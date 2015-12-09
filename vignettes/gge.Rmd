@@ -1,0 +1,81 @@
+---
+title: "Genotype plus Genotype-By-Block-of-Environments Biplots"
+author: "Kevin Wright"
+date: "`r Sys.Date()`"
+bibliography: gge.bib
+output:
+  html_document:
+    highlight: tango
+vignette: >
+  % \VignetteIndexEntry{Genotype plus Genotype-By-Block-of-Environments Biplots}
+  % \VignetteEncoding{UTF-8}
+  % \VignetteEngine{knitr::rmarkdown}
+---
+<style type="text/css">
+body, td { font-size: 14pt; color: #000; padding:1em; }
+code, pre, #ws, #message { font-size: 12pt;
+  color: #000; background-color: #f5f5f5; }
+code {border: 1px solid #e0e0e0; padding: 0 5px;}
+pre > code { border: 0; }
+</style>
+
+# Abstract
+
+A short note about GGE and GGB biplots.
+
+# R setup
+
+```{r setup, message=FALSE}
+library("knitr")
+knitr::opts_chunk$set(fig.align="center", fig.width=6, fig.height=6)
+options(width=90)
+```
+
+An example of a GGE (genotype plus genotype-by-environment) biplot similar to
+figure 12 of @yan2006biplot.
+
+```{r gge}
+library(agridat)
+data(yan.winterwheat)
+dat1 <- yan.winterwheat
+
+library(gge)
+m1 <- gge(yield~gen*env, dat1, scale=FALSE)
+biplot(m1, title="yan.winterwheat - GGE biplot",
+       flip=c(1,0), origin=0, hull=TRUE)
+```
+
+@laffont2007numerical showed how to partition the sums-of-squares
+simultaneously along the principal component axes and along 'G' and 'GxE'
+axes.
+```{r mosaic}
+plot(m1, title="yan.winterwheat")
+```
+
+The mosaic plot above shows that the first principal component axis is
+capturing almost all of the variation between genotypes, so that a projection
+of the genotype markers onto the first principal component axis is a good
+overall representation of the rankings of the genotypes.
+
+@laffont2013genotype presented GGB (genotype plus genotype-by-block of
+environments) biplots, which are useful to enhance the view of
+mega-environments consisting of multiple locations.
+
+```{r ggb}
+library(agridat)
+data(crossa.wheat)
+dat2 <- crossa.wheat
+
+# Define mega-environment groups of locations
+dat2$eg <- ifelse(is.element(dat2$loc,
+                             c("KN","NB","PA","BJ","IL","TC",
+                               "JM","PI","AS","ID","SC","SS",
+                               "SJ","MS","MG","MM")), "Grp1", "Grp2")
+
+library(gge)
+# Specify env.group as column in data frame
+m2 <- gge(yield~gen*loc, dat2, env.group=eg, scale=FALSE)
+biplot(m2, title="crossa.wheat - GGB biplot")
+```
+
+# References

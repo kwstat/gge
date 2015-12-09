@@ -1,2 +1,2 @@
-# gge
-GGE &amp; GGB biplots
+# agrifun
+Functions for analysis of agricultural data
