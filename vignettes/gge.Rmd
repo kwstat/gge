@@ -32,7 +32,7 @@ options(width=90)
 ```
 
 An example of a GGE (genotype plus genotype-by-environment) biplot similar to
-figure 12 of @yan2006biplot.
+figure 12 of @yan2006biplot.  The `flip` argument can be used to flip the x and y axes so that biplots are oriented as desired.  Because the SVD factorization is not unique, 
 
 ```{r gge}
 library(agridat)
@@ -45,6 +45,17 @@ biplot(m1, title="yan.winterwheat - GGE biplot",
        flip=c(1,0), origin=0, hull=TRUE)
 ```
 
+Many people prefer to use 'standardized' biplots, in which the data for each environement has been centered and scaled.  For standardized biplots, a unit circle is drawn.  Environment vectors that reach out to the unit circle are perfectly represented in the two dimensional plane.
+```{r}
+m2 <- gge(yield~gen*env, dat1, scale=TRUE)
+biplot(m2, title="yan.winterwheat - GGE biplot",
+       flip=c(1,1), origin=0)
+```
+As seen above, the environment vectors are fairly long, so that relative performance of genotypes in environments can be assessed with reasonable accuracy.  In contrast, a biplot based on principal components 2 and 3 has shorter vectors which should not be interpreted.
+```{r} 
+biplot(m2, title="yan.winterwheat - GGE biplot - PC 2 & 3",
+       comps=c(2,3), flip=c(1,1), origin=0)
+```
 @laffont2007numerical showed how to partition the sums-of-squares
 simultaneously along the principal component axes and along 'G' and 'GxE'
 axes.
@@ -74,8 +85,14 @@ dat2$eg <- ifelse(is.element(dat2$loc,
 
 library(gge)
 # Specify env.group as column in data frame
-m2 <- gge(yield~gen*loc, dat2, env.group=eg, scale=FALSE)
-biplot(m2, title="crossa.wheat - GGB biplot")
+m3 <- gge(yield~gen*loc, dat2, env.group=eg, scale=FALSE)
+biplot(m3, title="crossa.wheat - GGB biplot")
+
+```
+## Session info
+
+```{r session}
+sessionInfo()
 ```
 
-# References
+## References

@@ -34,6 +34,6 @@ Kenneth Moreland. (2009).
 "Diverging Color Maps for Scientific Visualization."
 In Proceedings of the 5th International Symposium on Visual Computing.
 December 2009.
-\url{http://kennethmoreland.com/color-maps/}
+http://kennethmoreland.com/color-maps/
 }
 

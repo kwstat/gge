@@ -125,8 +125,8 @@ if(require(agridat)){
   dat2$eg <- ifelse(is.element(dat2$loc,
                                c("KN","NB","PA","BJ","IL","TC", "JM","PI","AS","ID","SC","SS",
                                  "SJ","MS","MG","MM")), "Grp1", "Grp2")
-  m4 <- gge(yield~gen*loc, dat2, env.group=eg, scale=FALSE)
-  biplot(m4, lab.env=TRUE, title="crossa.wheat")
+  m2 <- gge(yield~gen*loc, dat2, env.group=eg, scale=FALSE)
+  biplot(m2, lab.env=TRUE, title="crossa.wheat")
 }
 
 
@@ -136,16 +136,16 @@ Jean-Louis Laffont, Kevin Wright
 }
 \references{
 Jean-Louis Laffont, Kevin Wright and Mohamed Hanafi (2013).
-  Genotype + Genotype x Block of Environments (GGB) Biplots.
-  \emph{Crop Science}, 53, 2332-2341.
-  \url{https://doi.org/10.2135/cropsci2013.03.0178}.
+Genotype + Genotype x Block of Environments (GGB) Biplots.
+\emph{Crop Science}, 53, 2332-2341.
+https://doi.org/10.2135/cropsci2013.03.0178.
 
-  Kroonenberg, Pieter M. (1997).
-  \emph{Introduction to Biplots for GxE Tables},
-  Research Report 51, Centre for Statistics, The University of Queensland,
-  Brisbane, Australia.
-  \url{http://three-mode.leidenuniv.nl/document/biplot.pdf}
+Kroonenberg, Pieter M. (1997).
+\emph{Introduction to Biplots for GxE Tables},
+Research Report 51, Centre for Statistics, The University of Queensland,
+Brisbane, Australia.
+http://three-mode.leidenuniv.nl/document/biplot.pdf
 
-  Yan, W. and Kang, M.S. (2003) \emph{GGE Biplot Analysis}.  CRC Press.
+Yan, W. and Kang, M.S. (2003) \emph{GGE Biplot Analysis}.  CRC Press.
 }
 

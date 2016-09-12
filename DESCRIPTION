@@ -1,7 +1,7 @@
 Package: gge
-Title: Genotype Plus Genotype-By-Environment Biplots
+Title: Genotype Plus Genotype-by-Environment Biplots
 Version: 1.0
-Date: 2015-12-07
+Date: 2015-12-13
 Authors@R: c(
   person("Kevin","Wright", email="kw.stat@gmail.com", role=c("aut","cre")),
   person("Jean-Louis","Laffont", role=c("aut"))

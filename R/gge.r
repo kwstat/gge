@@ -1,5 +1,5 @@
 # gge.r
-# Time-stamp: c:/x/rpack/agridat/R/gge.r
+# Time-stamp: <31 Aug 2016 14:38:18 c:/x/rpack/gge/R/gge.r>
 
 #' Function to create a Red-Gray-Blue palette
 #'
@@ -19,7 +19,7 @@
 #' "Diverging Color Maps for Scientific Visualization."
 #' In Proceedings of the 5th International Symposium on Visual Computing.
 #' December 2009.
-#' \url{http://kennethmoreland.com/color-maps/}
+#' http://kennethmoreland.com/color-maps/
 #'
 #' @examples
 #' pie(rep(1,11), col=RedGrayBlue(11))
@@ -59,20 +59,21 @@ RedGrayBlue <- colorRampPalette(c("firebrick", "lightgray", "#375997"))
 #' When using the matrix method, then \code{envGroup} must be a
 #' vector the same length as the number of columns in \code{data}, the contents
 #' of the vector contain the grouping information.  }
-#' @author Jean-Louis Laffont, Kevin Wright
+#' @author
+#' Jean-Louis Laffont, Kevin Wright
 #' @references
-#'   Jean-Louis Laffont, Kevin Wright and Mohamed Hanafi (2013).
-#'   Genotype + Genotype x Block of Environments (GGB) Biplots.
-#'   \emph{Crop Science}, 53, 2332-2341.
-#'   \url{https://doi.org/10.2135/cropsci2013.03.0178}.
+#' Jean-Louis Laffont, Kevin Wright and Mohamed Hanafi (2013).
+#' Genotype + Genotype x Block of Environments (GGB) Biplots.
+#' \emph{Crop Science}, 53, 2332-2341.
+#' https://doi.org/10.2135/cropsci2013.03.0178.
 #' 
-#'   Kroonenberg, Pieter M. (1997).
-#'   \emph{Introduction to Biplots for GxE Tables},
-#'   Research Report 51, Centre for Statistics, The University of Queensland,
-#'   Brisbane, Australia.
-#'   \url{http://three-mode.leidenuniv.nl/document/biplot.pdf}
+#' Kroonenberg, Pieter M. (1997).
+#' \emph{Introduction to Biplots for GxE Tables},
+#' Research Report 51, Centre for Statistics, The University of Queensland,
+#' Brisbane, Australia.
+#' http://three-mode.leidenuniv.nl/document/biplot.pdf
 #' 
-#'   Yan, W. and Kang, M.S. (2003) \emph{GGE Biplot Analysis}.  CRC Press.
+#' Yan, W. and Kang, M.S. (2003) \emph{GGE Biplot Analysis}.  CRC Press.
 #' 
 #' @examples
 #' # Example 1.  Data is a data.frame in 'matrix' format
@@ -99,8 +100,8 @@ RedGrayBlue <- colorRampPalette(c("firebrick", "lightgray", "#375997"))
 #'   dat2$eg <- ifelse(is.element(dat2$loc,
 #'                                c("KN","NB","PA","BJ","IL","TC", "JM","PI","AS","ID","SC","SS",
 #'                                  "SJ","MS","MG","MM")), "Grp1", "Grp2")
-#'   m4 <- gge(yield~gen*loc, dat2, env.group=eg, scale=FALSE)
-#'   biplot(m4, lab.env=TRUE, title="crossa.wheat")
+#'   m2 <- gge(yield~gen*loc, dat2, env.group=eg, scale=FALSE)
+#'   biplot(m2, lab.env=TRUE, title="crossa.wheat")
 #' }
 #' 
 #'
@@ -449,8 +450,10 @@ plot.gge <- function(x, title=substitute(x), ...) {
 #' @param res.vec If TRUE, for each group, draw residual vectors from the mean
 #' of the locs to the individual locs
 #' @param hull If TRUE, show which-won-where polygon
-
 #' @rdname gge
+#' @import graphics
+#' @import grDevices
+#' @import stats
 #' @export
 biplot.gge <- function(x, title = substitute(x), subtitle="",
                        cex.gen=0.6, cex.env=.5,
@@ -574,15 +577,19 @@ biplot.gge <- function(x, title = substitute(x), subtitle="",
   mtext(title, side=3, line=2.5)
   mtext(subtitle, side=3, line=0.9, cex=.7)
 
-  # Add a circle of unit radius to standardized biplots.
-  # Do this first so we don't overwrite group/genotype labels and so that
-  # the unit circle is on the locCoord scale, not the genCoord scale.
+  # Note that each environment vector has length 1:
+  # round(apply(x$locCoord, 1, function(x) sum(x*x)),2)
+  # E1 E2 E3 E4 E5 
+  #  1  1  1  1  1
+  # For standardized biplots, draw a circle of radius 1 on locCoord scale
+  # Do this first so we don't overwrite labels
+
   if(x$scale) {
-    angles <- seq(from=0,to=2*pi,length=100)
-    radius <- 1  # sqrt(nrow(genCoord - 1))
+    angles <- seq(from=0, to=2*pi, length=100)
+    radius <- 1
     xc <- radius * sin(angles)
     yc <- radius * cos(angles)
-    lines(xc,yc,col="tan")
+    lines(xc, yc, col="tan")
   }
 
   # Plot locs first (points OR labels, but not both) colored by group
