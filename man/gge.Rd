@@ -21,7 +21,8 @@ gge(x, ...)
 \method{biplot}{gge}(x, title = substitute(x), subtitle = "",
   cex.gen = 0.6, cex.env = 0.5, col.gen = "darkgreen",
   col.env = "orange3", pch.gen = 1, lab.env = TRUE, comps = 1:2,
-  flip = "auto", origin = "auto", res.vec = TRUE, hull = FALSE, ...)
+  flip = "auto", origin = "auto", res.vec = TRUE, hull = FALSE,
+  zoom.gen = 1, zoom.env = 1, ...)
 }
 \arguments{
 \item{x}{A matrix or data.frame.}
@@ -64,12 +65,19 @@ gge(x, ...)
 ordinate is positively correlated with genotype means.  Can also be a vector
 like c(TRUE,FALSE) for manual control.}
 
-\item{origin}{If "auto", the plotting window is centered on genotypes.}
+\item{origin}{If "auto", the plotting window is centered on genotypes, otherwise
+the origin is at the middle of the window.}
 
 \item{res.vec}{If TRUE, for each group, draw residual vectors from the mean
 of the locs to the individual locs}
 
 \item{hull}{If TRUE, show which-won-where polygon}
+
+\item{zoom.gen}{Zoom factor for manual control of genotype xlim,ylim
+The default is 1. Values less than 1 may be useful if genotype names are long.}
+
+\item{zoom.env}{Zoom factor for manual control of environment xlim,ylim.
+The default is 1. Values less than 1 may be useful if environment names are long.}
 }
 \value{
 A list of class \code{gge} containing:
@@ -138,13 +146,13 @@ Jean-Louis Laffont, Kevin Wright
 Jean-Louis Laffont, Kevin Wright and Mohamed Hanafi (2013).
 Genotype + Genotype x Block of Environments (GGB) Biplots.
 \emph{Crop Science}, 53, 2332-2341.
-https://doi.org/10.2135/cropsci2013.03.0178.
+\url{https://doi.org/10.2135/cropsci2013.03.0178}.
 
 Kroonenberg, Pieter M. (1997).
 \emph{Introduction to Biplots for GxE Tables},
 Research Report 51, Centre for Statistics, The University of Queensland,
 Brisbane, Australia.
-http://three-mode.leidenuniv.nl/document/biplot.pdf
+\url{http://three-mode.leidenuniv.nl/document/biplot.pdf}
 
 Yan, W. and Kang, M.S. (2003) \emph{GGE Biplot Analysis}.  CRC Press.
 }

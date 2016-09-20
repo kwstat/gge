@@ -1,5 +1,5 @@
 # gge.r
-# Time-stamp: <31 Aug 2016 14:38:18 c:/x/rpack/gge/R/gge.r>
+# Time-stamp: <20 Sep 2016 11:04:36 c:/x/rpack/gge/R/gge.r>
 
 #' Function to create a Red-Gray-Blue palette
 #'
@@ -65,13 +65,13 @@ RedGrayBlue <- colorRampPalette(c("firebrick", "lightgray", "#375997"))
 #' Jean-Louis Laffont, Kevin Wright and Mohamed Hanafi (2013).
 #' Genotype + Genotype x Block of Environments (GGB) Biplots.
 #' \emph{Crop Science}, 53, 2332-2341.
-#' https://doi.org/10.2135/cropsci2013.03.0178.
+#' \url{https://doi.org/10.2135/cropsci2013.03.0178}.
 #' 
 #' Kroonenberg, Pieter M. (1997).
 #' \emph{Introduction to Biplots for GxE Tables},
 #' Research Report 51, Centre for Statistics, The University of Queensland,
 #' Brisbane, Australia.
-#' http://three-mode.leidenuniv.nl/document/biplot.pdf
+#' \url{http://three-mode.leidenuniv.nl/document/biplot.pdf}
 #' 
 #' Yan, W. and Kang, M.S. (2003) \emph{GGE Biplot Analysis}.  CRC Press.
 #' 
@@ -446,10 +446,15 @@ plot.gge <- function(x, title=substitute(x), ...) {
 #' @param flip If "auto" then each axis is flipped so that the genotype
 #' ordinate is positively correlated with genotype means.  Can also be a vector
 #' like c(TRUE,FALSE) for manual control.
-#' @param origin If "auto", the plotting window is centered on genotypes.
+#' @param origin If "auto", the plotting window is centered on genotypes, otherwise
+#' the origin is at the middle of the window.
 #' @param res.vec If TRUE, for each group, draw residual vectors from the mean
 #' of the locs to the individual locs
 #' @param hull If TRUE, show which-won-where polygon
+#' @param zoom.gen Zoom factor for manual control of genotype xlim,ylim
+#' The default is 1. Values less than 1 may be useful if genotype names are long.
+#' @param zoom.env Zoom factor for manual control of environment xlim,ylim.
+#' The default is 1. Values less than 1 may be useful if environment names are long.
 #' @rdname gge
 #' @import graphics
 #' @import grDevices
@@ -464,7 +469,9 @@ biplot.gge <- function(x, title = substitute(x), subtitle="",
                        flip="auto",
                        origin="auto",
                        res.vec=TRUE,
-                       hull=FALSE, ...){
+                       hull=FALSE,
+                       zoom.gen=1, zoom.env=1,
+                       ...){
 
   # x: A model object of class 'gge'
   # Must include ... because the generic 'biplot' does
@@ -559,13 +566,14 @@ biplot.gge <- function(x, title = substitute(x), subtitle="",
   xlimg <- c(xmid-half, xmid+half)
   ylimg <- c(ymid-half, ymid+half)
 
-  #  Then find the scaling factor to make locations fill the window.
+  # Then find the scaling factor to make locations fill the window.
+  # Manual tweaking of limits is done with zoom.env
   # Block coord are always 'inside' loc coord box
   re1 <- expand.range(range(locCoord[, xcomp]))
   re2 <- expand.range(range(locCoord[, ycomp]))
-  ratio <- max(c(re1, re2)/c(xlimg, ylimg)) * 1.1 # Why 1.1 ?
-  xlime <- xlimg*ratio
-  ylime <- ylimg*ratio
+  ratio <- max(c(re1, re2)/c(xlimg, ylimg)) * 1.1 # 1.1 adds extra space
+  xlime <- xlimg * ratio / zoom.env
+  ylime <- ylimg * ratio / zoom.env
 
   # Set up plot for environment vectors
   plot(NULL, type = "n", xaxt="n", yaxt="n", xlab="", ylab="",
@@ -622,12 +630,12 @@ biplot.gge <- function(x, title = substitute(x), subtitle="",
     # points(ubc[ , c(xcomp,ycomp)], pch = 16, col=col.env) # no 'eix'
     # The 'xy' variable extends the vector to the edge of plot
     xy <- extend(ubc[ , xcomp], ubc[ , ycomp], xlime, ylime)
-    # Now the extended dashed-line part of the group vector.  Shorten by 5%
+    # Now the extended dashed-line part of the group vector.  Shorten by 10%
     # to reduce over-plotting.
     segments(ubc[ , xcomp], ubc[ , ycomp],
-             .95*xy[,1], .95*xy[,2], lty = 3, col=col.env)
+             .90*xy[,1], .90*xy[,2], lty = 3, col=col.env)
     # Group label
-    text(xy[,1], xy[,2], rownames(ubc), cex = 1, col=col.env)
+    text(.95*xy[,1], .95*xy[,2], rownames(ubc), cex = 1, col=col.env)
   }
 
   pch.gen <- c(pch.gen, setdiff(1:20, pch.gen))
@@ -641,9 +649,11 @@ biplot.gge <- function(x, title = substitute(x), subtitle="",
 
   # --- New coordinate system for genotypes ---
   par(new = TRUE)
+  # Manual tweaking of limits is done with zoom.gen
+  xlimg = xlimg / zoom.gen
+  ylimg = ylimg / zoom.gen
   plot(NULL, type = "n", xaxt="n", yaxt="n", xlab="", ylab="",
        xlim=xlimg, ylim=ylimg)
-
   # Now overlay genotype labels and/or points
   if(n.gen.grp < 2) {
     text(genCoord[, c(xcomp, ycomp)], rownames(genCoord), cex=cex.gen, col=col.gen)
@@ -822,118 +832,3 @@ nipals <- function(x, maxcomp=min(nrow(x), ncol(x)-1),
   class(out) <- c("nipals","prcomp")
   return(out)
 }
-
-if(0){  # Tests
-
-  # matrix data
-  mat1 <- matrix(c(50, 55, 65, 50, 60, 65, 75,
-                   67, 71, 76, 80, 82, 89, 95,
-                   90, 93, 95, 102, 97, 106, 117,
-                   98, 102, 105, 130, 135, 137, 133,
-                   120, 129, 134, 138, 151, 153, 155),
-                 ncol=5, byrow=FALSE)
-  colnames(mat1) <- c("E1","E2","E3","E4","E5")
-  rownames(mat1) <- c("G1","G2","G3","G4","G5","G6","G7")
-
-  # One missing value in a matrix
-  mat2 <- mat1 ; mat2[1,1] <- NA
-
-  # Check 'plot' functions for complete/missing
-  m11 = gge(mat1)
-  plot(m11)
-  m21 = gge(mat2)
-  plot(m21)
-
-  # Checking arguments of 'biplot'
-  biplot(m11)
-  biplot(m11, title="Example biplot", subtitle="GGE biplot")
-  biplot(m11, cex.gen=2)
-  biplot(m11, cex.env=2)
-  biplot(m11, col.gen="blue")
-  biplot(m11, col.gen=c("blue","red")) # With 1 group, only use first
-  biplot(m11, pch.gen=20) # Ignored with 1 group
-  biplot(m11, comps=2:3)
-  biplot(m11, lab.env=FALSE)
-  # Flips
-  biplot(m11, flip="") # no flipping
-  biplot(m11, flip=FALSE)
-  biplot(m11, flip=TRUE)
-  biplot(m11, flip=c(TRUE,FALSE))
-  biplot(m11, flip=c(FALSE,TRUE))
-  biplot(m11, flip=c(FALSE,FALSE))
-  biplot(m11, flip=c(TRUE,TRUE))
-
-  m31 <- gge(mat1, method="svd")
-  biplot(m31)
-  m32 <- gge(mat1, method="nipals")
-  biplot(m32)
-  m34 <- gge(mat2) # should switch to 'nipals'
-  biplot(m34)
-  m35 <- gge(mat2, method="svd") # should switch to 'nipals'
-
-  # matrix data with env.group, gen.group
-  m24 <- gge(mat2, env.group=c(1,1,1,2,2))
-  biplot(m24)
-  m25 <- gge(mat2, gen.group=c(1,1,1,1,2,2,2))
-  biplot(m25, col.gen=c('blue','red'), pch.gen=1:2) # group colors, symbols
-
-  # Create data.frame with env groups using the lattice::barley data
-  bar <- transform(lattice::barley, env=paste0(site,year))
-  m31 <- gge(yield~variety*site, bar, env.group=year) # errs, as it should
-  m32 <- gge(yield~variety*env, bar)
-  biplot(m32)
-  m33 <- gge(yield~variety*env, bar, env.group=year) # env.group
-  plot(m33)
-  biplot(m33)
-  biplot(m33, lab.env=FALSE) # label locs
-  biplot(m33, lab.env=TRUE) # default is to label locs
-  # Option to disable residual vectors
-  biplot(m33, res.vec=TRUE) # default is to label locs
-  biplot(m33, res.vec=FALSE) # default is to label locs
-
-  # Custom colors for gen/env. Example matrix data from Laffont
-  mat6 <- read.csv("c:/x/rpack/old/ggb/example1.csv")
-  rownames(mat6) <- mat6[,1]
-  mat6 <- as.matrix(mat6[, -1])
-  # specify 'gen.group' and 'env.group' as a vector with matrix data
-  m61 <- gge(mat6, scale=FALSE,
-             env.group=c(rep("Blk1",3), rep("Blk2",5),rep("Blk3", 5), rep("Blk4", 7)),
-             gen.group=rep(letters[1:3], each=5))
-  biplot(m61, flip=c(1,1))
-
-  # Corssa example
-  require("reshape2")
-  # CRAN check doesn't like data() loading into global envt, so keep
-  # this commented out.
-  # data(crossa.wheat, package="agridat")
-  dat1 <- crossa.wheat
-  mat1 <- reshape2::acast(dat1, gen~loc)
-  mat1 <- mat1[, c("SR","SG","CA","AK","TB","SE","ES","EB","EG",
-                   "KN","NB","PA","BJ","IL","TC","JM","PI","AS","ID",
-                   "SC","SS","SJ","MS","MG","MM")]
-  tit1 <- "CYMMIT wheat"
-  m7 <- gge(mat1, env.group=c(rep("Grp2",9), rep("Grp1", 16)), lab="Y",
-            scale=FALSE)
-  biplot(m7, title=tit1)
-  plot(m7)
-
-  # Specify env.group as column in data frame
-  dat2 <- crossa.wheat
-  dat2$eg <- ifelse(dat2$loc %in% c("KN","NB","PA","BJ","IL","TC","JM","PI","AS","ID",
-                                   "SC","SS","SJ","MS","MG","MM"), "Grp1", "Grp2")
-  m8 <- gge(yield~gen*loc, dat2, env.group=eg, scale=FALSE)
-  biplot(m8)
-
-  # No env.group
-  m9 <- gge(yield~gen*loc, dat2, scale=FALSE)
-  biplot(m9)
-
-  # Polygon.  Yan 2006 fig 12.
-  require(agridat)
-  dat <- yan.winterwheat
-  m1 <- gge(yield ~ gen*env, data=dat, scale=FALSE)
-  biplot(m1, title="yan.winterwheat - GGE biplot",
-         flip=c(1,0), origin=0, hull=TRUE)
-  
-}
-
