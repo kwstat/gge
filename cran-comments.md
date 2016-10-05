@@ -7,12 +7,23 @@ This is a minor update to meet a user request.
 
 local R 3.3.1 on Windows 7
 
-win-builder (devel & release)
+win-builder release
+
+win-builder devel
 
 ## R CMD check results
 
-There were no ERRORs, WARNINGs, or NOTEs.
+There were no ERRORs, or WARNINGs.
 
+There is one NOTE:
+
+Possibly mis-spelled words in DESCRIPTION:
+  Biplots (2:46)
+  GGB (10:5)
+  GGE (9:33)
+  Genotype (2:8, 2:22)
+  biplots (9:21)
+  
 ## Downstream dependencies
 
 None.
