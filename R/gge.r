@@ -1,5 +1,7 @@
-# gge.r
-# Time-stamp: <20 Sep 2016 11:04:36 c:/x/rpack/gge/R/gge.r>
+# gge.R
+# Time-stamp: <20 Sep 2016 11:04:36 c:/x/rpack/gge/R/gge.R>
+
+# ----------------------------------------------------------------------------
 
 #' Function to create a Red-Gray-Blue palette
 #'
@@ -8,18 +10,9 @@
 #' Using gray instead of white allows missing values to appear as white
 #' (actually, transparent).
 #'
-#' The 'coolwarm' palette by Kenneth Mooreland came later and added a bit
-#' more color to the red and blue, and reversed the scale.
-#'
 #' @param n Number of colors to create
 #' @return A vector of n colors.
 #' @author Kevin Wright
-#' @references
-#' Kenneth Moreland. (2009).
-#' "Diverging Color Maps for Scientific Visualization."
-#' In Proceedings of the 5th International Symposium on Visual Computing.
-#' December 2009.
-#' http://kennethmoreland.com/color-maps/
 #'
 #' @examples
 #' pie(rep(1,11), col=RedGrayBlue(11))
@@ -109,6 +102,8 @@ RedGrayBlue <- colorRampPalette(c("firebrick", "lightgray", "#375997"))
 #' @export gge
 gge <- function(x, ...) UseMethod("gge")
 
+# ----------------------------------------------------------------------------
+
 #' @param formula A formula
 #' @param data Data frame
 #' @param gen.group genotype group
@@ -176,6 +171,8 @@ gge.formula <- function(formula, data=NULL,
   invisible(gge.matrix(datm, gen.group=gen.group, env.group=env.group, ...))
 
 }
+
+# ----------------------------------------------------------------------------
 
 #' @param center If TRUE, center values for each environment
 #' @param scale If TRUE, scale values for each environment
@@ -396,6 +393,9 @@ extend <- function(x,y,xlim,ylim){
   return(cbind(xb, yb))
 }
 
+# ----------------------------------------------------------------------------
+
+
 #' @rdname gge
 #' @export
 plot.gge <- function(x, title=substitute(x), ...) {
@@ -433,6 +433,8 @@ plot.gge <- function(x, title=substitute(x), ...) {
 
   invisible()
 }
+
+# ----------------------------------------------------------------------------
 
 #' @param title title
 #' @param subtitle subtitle
@@ -693,6 +695,8 @@ biplot.gge <- function(x, title = substitute(x), subtitle="",
   
   invisible()
 }
+
+# ----------------------------------------------------------------------------
 
 nipals <- function(x, maxcomp=min(nrow(x), ncol(x)-1),
                     completeObs=TRUE,

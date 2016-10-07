@@ -1,15 +1,17 @@
 
-# gge 1.1 (Sep 2016)
+# gge 1.1 - Oct 2016
 
-* Added zoom.gen, zoom.env arguments to `biplot()`for M.Zoric.
-* Moved tests to tests/all.R.
+Added zoom.gen, zoom.env arguments to `biplot()`for M.Zoric.
 
-# gge 1.0 (Dec 2015)
+Moved tests to tests/gge_tests.R
 
-* Packaged forked and split off from agridat package.
-* Added origin/hull arguments to `biplot()`.
+# gge 1.0 - Dec 2015
 
-# gge 0.0 (Jan 2005)
+Package forked and split off from agridat package.
 
-* Created function `gge()` to fit and plot GGE biplots.
+Added origin/hull arguments to `biplot()`.
+
+# gge 0.0 - Jan 2005
+
+Created function `gge()` to fit and plot GGE biplots.
 
