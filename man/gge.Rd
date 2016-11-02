@@ -41,25 +41,25 @@ gge(x, ...)
 
 \item{scale}{If TRUE, scale values for each environment}
 
-\item{comps}{comps}
+\item{comps}{Principal components to use for the biplot. Default c(1,2).}
 
 \item{method}{method used to find principal component directions}
 
-\item{title}{title}
+\item{title}{Title, by default the name of the data. Use NULL to suppress the title.}
 
-\item{subtitle}{subtitle}
+\item{subtitle}{Subtitle to put in front of options. Use NULL to suppress the subtitle.}
 
-\item{cex.gen}{character expansion for genotypes}
+\item{cex.gen}{Character expansion for genotypes}
 
-\item{cex.env}{character expansion for environments}
+\item{cex.env}{Character expansion for environments}
 
-\item{col.gen}{color for genotypes}
+\item{col.gen}{Color for genotypes}
 
-\item{col.env}{color for envts}
+\item{col.env}{Color for environments}
 
-\item{pch.gen}{plot character for genotypes}
+\item{pch.gen}{Plot character for genotypes}
 
-\item{lab.env}{label envts}
+\item{lab.env}{Label environments if TRUE.}
 
 \item{flip}{If "auto" then each axis is flipped so that the genotype
 ordinate is positively correlated with genotype means.  Can also be a vector
@@ -71,7 +71,7 @@ the origin is at the middle of the window.}
 \item{res.vec}{If TRUE, for each group, draw residual vectors from the mean
 of the locs to the individual locs}
 
-\item{hull}{If TRUE, show which-won-where polygon}
+\item{hull}{If TRUE, show a which-won-where polygon}
 
 \item{zoom.gen}{Zoom factor for manual control of genotype xlim,ylim
 The default is 1. Values less than 1 may be useful if genotype names are long.}
@@ -81,7 +81,7 @@ The default is 1. Values less than 1 may be useful if environment names are long
 }
 \value{
 A list of class \code{gge} containing:
-\item{method}{}
+\item{method}{Method used to calculate principal components.}
 \item{center}{Data centered?}
 \item{scale}{Data scaled?}
 \item{gen.group}{This is only used for plotting.  If not NULL, this specifies a
@@ -154,6 +154,7 @@ Research Report 51, Centre for Statistics, The University of Queensland,
 Brisbane, Australia.
 \url{http://three-mode.leidenuniv.nl/document/biplot.pdf}
 
-Yan, W. and Kang, M.S. (2003) \emph{GGE Biplot Analysis}.  CRC Press.
+Yan, W. and Kang, M.S. (2003).
+\emph{GGE Biplot Analysis}.  CRC Press.
 }
 

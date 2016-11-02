@@ -41,7 +41,7 @@ RedGrayBlue <- colorRampPalette(c("firebrick", "lightgray", "#375997"))
 #' @param x A matrix or data.frame.
 #' @param ... Other arguments
 #' @return A list of class \code{gge} containing:
-#' \item{method}{}
+#' \item{method}{Method used to calculate principal components.}
 #' \item{center}{Data centered?}
 #' \item{scale}{Data scaled?}
 #' \item{gen.group}{This is only used for plotting.  If not NULL, this specifies a
@@ -54,7 +54,9 @@ RedGrayBlue <- colorRampPalette(c("firebrick", "lightgray", "#375997"))
 #' of the vector contain the grouping information.  }
 #' @author
 #' Jean-Louis Laffont, Kevin Wright
+#' 
 #' @references
+#' 
 #' Jean-Louis Laffont, Kevin Wright and Mohamed Hanafi (2013).
 #' Genotype + Genotype x Block of Environments (GGB) Biplots.
 #' \emph{Crop Science}, 53, 2332-2341.
@@ -66,7 +68,8 @@ RedGrayBlue <- colorRampPalette(c("firebrick", "lightgray", "#375997"))
 #' Brisbane, Australia.
 #' \url{http://three-mode.leidenuniv.nl/document/biplot.pdf}
 #' 
-#' Yan, W. and Kang, M.S. (2003) \emph{GGE Biplot Analysis}.  CRC Press.
+#' Yan, W. and Kang, M.S. (2003).
+#' \emph{GGE Biplot Analysis}.  CRC Press.
 #' 
 #' @examples
 #' # Example 1.  Data is a data.frame in 'matrix' format
@@ -436,15 +439,15 @@ plot.gge <- function(x, title=substitute(x), ...) {
 
 # ----------------------------------------------------------------------------
 
-#' @param title title
-#' @param subtitle subtitle
-#' @param cex.gen character expansion for genotypes
-#' @param cex.env character expansion for environments
-#' @param col.gen color for genotypes
-#' @param col.env color for envts
-#' @param pch.gen plot character for genotypes
-#' @param lab.env label envts
-#' @param comps comps
+#' @param title Title, by default the name of the data. Use NULL to suppress the title.
+#' @param subtitle Subtitle to put in front of options. Use NULL to suppress the subtitle.
+#' @param cex.gen Character expansion for genotypes
+#' @param cex.env Character expansion for environments
+#' @param col.gen Color for genotypes
+#' @param col.env Color for environments
+#' @param pch.gen Plot character for genotypes
+#' @param lab.env Label environments if TRUE.
+#' @param comps Principal components to use for the biplot. Default c(1,2).
 #' @param flip If "auto" then each axis is flipped so that the genotype
 #' ordinate is positively correlated with genotype means.  Can also be a vector
 #' like c(TRUE,FALSE) for manual control.
@@ -452,7 +455,7 @@ plot.gge <- function(x, title=substitute(x), ...) {
 #' the origin is at the middle of the window.
 #' @param res.vec If TRUE, for each group, draw residual vectors from the mean
 #' of the locs to the individual locs
-#' @param hull If TRUE, show which-won-where polygon
+#' @param hull If TRUE, show a which-won-where polygon
 #' @param zoom.gen Zoom factor for manual control of genotype xlim,ylim
 #' The default is 1. Values less than 1 may be useful if genotype names are long.
 #' @param zoom.env Zoom factor for manual control of environment xlim,ylim.
@@ -492,11 +495,15 @@ biplot.gge <- function(x, title = substitute(x), subtitle="",
   n.env.grp <- length(unique(env.group))
 
   # Add options to subtitle
-  if(subtitle != "") subtitle <- paste0(subtitle, ", ")
-  subtitle <- paste0(subtitle, "method=", x$method)
-  subtitle <- paste0(subtitle, ", center=", x$center)
-  subtitle <- paste0(subtitle, ", scale=", x$scale)
-  subtitle <- paste0(subtitle, ", missing: ", round(pctMiss*100,1), "%")
+  if(is.null(subtitle)) {
+    subtitle = ""
+  } else {
+    if(subtitle != "") subtitle <- paste0(subtitle, ", ")
+    subtitle <- paste0(subtitle, "method=", x$method)
+    subtitle <- paste0(subtitle, ", center=", x$center)
+    subtitle <- paste0(subtitle, ", scale=", x$scale)
+    subtitle <- paste0(subtitle, ", missing: ", round(pctMiss*100,1), "%")
+  }
 
   # Environment (group) colors (first one is used for environments)
   # Replicate colors if not enough have been specified
@@ -506,16 +513,6 @@ biplot.gge <- function(x, title = substitute(x), subtitle="",
     col.env <- col.env[1]
   } else {
     col.env <- rep(col.env, length=n.env.grp)
-  }
-
-  # If alpha transparency is supported, use 70%=180
-  if(.Device != "windows") {
-    col.env <- col2rgb(col.env)
-    col.env <- rgb(col.env[1,], col.env[2,], col.env[3,],
-                   alpha=180, maxColorValue=255)
-    col.gen <- col2rgb(col.gen)
-    col.gen <- rgb(col.gen[1,], col.gen[2,], col.gen[3,],
-                   alpha=180, maxColorValue=255)
   }
 
   # Flip. If 'auto', flip the axis so that genotype ordinate is positively
@@ -530,9 +527,21 @@ biplot.gge <- function(x, title = substitute(x), subtitle="",
     }
   }
 
-  # Set up plot
+  # Initialize plot
   par(pty='s')
 
+  # If alpha transparency is supported, use 70%=180
+  if(.Device=="windows" | .Device=="RStudioGD") {
+    # These devices do not support true transparency
+  } else {
+    col.env <- col2rgb(col.env)
+    col.env <- rgb(col.env[1,], col.env[2,], col.env[3,],
+                   alpha=180, maxColorValue=255)
+    col.gen <- col2rgb(col.gen)
+    col.gen <- rgb(col.gen[1,], col.gen[2,], col.gen[3,],
+                   alpha=180, maxColorValue=255)
+  }
+  
   xcomp <- comps[1] # Component for x axis
   ycomp <- comps[2] # Component for y axis
 
@@ -656,6 +665,7 @@ biplot.gge <- function(x, title = substitute(x), subtitle="",
   ylimg = ylimg / zoom.gen
   plot(NULL, type = "n", xaxt="n", yaxt="n", xlab="", ylab="",
        xlim=xlimg, ylim=ylimg)
+  
   # Now overlay genotype labels and/or points
   if(n.gen.grp < 2) {
     text(genCoord[, c(xcomp, ycomp)], rownames(genCoord), cex=cex.gen, col=col.gen)

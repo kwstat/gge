@@ -1,7 +1,22 @@
-# all.R
-# Time-stamp: <20 Sep 2016 10:54:38 c:/x/rpack/gge/tests/all.R>
+# gge_tests.R
+# Time-stamp: <20 Sep 2016 10:54:38 c:/x/rpack/gge/tests/gge_tests.R>
 
 require(gge)
+
+# Temporary check of alpha transparency
+if(FALSE) {
+  require(gge)
+  mat1 <- matrix(c(50, 55, 65, 50, 60, 65, 75,
+                   67, 71, 76, 80, 82, 89, 95,
+                   90, 93, 95, 102, 97, 106, 117,
+                   98, 102, 105, 130, 135, 137, 133,
+                   120, 129, 134, 138, 151, 153, 155),
+                 ncol=5, byrow=FALSE)
+  colnames(mat1) <- c("E1","E2","E3","E4","E5")
+  rownames(mat1) <- c("G1","G2","G3","G4","G5","G6","G7")
+  m25 <- gge(mat1, env.group=c(1,1,1,2,2))
+  biplot(m25, col.env=c('blue','red')) # group colors, symbols
+}
 
 # matrix data
 mat1 <- matrix(c(50, 55, 65, 50, 60, 65, 75,
@@ -25,6 +40,8 @@ plot(m21)
 # Checking arguments of 'biplot'
 biplot(m11)
 biplot(m11, title="Example biplot", subtitle="GGE biplot")
+biplot(m11, subtitle=NULL) # suppress subtitle
+biplot(m11, title=NULL, subtitle=NULL) # suppress title & subtitle
 biplot(m11, cex.gen=2)
 biplot(m11, cex.env=2)
 biplot(m11, col.gen="blue")
