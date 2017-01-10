@@ -1,5 +1,18 @@
 # gge.R
-# Time-stamp: <20 Sep 2016 11:04:36 c:/x/rpack/gge/R/gge.R>
+# Time-stamp: <10 Jan 2017 16:54:35 c:/x/rpack/gge/R/gge.R>
+
+if(FALSE) {
+  # Tests for 3D
+  biplot3d(m2)
+  biplot3d(m2, cex.gen=1)
+  biplot3d(m2, cex.env=1)
+  biplot3d(m2, col.gen="red")
+  biplot3d(m2, col.env=c("pink","purple"))
+  biplot3d(m2, comps=c(1,2,4))
+  biplot3d(m2, lab.env=FALSE)
+  biplot3d(m2, res.vec=FALSE)
+  biplot3d(m2, zoom.gen=2)
+}
 
 # ----------------------------------------------------------------------------
 
@@ -39,6 +52,7 @@ RedGrayBlue <- colorRampPalette(c("firebrick", "lightgray", "#375997"))
 #' 
 #' @rdname gge
 #' @param x A matrix or data.frame.
+#' 
 #' @param ... Other arguments
 #' @return A list of class \code{gge} containing:
 #' \item{method}{Method used to calculate principal components.}
@@ -86,6 +100,7 @@ RedGrayBlue <- colorRampPalette(c("firebrick", "lightgray", "#375997"))
 #' m1 = gge(B)
 #' plot(m1)
 #' biplot(m1, title="Example biplot")
+#' # biplot3d(m1)
 #' 
 #' if(require(agridat)){
 #'   # crossa.wheat biplot
@@ -98,6 +113,7 @@ RedGrayBlue <- colorRampPalette(c("firebrick", "lightgray", "#375997"))
 #'                                  "SJ","MS","MG","MM")), "Grp1", "Grp2")
 #'   m2 <- gge(yield~gen*loc, dat2, env.group=eg, scale=FALSE)
 #'   biplot(m2, lab.env=TRUE, title="crossa.wheat")
+#'   # biplot3d(m2)
 #' }
 #' 
 #'
@@ -108,9 +124,13 @@ gge <- function(x, ...) UseMethod("gge")
 # ----------------------------------------------------------------------------
 
 #' @param formula A formula
+#' 
 #' @param data Data frame
+#' 
 #' @param gen.group genotype group
+#' 
 #' @param env.group env group
+#' 
 #' @rdname gge
 #' @export
 gge.formula <- function(formula, data=NULL,
@@ -178,8 +198,11 @@ gge.formula <- function(formula, data=NULL,
 # ----------------------------------------------------------------------------
 
 #' @param center If TRUE, center values for each environment
+#' 
 #' @param scale If TRUE, scale values for each environment
+#' 
 #' @param method method used to find principal component directions
+#' 
 #' @rdname gge
 #' @export
 gge.matrix <- function(x, center=TRUE, scale=TRUE,
@@ -440,26 +463,42 @@ plot.gge <- function(x, title=substitute(x), ...) {
 # ----------------------------------------------------------------------------
 
 #' @param title Title, by default the name of the data. Use NULL to suppress the title.
+#' 
 #' @param subtitle Subtitle to put in front of options. Use NULL to suppress the subtitle.
+#' 
 #' @param cex.gen Character expansion for genotypes
+#' 
 #' @param cex.env Character expansion for environments
+#' 
 #' @param col.gen Color for genotypes
+#' 
 #' @param col.env Color for environments
+#' 
 #' @param pch.gen Plot character for genotypes
+#' 
 #' @param lab.env Label environments if TRUE.
+#' 
 #' @param comps Principal components to use for the biplot. Default c(1,2).
+#' 
 #' @param flip If "auto" then each axis is flipped so that the genotype
 #' ordinate is positively correlated with genotype means.  Can also be a vector
 #' like c(TRUE,FALSE) for manual control.
+#' 
 #' @param origin If "auto", the plotting window is centered on genotypes, otherwise
 #' the origin is at the middle of the window.
+#' 
 #' @param res.vec If TRUE, for each group, draw residual vectors from the mean
-#' of the locs to the individual locs
-#' @param hull If TRUE, show a which-won-where polygon
+#' of the locs to the individual locs.
+#' 
+#' @param hull If TRUE, show a which-won-where polygon.
+#' 
 #' @param zoom.gen Zoom factor for manual control of genotype xlim,ylim
 #' The default is 1. Values less than 1 may be useful if genotype names are long.
+#' 
 #' @param zoom.env Zoom factor for manual control of environment xlim,ylim.
 #' The default is 1. Values less than 1 may be useful if environment names are long.
+#' Not used for 3D biplots.
+#' 
 #' @rdname gge
 #' @import graphics
 #' @import grDevices
@@ -619,8 +658,10 @@ biplot.gge <- function(x, title = substitute(x), subtitle="",
   if(lab.env == TRUE) {
     text(locCoord[ , c(xcomp, ycomp), drop = FALSE],
          rownames(locCoord), cex=cex.env, col = col.env[eix])
-  } else points(locCoord[ , c(xcomp, ycomp), drop = FALSE],
-                cex = cex.env, col = col.env[eix]) # pch = (1:n.env.grp)[eix])
+  } else {
+    points(locCoord[ , c(xcomp, ycomp), drop = FALSE],
+           cex = cex.env, col = col.env[eix]) # pch = (1:n.env.grp)[eix])
+  }
 
   # Draw vectors.  Shorten by 5% to reduce over-plotting the label
   if(n.env.grp < 2){
@@ -645,7 +686,7 @@ biplot.gge <- function(x, title = substitute(x), subtitle="",
     # to reduce over-plotting.
     segments(ubc[ , xcomp], ubc[ , ycomp],
              .90*xy[,1], .90*xy[,2], lty = 3, col=col.env)
-    # Group label
+    # Add group label
     text(.95*xy[,1], .95*xy[,2], rownames(ubc), cex = 1, col=col.env)
   }
 
@@ -704,6 +745,156 @@ biplot.gge <- function(x, title = substitute(x), subtitle="",
   }
   
   invisible()
+}
+
+# ----------------------------------------------------------------------------
+
+#' @rdname gge
+#' @export
+biplot3d <- function(x, ...) UseMethod("biplot3d", x)
+
+#' @rdname gge
+#' @method biplot3d gge
+#' @import rgl
+#' @export
+biplot3d.gge <- function(x,
+                         cex.gen=0.6, cex.env=.5,
+                         col.gen="darkgreen", col.env="orange3",
+                         comps=1:3,
+                         lab.env=TRUE,
+                         res.vec=TRUE,
+                         zoom.gen=1,
+                         ...){
+  # title/subtitle are not used
+  gen.group <- x$gen.group
+  env.group <- x$env.group
+  genCoord <- x$genCoord
+  locCoord <- x$locCoord
+  blockCoord <- x$blockCoord
+  R2 <- x$R2
+
+  if(is.null(env.group)) n.env.grp <- 0
+  else n.env.grp <- length(unique(env.group))
+
+  if(length(R2) == 2)
+    stop("Only two principal components--3D biplot not available.")
+  if(length(comps) < 3)
+    stop("You need to specify 3 components for 3D biplot.")
+
+  # Environment (group) colors (first one is used for environments)
+  # Replicate colors if not enough have been specified
+  col.env <- c(col.env, "blue","black","purple","darkgreen", "red",
+               "dark orange", "deep pink", "#999999", "#a6761d")
+  if(n.env.grp < 2) {
+    col.env <- col.env[1]
+  } else {
+    col.env <- rep(col.env, length=n.env.grp)
+  }
+
+  # Set up device
+  open3d()
+  bg3d(color="white")
+
+  xcomp <- comps[1] # Component for x axis
+  ycomp <- comps[2] # Component for y axis
+  zcomp <- comps[3] # Component for z axis
+
+  # Axis labels
+  labs <- paste("PC ", c(xcomp, ycomp, zcomp),
+                  " (", round(100*R2[c(xcomp,ycomp)],0), "% TSS)", sep="")
+  xlab <- labs[1]
+  ylab <- labs[2]
+  zlab <- labs[3]
+
+  expand.range <- function(xx) { # Make sure range includes origin
+    if(xx[1] > 0) xx[1] <-  - xx[1]
+    else if(xx[2] < 0) xx[2] <-  - xx[2]
+    return(xx)
+  }
+
+  # Determine the range for locs (use same range for all axes)
+  envRange <- expand.range(range(locCoord[, c(xcomp,ycomp,zcomp)]))
+  xlim <- ylim <- zlim <- range(envRange) * 1.05 # Add 5% for extra space
+
+  # Plot locs first (points OR labels, but not both) colored by group
+  if(is.null(env.group)) {
+    eix <- rep(1, nrow(locCoord))
+  } else eix <- as.numeric(factor(env.group))
+
+  if(lab.env==TRUE){
+    text3d(locCoord[,xcomp], locCoord[,ycomp], locCoord[,zcomp],
+           texts=rownames(locCoord),
+           cex=cex.env, col=col.env[eix], alpha=0.7)
+  } else {
+    spheres3d(locCoord[,xcomp], locCoord[,ycomp], locCoord[,zcomp],
+              radius=0.01*diff(xlim), col=col.env[eix], alpha=0.5)
+  }
+
+  # Plot the environments (points OR labels, but not both).
+  if(n.env.grp == 0) { # use the same color for all locs
+  } else { # color loc by group.
+    ##   # Very faint group labels
+    ##   text3d(locCoord[,xcomp], locCoord[,ycomp], locCoord[,zcomp],
+    ##          texts=rownames(locCoord),
+    ##          col=col.env[env.group], alpha=.1)
+  }
+
+  # Bounding box
+  col.axis <- 'black'
+
+  # Draw axes and label
+  lines3d(xlim, rep(ylim[1],2), rep(zlim[1], 2),  col=col.axis, alpha=0.5)
+  text3d(xlim[2], ylim[1], zlim[1],
+         texts=xlab, cex=cex.env, col=col.axis, alpha=0.5)
+  lines3d(rep(xlim[1],2), ylim, rep(zlim[1], 2), col=col.axis, alpha=0.5)
+  text3d(xlim[1], ylim[2], zlim[1],
+         texts=ylab, cex=cex.env, col=col.axis, alpha=0.5)
+  lines3d(rep(xlim[1],2), rep(ylim[1],2), zlim, col=col.axis, alpha=0.5)
+  text3d(xlim[1], ylim[1], zlim[2],
+         texts=zlab, cex=cex.env, col=col.axis, alpha=0.5)
+
+  # Add vectors (and group labels, if needed)
+  if(n.env.grp < 2) {
+    # Draw vector to each loc
+    apply(cbind(locCoord[,c(xcomp, ycomp, zcomp)], col.env[1]), 1,
+          function(xx) {
+            segments3d(c(0, xx[1]), c(0, xx[2]), c(0, xx[3]),
+                       col=xx[4], alpha=0.5) })
+  } else {
+    # Short residual vectors from group mean to each loc
+    if(res.vec) {
+      apply(cbind(blockCoord[ , c(xcomp,ycomp,zcomp)], locCoord[ , c(xcomp,ycomp,zcomp)], col.env[eix]), 1,
+            function(xx) {
+              segments3d(c(xx[1], xx[4]), c(xx[2], xx[5]), c(xx[3], xx[6]),
+                         col = xx[7], alpha=0.5) })
+    }
+
+    #browser()
+    # Draw solid-line part of the group vector
+    apply(cbind(blockCoord[,c(xcomp, ycomp, zcomp)], col.env[eix]), 1,
+          function(xx) {
+            segments3d(c(0, xx[1]), c(0, xx[2]), c(0, xx[3]),
+                       col=xx[4], alpha=0.5, lwd=4) })
+    
+    # Origin is a black dot
+    spheres3d(0,0,0, 
+              radius=0.01*diff(xlim),
+              col="black", alpha=0.5)
+    
+    # Add group label
+    text3d(blockCoord[, xcomp], blockCoord[, ycomp], blockCoord[, zcomp],
+           texts=rownames(blockCoord),
+           cex=cex.env*1.5, col=col.env[eix], alpha=0.9)
+  }
+
+  # Overlay the genotype names (re-scale to fill the graph)
+  genRange <- expand.range(range(genCoord[, c(xcomp,ycomp,zcomp)]))
+  ratio <- min(xlim/genRange) * zoom.gen # Why only xlim?
+  text3d(genCoord[,xcomp]*ratio, genCoord[,ycomp]*ratio, genCoord[,zcomp]*ratio,
+         texts=rownames(genCoord),
+         cex=cex.gen, color=col.gen, alpha=0.5)
+
+  return()
 }
 
 # ----------------------------------------------------------------------------

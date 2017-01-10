@@ -2,6 +2,7 @@
 
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/gge)](https://cran.r-project.org/package=gge)
 [![CRAN_Downloads](https://cranlogs.r-pkg.org/badges/gge)](https://cranlogs.r-pkg.org/badges/gge)
+[![Research software impact](http://depsy.org/api/package/cran/gge/badge.svg)](http://depsy.org/package/r/gge)
 
 Functions for GGE (genotype plus genotype-by-environment) and GGB (genotype plus genotype-by-block-of-environments) biplots.
 
@@ -17,7 +18,7 @@ Key features:
 # Install the released version from CRAN:
 install.packages("gge")
 
-# Install the cutting edge development version from GitHub:
+# Install the development version from GitHub:
 install.packages("devtools")
 devtools::install_github("kwstat/gge")
 ```

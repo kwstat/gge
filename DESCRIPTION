@@ -11,6 +11,7 @@ Description: Create biplots for GGE (genotype plus genotype-by-environment) and
     GGB (genotype plus genotype-by-block-of-environments) models.
 Type: Package
 Imports:
+    rgl,
     reshape2
 Suggests:
     agridat,

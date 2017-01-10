@@ -2,6 +2,8 @@
 % Please edit documentation in R/gge.R
 \name{gge}
 \alias{biplot.gge}
+\alias{biplot3d}
+\alias{biplot3d.gge}
 \alias{gge}
 \alias{gge.formula}
 \alias{gge.matrix}
@@ -23,6 +25,12 @@ gge(x, ...)
   col.env = "orange3", pch.gen = 1, lab.env = TRUE, comps = 1:2,
   flip = "auto", origin = "auto", res.vec = TRUE, hull = FALSE,
   zoom.gen = 1, zoom.env = 1, ...)
+
+biplot3d(x, ...)
+
+\method{biplot3d}{gge}(x, cex.gen = 0.6, cex.env = 0.5,
+  col.gen = "darkgreen", col.env = "orange3", comps = 1:3,
+  lab.env = TRUE, res.vec = TRUE, zoom.gen = 1, ...)
 }
 \arguments{
 \item{x}{A matrix or data.frame.}
@@ -69,15 +77,16 @@ like c(TRUE,FALSE) for manual control.}
 the origin is at the middle of the window.}
 
 \item{res.vec}{If TRUE, for each group, draw residual vectors from the mean
-of the locs to the individual locs}
+of the locs to the individual locs.}
 
-\item{hull}{If TRUE, show a which-won-where polygon}
+\item{hull}{If TRUE, show a which-won-where polygon.}
 
 \item{zoom.gen}{Zoom factor for manual control of genotype xlim,ylim
 The default is 1. Values less than 1 may be useful if genotype names are long.}
 
 \item{zoom.env}{Zoom factor for manual control of environment xlim,ylim.
-The default is 1. Values less than 1 may be useful if environment names are long.}
+The default is 1. Values less than 1 may be useful if environment names are long.
+Not used for 3D biplots.}
 }
 \value{
 A list of class \code{gge} containing:
@@ -123,6 +132,7 @@ colnames(B) <- c("E1","E2","E3","E4","E5")
 m1 = gge(B)
 plot(m1)
 biplot(m1, title="Example biplot")
+# biplot3d(m1)
 
 if(require(agridat)){
   # crossa.wheat biplot
@@ -135,6 +145,7 @@ if(require(agridat)){
                                  "SJ","MS","MG","MM")), "Grp1", "Grp2")
   m2 <- gge(yield~gen*loc, dat2, env.group=eg, scale=FALSE)
   biplot(m2, lab.env=TRUE, title="crossa.wheat")
+  # biplot3d(m2)
 }
 
 

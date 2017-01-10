@@ -5,6 +5,8 @@ Modifed `subtitle` argument to allow removal of subtitle.
 
 Minor bug fix with transparent vector colors for a biplot drawn on a new `windows()` device.
 
+Added function to draw 3d biplots using `rgl` package.
+
 # gge 1.1 - Oct 2016
 
 Added zoom.gen, zoom.env arguments to `biplot()`for M.Zoric.
