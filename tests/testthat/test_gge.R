@@ -1,7 +1,57 @@
-# gge_tests.R
-# Time-stamp: <20 Sep 2016 10:54:38 c:/x/rpack/gge/tests/gge_tests.R>
+# test_gge.R
+# Time-stamp: <26 Apr 2017 18:43:57 c:/x/rpack/gge/tests/testthat/test_gge.R>
+
+context("test_gge.R")
 
 require(gge)
+
+# ----------------------------------------------------------------------------
+
+# create data for tests
+
+# matrix data
+mat1 <- matrix(c(50, 55, 65, 50, 60, 65, 75,
+                 67, 71, 76, 80, 82, 89, 95,
+                 90, 93, 95, 102, 97, 106, 117,
+                 98, 102, 105, 130, 135, 137, 133,
+                 120, 129, 134, 138, 151, 153, 155),
+               ncol=5, byrow=FALSE)
+colnames(mat1) <- c("E1","E2","E3","E4","E5")
+rownames(mat1) <- c("G1","G2","G3","G4","G5","G6","G7")
+
+bar <- transform(lattice::barley, env=paste0(site,year))
+
+# ----------------------------------------------------------------------------
+
+test_that("errors with gge.formula", {
+  expect_error(gge(yield~variety*site)) # no data
+  expect_error(gge(yield~variety*loc, bar)) # no 'loc'
+  expect_error(gge(yield~variety*site, bar, gen.group=loc)) # no 'loc'
+  expect_error(gge(yield~variety*site, bar, gen.group=year)) # multiple gen.group
+  expect_error(gge(yield~variety*site, bar, env.group=loc)) # no 'loc'
+  bar$junk <- c('A','B','C','D')
+  expect_error(gge(yield~variety*site, bar, env.group=junk)) # multiple env.group
+})
+
+test_that("errors with gge.matrix", {
+  expect_error(gge(mat1,env.group=1:3)) # wrong length
+  expect_error(gge(mat1,gen.group=1:3)) # wrong length
+  expect_error(gge(mat1, method="NIP")) # unknown method
+})
+
+test_that("nipals",{
+  mat2 <- mat1
+  mat2[,1] <- 1
+  expect_error(gge(mat2, method="nipals")) # constant column
+  mat3 <- mat1
+  mat3[1:5,1] <- NA
+  expect_warning(gge(mat3)) # more than 10 percent missing
+})
+
+test_that("3d", {
+})
+
+# ----------------------------------------------------------------------------
 
 # Temporary check of alpha transparency
 if(FALSE) {
@@ -18,16 +68,6 @@ if(FALSE) {
   biplot(m25, col.env=c('blue','red')) # group colors, symbols
 }
 
-# matrix data
-mat1 <- matrix(c(50, 55, 65, 50, 60, 65, 75,
-                 67, 71, 76, 80, 82, 89, 95,
-                 90, 93, 95, 102, 97, 106, 117,
-                 98, 102, 105, 130, 135, 137, 133,
-                 120, 129, 134, 138, 151, 153, 155),
-               ncol=5, byrow=FALSE)
-colnames(mat1) <- c("E1","E2","E3","E4","E5")
-rownames(mat1) <- c("G1","G2","G3","G4","G5","G6","G7")
-
 # One missing value in a matrix
 mat2 <- mat1 ; mat2[1,1] <- NA
 
@@ -41,6 +81,8 @@ plot(m21)
 biplot(m11)
 biplot(m11, title="Example biplot", subtitle="GGE biplot")
 biplot(m11, subtitle=NULL) # suppress subtitle
+biplot(m11, xlab=NULL, ylab=NULL)
+biplot(m11, xlab="Axis 1", ylab="Axis 2")
 biplot(m11, title=NULL, subtitle=NULL) # suppress title & subtitle
 biplot(m11, cex.gen=2)
 biplot(m11, cex.env=2)
@@ -80,8 +122,7 @@ biplot(m25, col.gen=c('blue','red'), pch.gen=1:2) # group colors, symbols
 
 # Environment groups. Use the lattice::barley data
 require(lattice)
-bar <- transform(lattice::barley, env=paste0(site,year))
-m31 <- gge(yield~variety*site, bar, env.group=year) # errs, as it should
+#bar <- transform(lattice::barley, env=paste0(site,year))
 m32 <- gge(yield~variety*env, bar)
 biplot(m32)
 m33 <- gge(yield~variety*env, bar, env.group=year) # env.group
@@ -176,3 +217,8 @@ biplot(m1, title="yan.winterwheat - GGE biplot",
        flip=c(1,0), origin=0,  hull=TRUE)
 
 
+# 3d
+
+biplot3d(m7)
+
+biplot3d(m7, cex.gen=1)

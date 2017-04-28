@@ -26,4 +26,3 @@ title("RedGrayBlue(11)")
 \author{
 Kevin Wright
 }
-

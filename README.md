@@ -1,4 +1,4 @@
-# gge
+# gge <img src="figure/gge_logo_150.png" align="right" />
 
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/gge)](https://cran.r-project.org/package=gge)
 [![CRAN_Downloads](https://cranlogs.r-pkg.org/badges/gge)](https://cranlogs.r-pkg.org/badges/gge)

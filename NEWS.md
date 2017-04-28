@@ -7,6 +7,8 @@ Minor bug fix with transparent vector colors for a biplot drawn on a new `window
 
 Added function to draw 3d biplots using `rgl` package.
 
+Switched to testthat and covr packages.
+ 
 # gge 1.1 - Oct 2016
 
 Added zoom.gen, zoom.env arguments to `biplot()`for M.Zoric.

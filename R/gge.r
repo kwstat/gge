@@ -1,5 +1,5 @@
 # gge.R
-# Time-stamp: <10 Jan 2017 16:54:35 c:/x/rpack/gge/R/gge.R>
+# Time-stamp: <26 Apr 2017 19:00:37 c:/x/rpack/gge/R/gge.R>
 
 if(FALSE) {
   # Tests for 3D
@@ -159,8 +159,7 @@ gge.formula <- function(formula, data=NULL,
       stop("The argument 'gen.group' refers to non-existant column of data.")
 
     if(any(colSums(table(data[[gen.group]], data[[.gen]])>0)>1)){
-      warning("Some values of '", .gen, "' have multiple gen.group.  Ignoring gen.group.")
-      gen.group <- NULL
+      stop("Some values of '", .gen, "' have multiple gen.group.")
     }
   }
   if(!is.null(env.group)) {
@@ -169,7 +168,7 @@ gge.formula <- function(formula, data=NULL,
       stop("The argument 'env.group' refers to non-existant column of data.")
 
     if(any(colSums(table(data[[env.group]], data[[.env]])>0)>1)){
-      warning("Some values of '", .env, "' have multiple env.group.  Ignoring env.group.")
+      stop("Some values of '", .env, "' have multiple env.group.")
       env.group <- NULL
     }
   }
@@ -465,6 +464,10 @@ plot.gge <- function(x, title=substitute(x), ...) {
 #' @param title Title, by default the name of the data. Use NULL to suppress the title.
 #' 
 #' @param subtitle Subtitle to put in front of options. Use NULL to suppress the subtitle.
+#'
+#' @param xlab Label along axis. Default "auto" shows percent of variation explained. Use NULL to suppress.
+#'
+#' @param ylab Label along axis. Default "auto" shows percent of variation explained. Use NULL to suppress.
 #' 
 #' @param cex.gen Character expansion for genotypes
 #' 
@@ -505,6 +508,7 @@ plot.gge <- function(x, title=substitute(x), ...) {
 #' @import stats
 #' @export
 biplot.gge <- function(x, title = substitute(x), subtitle="",
+                       xlab="auto", ylab="auto",
                        cex.gen=0.6, cex.env=.5,
                        col.gen="darkgreen", col.env="orange3",
                        pch.gen=1,
@@ -586,9 +590,13 @@ biplot.gge <- function(x, title = substitute(x), subtitle="",
 
   # Axis labels
   labs <- paste("PC ", c(xcomp, ycomp),
-                  " (", round(100*R2[c(xcomp,ycomp)],0), "% TSS)", sep="")
-  xlab <- labs[1]
-  ylab <- labs[2]
+                " (", round(100*R2[c(xcomp,ycomp)],0), "% TSS)", sep="")
+  if(!is.null(xlab)) {
+    if(xlab=="auto") xlab <- labs[1]
+  }
+  if(!is.null(ylab)) {
+    if(ylab=="auto") ylab <- labs[2]
+  }
 
   expand.range <- function(xx) { # Make sure range includes origin
     if(xx[1] > 0) xx[1] <-  - xx[1]
@@ -869,7 +877,6 @@ biplot3d.gge <- function(x,
                          col = xx[7], alpha=0.5) })
     }
 
-    #browser()
     # Draw solid-line part of the group vector
     apply(cbind(blockCoord[,c(xcomp, ycomp, zcomp)], col.env[eix]), 1,
           function(xx) {

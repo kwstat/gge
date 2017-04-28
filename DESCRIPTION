@@ -1,8 +1,7 @@
-
 Package: gge
 Title: Genotype Plus Genotype-by-Environment Biplots
 Version: 1.2
-Date: 2016-11-02
+Date: 2017-04-22
 Authors@R: c(
   person("Kevin","Wright", email="kw.stat@gmail.com", role=c("aut","cre")),
   person("Jean-Louis","Laffont", role=c("aut"))
@@ -16,10 +15,11 @@ Imports:
 Suggests:
     agridat,
     knitr,
-    lattice
+    lattice,
+    testthat
 License: GPL-3
 LazyData: yes
 URL: https://github.com/kwstat/gge
 BugReports: https://github.com/kwstat/gge/issues
 VignetteBuilder: knitr
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1
