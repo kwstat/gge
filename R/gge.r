@@ -1,18 +1,15 @@
 # gge.R
-# Time-stamp: <26 Apr 2017 19:00:37 c:/x/rpack/gge/R/gge.R>
+# Time-stamp: <24 May 2017 17:03:50 c:/x/rpack/gge/R/gge.R>
 
-if(FALSE) {
-  # Tests for 3D
-  biplot3d(m2)
-  biplot3d(m2, cex.gen=1)
-  biplot3d(m2, cex.env=1)
-  biplot3d(m2, col.gen="red")
-  biplot3d(m2, col.env=c("pink","purple"))
-  biplot3d(m2, comps=c(1,2,4))
-  biplot3d(m2, lab.env=FALSE)
-  biplot3d(m2, res.vec=FALSE)
-  biplot3d(m2, zoom.gen=2)
-}
+#' GGE and GGB biplots
+#' 
+#' @name gge
+#' @aliases gge package-gge
+#' @author Kevin Wright, Jean-Louis Laffont
+#' @docType package
+#' @importFrom Rcpp evalCpp
+#' @useDynLib gge
+NULL
 
 # ----------------------------------------------------------------------------
 
@@ -47,13 +44,17 @@ RedGrayBlue <- colorRampPalette(c("firebrick", "lightgray", "#375997"))
 #' 
 #' The NIPALS algorithm can be used when there are missing data.
 #' 
-#' The argument 'method' can be either 'svd' for complete-data, or 'nipals' for
-#' missing-data.
+#' The argument 'method' can be one of
+#' (1) 'svd' for complete-data
+#' (2) 'nipals' for missing-data (coded in C++)
+#' (3) 'rnipals' for missing-data
 #' 
 #' @rdname gge
+#' 
 #' @param x A matrix or data.frame.
 #' 
-#' @param ... Other arguments
+#' @param ... Other arguments (e.g. maxiter)
+#' 
 #' @return A list of class \code{gge} containing:
 #' \item{method}{Method used to calculate principal components.}
 #' \item{center}{Data centered?}
@@ -99,7 +100,7 @@ RedGrayBlue <- colorRampPalette(c("firebrick", "lightgray", "#375997"))
 #' 
 #' m1 = gge(B)
 #' plot(m1)
-#' biplot(m1, title="Example biplot")
+#' biplot(m1, main="Example biplot")
 #' # biplot3d(m1)
 #' 
 #' if(require(agridat)){
@@ -112,7 +113,7 @@ RedGrayBlue <- colorRampPalette(c("firebrick", "lightgray", "#375997"))
 #'                                c("KN","NB","PA","BJ","IL","TC", "JM","PI","AS","ID","SC","SS",
 #'                                  "SJ","MS","MG","MM")), "Grp1", "Grp2")
 #'   m2 <- gge(yield~gen*loc, dat2, env.group=eg, scale=FALSE)
-#'   biplot(m2, lab.env=TRUE, title="crossa.wheat")
+#'   biplot(m2, lab.env=TRUE, main="crossa.wheat")
 #'   # biplot3d(m2)
 #' }
 #' 
@@ -132,6 +133,7 @@ gge <- function(x, ...) UseMethod("gge")
 #' @param env.group env group
 #' 
 #' @rdname gge
+#' 
 #' @export
 gge.formula <- function(formula, data=NULL,
                         gen.group=NULL, env.group=NULL, ...) {
@@ -176,7 +178,7 @@ gge.formula <- function(formula, data=NULL,
   # Finally, reshape data into a matrix, average values in each cell
   # require(reshape2) # Now in 'Depends'
   datm <- reshape2::acast(data, formula(paste(.gen, "~", .env)),
-                          fun.aggregate=mean, value.var=.y)
+                          fun.aggregate=mean, na.rm=TRUE, value.var=.y)
   datm[is.nan(datm)] <- NA # Use NA instead of NaN
 
   # Make gen.group and env.group to be vectors corresponding to rows/cols of datm
@@ -269,7 +271,7 @@ gge.matrix <- function(x, center=TRUE, scale=TRUE,
 
   ##   x.svd <- NULL
   ##   pcascale <- ifelse(scale, 'uv', 'none') # Chg T/F to uv/none
-  ##   x.pca <- pca(x, nPcs=min(nrow(x), ncol(x)-1), completeObs=TRUE,
+  ##   x.pca <- pca(x, maxcomp=min(nrow(x), ncol(x)-1), completeObs=TRUE,
   ##                center=center, scale=pcascale, verbose=TRUE, method=method)
   ##   R2 <- x.pca@R2
   ##   x <- x.pca@completeObs # missing values are replaced with estimates
@@ -279,8 +281,8 @@ gge.matrix <- function(x, center=TRUE, scale=TRUE,
 
   pcameth <- FALSE
 
-  if(!is.element(method, c('nipals', 'svd')))
-    stop("Unknown method.  Use 'svd' or 'nipals'")
+  if(!is.element(method, c('svd', 'nipals', 'rnipals')))
+    stop("Unknown method.  Use 'svd' or 'nipals' or 'rnipals'.")
 
   # Scale data
   x <- scale(x, center=center, scale=scale)  # Center / scale each environment
@@ -293,15 +295,22 @@ gge.matrix <- function(x, center=TRUE, scale=TRUE,
 
   } else if(method=="nipals"){ # ----- Nipals
 
+    #oo <- nipals(x, center=FALSE, scale.=FALSE)
+    #nn <- nipalsPca(x, center=FALSE, scale.=FALSE)
+    
     x.svd <- NULL
-    x.pca <- nipals(x, completeObs=TRUE, center=FALSE, scale.=FALSE)
+    x.pca <- nipals(x, center=FALSE, scale.=FALSE, ...)
     R2 <- x.pca$R2
     x <- x.pca$completeObs # replaces missing values with estimates
     x <- scale(x, center=center, scale=scale)
 
+  } else if(method=="rnipals"){
+    x.svd <- NULL
+    x.pca <- rnipals(x, center=FALSE, scale.=FALSE, ...)
+    R2 <- x.pca$R2
+    x <- x.pca$completeObs # replaces missing values with estimates
+    x <- scale(x, center=center, scale=scale)    
   }
-
-  ## }
 
 	if(!is.null(x.svd) && length(x.svd$d) == 1)
 		stop("Only one principal component.  Biplot not available.")
@@ -338,8 +347,9 @@ gge.matrix <- function(x, center=TRUE, scale=TRUE,
   #} else {
   if(method=="svd") {
     U <- x.svd$u
-  } else if (method=="nipals"){
-    U <- x.pca$x %*% diag(1/sqrt(x.pca$eval))
+  } else if (method=="nipals" | method=="rnipals"){
+    #browser()
+    U <- x.pca$scores %*% diag(1/sqrt(x.pca$eval))
   }
 
   # Partition SSG, SSGB, SSR along each axis
@@ -423,37 +433,41 @@ extend <- function(x,y,xlim,ylim){
 
 #' @rdname gge
 #' @export
-plot.gge <- function(x, title=substitute(x), ...) {
+plot.gge <- function(x, main=substitute(x), ...) {
 
-  # For now, only a mosaic plot.
+  # title deprecated in gge 1.2, 2017
+  args <- match.call()
+  if( is.element("title", names(args)) ) {
+    main <- args$title
+    cat("Argument 'title' will be deprecated. Use 'main' instead.\n")
+  }
+  
   # heatmap
 
-  op1 <- par(mfrow=c(2,2))
+  op1 <- par(mfrow=c(2,2), pty="s", mar=c(3,5,2,1))
   R2 <- x$R2
 
   # Scree plot
-  op2 <- par(pty='s', mar=c(3,5,2,1))
+  #op2 <- par(pty='s', mar=c(3,5,2,1))
   plot(1:length(R2), R2, type="b", axes=FALSE,
        main="", xlab="", ylab="Scree plot - Pct SS")
   axis(1, at=pretty(1:length(R2)), cex.axis=0.75)
   axis(2, at=pretty(c(0,max(R2))), cex.axis=0.75)
 
   # Mosaic
-  par(pty='s', mar=c(2,1,2,1))
+  par(mar=c(3,2,2,1))
   mosaicplot(x$mosdat, main="",
              col=c("darkgreen","lightgreen","gray70"), off=c(0,0))
-  mtext(title, line=.5, cex=1)
+  mtext(main, line=.5, cex=1)
 
   # Heatmap
   Y <- x$x
-  #par(pty = "m", mar = c(2, 3, 3, 1))
   image(t(Y), col=RedGrayBlue(12), axes=FALSE)
   axis(2, seq(from=0, to=1, length=nrow(Y)), labels=rownames(Y),
        tick=FALSE, cex.axis=.4, col.axis="black", las=2, line=-.8)
   axis(3, seq(from=0, to=1, length=ncol(Y)), labels=colnames(Y),
        tick=FALSE, cex.axis=.4, col.axis="black", las=2, line=-0.8)
 
-  par(op2)
   par(op1)
 
   invisible()
@@ -461,7 +475,7 @@ plot.gge <- function(x, title=substitute(x), ...) {
 
 # ----------------------------------------------------------------------------
 
-#' @param title Title, by default the name of the data. Use NULL to suppress the title.
+#' @param main Title, by default the name of the data. Use NULL to suppress the title.
 #' 
 #' @param subtitle Subtitle to put in front of options. Use NULL to suppress the subtitle.
 #'
@@ -507,7 +521,7 @@ plot.gge <- function(x, title=substitute(x), ...) {
 #' @import grDevices
 #' @import stats
 #' @export
-biplot.gge <- function(x, title = substitute(x), subtitle="",
+biplot.gge <- function(x, main = substitute(x), subtitle="",
                        xlab="auto", ylab="auto",
                        cex.gen=0.6, cex.env=.5,
                        col.gen="darkgreen", col.env="orange3",
@@ -521,6 +535,13 @@ biplot.gge <- function(x, title = substitute(x), subtitle="",
                        zoom.gen=1, zoom.env=1,
                        ...){
 
+  # title deprecated in gge 1.2, 2017
+  args <- match.call()
+  if( is.element("title", names(args)) ) {
+    main <- args$title
+    cat("Argument 'title' will be deprecated. Use 'main' instead.\n")
+  }
+    
   # x: A model object of class 'gge'
   # Must include ... because the generic 'biplot' does
 
@@ -571,7 +592,7 @@ biplot.gge <- function(x, title = substitute(x), subtitle="",
   }
 
   # Initialize plot
-  par(pty='s')
+  op1 <- par(pty="s")
 
   # If alpha transparency is supported, use 70%=180
   if(.Device=="windows" | .Device=="RStudioGD") {
@@ -640,7 +661,7 @@ biplot.gge <- function(x, title = substitute(x), subtitle="",
   # Add the margin axis labels and titles
   mtext(xlab, side=1, line=.5, cex=.8)
   mtext(ylab, side=2, line=.5, cex=.8)
-  mtext(title, side=3, line=2.5)
+  mtext(main, side=3, line=2.5)
   mtext(subtitle, side=3, line=0.9, cex=.7)
 
   # Note that each environment vector has length 1:
@@ -751,6 +772,8 @@ biplot.gge <- function(x, title = substitute(x), subtitle="",
       segments(0, 0, 1.1*xy[,1], 1.1*xy[,2], lty = 2, col="gray60")
     }
   }
+
+  par(op1)
   
   invisible()
 }
@@ -906,9 +929,136 @@ biplot3d.gge <- function(x,
 
 # ----------------------------------------------------------------------------
 
+#' PCA by non-linear iterative partial least squares in C++
+#'
+#' Used for finding principal components of a numeric matrix.  Components
+#' are extracted one a time.  Missing values in the matrix are allowed.
+#'
+#' @param x Numerical matrix
+#' 
+#' @param maxcomp Maximum number of principal components to extract.
+#'
+#' @param maxiter Maximum number of NIPALS iterations to perform.
+#'
+#' @param propvar The proportion of variance that should be explained by the
+#' returned principal components. If propvar < 1, then \code{maxcomp} is ignored.
+#'
+#' @param tol Default 1e-6 tolerance for testing convergence of the algorithm.
+#'
+#' @param center If TRUE, do center columns.
+#'
+#' @param scale. If FALSE, do not scale columns.
+#'
+#' @param ... Only used for passing through arguments.
+#' 
+#' @return A list with components.
+#' 
+#' @references
+#' Wold, H. (1966) Estimation of principal components and
+#' related models by iterative least squares. In Multivariate
+#' Analysis (Ed., P.R. Krishnaiah), Academic Press, NY, 391-420.
+#' 
+#' @author Henning Redestig
+#' 
+#' @export
 nipals <- function(x, maxcomp=min(nrow(x), ncol(x)-1),
-                    completeObs=TRUE,
-                    maxiter=50*nrow(x),
+                   maxiter=5000,
+                   tol=1e-6, propvar=1,  
+                   center=TRUE, scale.=FALSE, ...) {
+  
+  x <- as.matrix(x)
+  x.orig <- x # Save x for replacing missing values
+  
+  x <- scale(x, center=center, scale=scale.)
+  cen <- attr(x, "scaled:center")
+  sc <- attr(x, "scaled:scale")
+  if (any(sc == 0))
+    stop("cannot rescale a constant/zero column to unit variance")
+  
+  # Check for a column/row with all NAs
+  col.count <- apply(x, 2, function(x) sum(!is.na(x)))
+  if(any(col.count==0)) warning("At least one column is all NAs")
+  row.count <- apply(x, 1, function(x) sum(!is.na(x)))
+  if(any(row.count==0)) warning("At least one row is all NAs")
+  
+  # danger! scale() adds additional attributes to 'x' which confuses the C code
+  # and over-writes some memory. Remove these attributes before handing to C
+  mat=x
+  attr(mat, "scaled:center") <- NULL
+  attr(mat, "scaled:scale") <- NULL
+  nipRes <- .Call("gge_Nipals", mat,
+                  params=list(maxcomp=maxcomp,
+                              propvar=propvar,
+                              tol=tol,
+                              maxiter=maxiter),
+                  PACKAGE="gge")
+  
+  scores <- nipRes$scores
+  loadings <- nipRes$loadings
+  R2cum <- nipRes$R2cum
+  
+  # un-cumulate R2
+  R2 <- c(R2cum[1], diff(R2cum))
+  
+  # eigen values
+  eval = apply(scores, 2, function(x) sum(x*x))
+  
+  # re-construction of x using maxcomp principal components
+  fitted.values <- scores[ , 1:maxcomp] %*% t(loadings[ , 1:maxcomp])
+  if(scale.) fitted.values <- fitted.values * attr(x, "scaled:scale")
+  if(center) fitted.values <- fitted.values + attr(x, "scaled:center")
+  
+  # replace missing values in the original matrix with fitted values
+  completeObs <- x.orig
+  completeObs[is.na(x.orig)] <- fitted.values[is.na(x.orig)]
+  
+  # prepare output
+  rownames(scores) <- rownames(x)
+  colnames(scores) <- paste("PC", 1:ncol(scores), sep="")
+  rownames(loadings) <- colnames(x)
+  colnames(loadings) <- paste("PC", 1:ncol(loadings), sep="")
+  out <- list(scores = scores, rotation = loadings,
+              completeObs = completeObs,
+              maxcomp = maxcomp,
+              center=if(is.null(cen)) FALSE else cen,
+              scale=if(is.null(sc)) FALSE else sc,
+              sdev=apply(scores, 2, sd), # needed for prcomp print method
+              R2 = R2,
+              eval=eval,
+              propvar = propvar)
+  class(out) <- c("nipals","prcomp")
+  return(out)
+}
+
+# ----------------------------------------------------------------------------
+
+
+#' PCA by non-linear iterative partial least squares, coded in R.
+#' 
+#' @param x Numerical matrix
+#' 
+#' @param maxcomp Maximum number of principal components to extract.
+#'
+#' @param maxiter Maximum number of NIPALS iterations to perform.
+#'
+#' @param propvar The proportion of variance that should be explained by the
+#' returned principal components. If propvar < 1, then \code{maxcomp} is ignored.
+#'
+#' @param tol Default 1e-6 tolerance for testing convergence of the algorithm.
+#'
+#' @param center If TRUE, do center columns.
+#'
+#' @param scale. If FALSE, do not scale columns.
+#'
+#' @param verbose FALSE. If TRUE, show diagnostic output.
+#'
+#' @return A list with components.
+#'
+#' @author Kevin Wright
+#' 
+#' @export
+rnipals <- function(x, maxcomp=min(nrow(x), ncol(x)-1),
+                    maxiter=5000,
                     tol=1e-6, propvar=1,
                     center=TRUE, scale.=FALSE, verbose=FALSE) {
   # Calculate principal components using NIPALS
@@ -928,9 +1078,6 @@ nipals <- function(x, maxcomp=min(nrow(x), ncol(x)-1),
   if (any(sc == 0))
     stop("cannot rescale a constant/zero column to unit variance")
 
-  nr <- nrow(x)
-  nc <- ncol(x)
-
   # sum(NA, na.rm=TRUE) is 0, but we want NA
   sum.na <- function(x){ ifelse(all(is.na(x)), NA, sum(x, na.rm=TRUE))}
 
@@ -945,14 +1092,8 @@ nipals <- function(x, maxcomp=min(nrow(x), ncol(x)-1),
   # Find a starting column (with fewest number of NAs)
   # startingColumn <- which.max(col.count)
   startingColumn <- ncol(x)
-  # Choose the column with maximum variation.
-  # Maybe we should do this inside the loop for each PC
-  #startingColumn <-
-  #  which.max(apply(x, 2, function(z) {
-  #    z <- na.omit(z)
-  #    ifelse(length(z)==1, NA, var(z))
-  #  }))
-  if(verbose >= 2) cat("Starting column: ", startingColumn, "\n")
+
+  if(verbose >= 1) cat("Starting column: ", startingColumn, "\n")
 
   TotalSS <- sum(x*x, na.rm=TRUE)
 
@@ -964,7 +1105,7 @@ nipals <- function(x, maxcomp=min(nrow(x), ncol(x)-1),
     iter <- 0
     u <- x[,startingColumn]
     continue <- TRUE
-    if(verbose >= 1) cat(paste("\nCalculating PC", comp, ": ", sep=""))
+    if(verbose >= 1) cat(paste("Calculating PC", comp, sep=""))
 
     while(continue) {
       iter <- iter+1
@@ -984,21 +1125,15 @@ nipals <- function(x, maxcomp=min(nrow(x), ncol(x)-1),
       if (iter > maxiter) stop("Exceeding ", maxiter, " iterations, quitting")
       if( sum((u.old-u)^2, na.rm=TRUE)<tol ) continue=FALSE
 
-      if (verbose >= 1) cat("*")
+      if (verbose >= 1) cat(".")
     }
-    if (verbose >= 1) cat(" Done\n")
-
+    if (verbose >= 1) cat("\n")
+    
     # Remove the estimated principal component from x, x-uv'
     x <- x - (u %*% t(v))
     scores <- cbind(scores, u)
     loadings <- cbind(loadings, v)
     eval <- c(eval, sum(u*u))
-    if(verbose >= 2) {
-      cat("scores\n")
-      print(u[1:5,])
-      cat("loadings\n")
-      print(v[1:5,])
-    }
 
     # Cumulative proportion of variance
     R2cum <- c(R2cum, 1 - (sum(x*x,na.rm=TRUE) / TotalSS))
@@ -1007,40 +1142,40 @@ nipals <- function(x, maxcomp=min(nrow(x), ncol(x)-1),
     else if(R2cum[comp] >= propvar) {
       # Maybe I should set maxcomp=comp here?  Will the user be confused
       # if he requests 10 comps and only 9 are returned?
-      # maxcomp <- comp
+      maxcomp <- comp
       anotherPC <- FALSE
     } else
       comp <- comp + 1
 
   } # Done finding PCs
 
-  # Un-cumulate R2
+  # un-cumulate R2
   R2 <- c(R2cum[1], diff(R2cum))
-
-  # This is a re-construction of x using maxcomp principal components
+  
+  # re-construction of x using maxcomp principal components
   fitted.values <- scores[ , 1:maxcomp] %*% t(loadings[ , 1:maxcomp])
   if(scale.) fitted.values <- fitted.values * attr(x, "scaled:scale")
   if(center) fitted.values <- fitted.values + attr(x, "scaled:center")
 
-  # Replace missing values in the original matrix with fitted values
+  # replace missing values in the original matrix with fitted values
   completeObs <- x.orig
   completeObs[is.na(x.orig)] <- fitted.values[is.na(x.orig)]
 
-  # Prepare output
+  # prepare output
   rownames(scores) <- rownames(x)
   colnames(scores) <- paste("PC", 1:ncol(scores), sep="")
   rownames(loadings) <- colnames(x)
   colnames(loadings) <- paste("PC", 1:ncol(loadings), sep="")
-  out <- list(x=scores, rotation=as.matrix(loadings),
+  out <- list(scores=scores, rotation=as.matrix(loadings),
               completeObs=completeObs,
               maxcomp=maxcomp,
               center=if(is.null(cen)) FALSE else cen,
               scale=if(is.null(sc)) FALSE else sc,
               sdev=apply(scores, 2, sd),
-              R2=R2, nr=nr, nc=nc,
+              R2=R2,
               eval=eval,
-              propvar=propvar,
-              n.missing=n.missing)
+              propvar=propvar)
   class(out) <- c("nipals","prcomp")
   return(out)
 }
+

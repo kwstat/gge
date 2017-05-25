@@ -41,19 +41,19 @@ dat1 <- yan.winterwheat
 
 library(gge)
 m1 <- gge(yield~gen*env, dat1, scale=FALSE)
-biplot(m1, title="yan.winterwheat - GGE biplot",
+biplot(m1, main="yan.winterwheat - GGE biplot",
        flip=c(1,0), origin=0, hull=TRUE)
 ```
 
 Many people prefer to use 'standardized' biplots, in which the data for each environement has been centered and scaled.  For standardized biplots, a unit circle is drawn.  Environment vectors that reach out to the unit circle are perfectly represented in the two dimensional plane.
 ```{r}
 m2 <- gge(yield~gen*env, dat1, scale=TRUE)
-biplot(m2, title="yan.winterwheat - GGE biplot",
+biplot(m2, main="yan.winterwheat - GGE biplot",
        flip=c(1,1), origin=0)
 ```
 As seen above, the environment vectors are fairly long, so that relative performance of genotypes in environments can be assessed with reasonable accuracy.  In contrast, a biplot based on principal components 2 and 3 has shorter vectors which should not be interpreted.
 ```{r} 
-biplot(m2, title="yan.winterwheat - GGE biplot - PC 2 & 3",
+biplot(m2, main="yan.winterwheat - GGE biplot - PC 2 & 3",
        comps=c(2,3), flip=c(1,1), origin=0)
 ```
 @laffont2007numerical showed how to partition the sums-of-squares
