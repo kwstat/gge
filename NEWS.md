@@ -1,14 +1,20 @@
 
-# gge 1.2 - unpublished
+# gge 1.2 - May 2017
 
-Modifed `subtitle` argument to allow removal of subtitle.
+New function `nipals()` for finding principal components using C++.  Code from `pcaMethods` package. (GPL-3 license.)
 
-Minor bug fix with transparent vector colors for a biplot drawn on a new `windows()` device.
+New function `rnipals()` for finding principal components in R.
 
-Added function to draw 3d biplots using `rgl` package.
+New function `biplot3d()` to draw 3d biplots using `rgl` package.
 
-Switched to testthat and covr packages.
- 
+Modifed `main`, `subtitle`, `xlab`, `ylab` arguments to allow removal.
+
+Changed `title` argument to `main` for consistency with other packages.
+
+Now using `testthat` and `covr` packages.
+
+Added package logo on github.
+
 # gge 1.1 - Oct 2016
 
 Added zoom.gen, zoom.env arguments to `biplot()`for M.Zoric.
