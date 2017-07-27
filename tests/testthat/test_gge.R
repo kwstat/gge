@@ -45,7 +45,7 @@ test_that("nipals",{
   expect_error(gge(mat2, method="nipals")) # constant column
   mat3 <- mat1
   mat3[1:5,1] <- NA
-  expect_warning(gge(mat3)) # more than 10 percent missing
+  expect_warning(gge(mat3, method="nipals")) # more than 10 percent missing
 })
 
 # ----------------------------------------------------------------------------
@@ -132,6 +132,11 @@ biplot(m33, lab.env=TRUE) # default is to label locs
 # Option to disable residual vectors
 biplot(m33, res.vec=TRUE) # default is to label locs
 biplot(m33, res.vec=FALSE) # default is to label locs
+
+# Average environment coordinate
+bar$aec="AEC"
+m34 <- gge(yield~variety*env, bar, env.group=aec)
+biplot(m34)
 
 # Custom colors for gen/env. Example matrix data from Laffont
 mat6 <- structure(c(120, 140, 131, 144, 120, 129, 131, 135, 107, 132, 123,

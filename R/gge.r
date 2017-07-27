@@ -117,6 +117,7 @@ RedGrayBlue <- colorRampPalette(c("firebrick", "lightgray", "#375997"))
 #'   # biplot3d(m2)
 #' }
 #' 
+#' # Average Environment Coordinate
 #' dat2$avg <- "Avg"
 #' m3 <- gge(yield~gen*loc, dat2, env.group=avg, scale=FALSE)
 #' biplot(m3)
@@ -558,9 +559,9 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
 
   groupNames <- names(table(env.group))
   n.gen.grp <- length(unique(gen.group)) # 0 for NULL
-  n.env.grp <- length(unique(env.group))
+  n.env.grp <- length(unique(env.group)) # 0 for NULL
 
-  # Add options to subtitle
+  # add options to the subtitle
   if(is.null(subtitle)) {
     subtitle = ""
   } else {
@@ -571,17 +572,23 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
     subtitle <- paste0(subtitle, ", missing: ", round(pctMiss*100,1), "%")
   }
 
-  # Environment (group) colors (first one is used for environments)
-  # Replicate colors if not enough have been specified
-  col.env <- c(col.env, "blue","black","purple","darkgreen", "red",
-               "dark orange", "deep pink", "#999999", "#a6761d")
-  if(n.env.grp == 1) {
-    col.env <- col.env[1]
-  } else {
+  # if the user did not give enough environment vector colors, add more
+  if(n.env.grp > length(col.env)) {
+    col.env <- c(col.env, "blue","black","purple","darkgreen", "red",
+                 "dark orange", "deep pink", "#999999", "#a6761d")
     col.env <- rep(col.env, length=n.env.grp)
   }
+#  # environment (group) colors (first one is used for environments)
+#  # replicate colors if not enough have been specified
+#  col.env <- c(col.env, "blue","black","purple","darkgreen", "red",
+#               "dark orange", "deep pink", "#999999", "#a6761d")
+#  if(n.env.grp == 1) {
+#    col.env <- col.env[1]
+#  } else {
+#    col.env <- rep(col.env, length=n.env.grp)
+#  }
 
-  # Flip. If 'auto', flip the axis so that genotype ordinate is positively
+  # flip. If 'auto', flip the axis so that genotype ordinate is positively
   # correlated with genotype means.
   if(length(flip)<length(comps)) flip <- rep(flip,length=length(comps))
   for(i in 1:length(comps)){
@@ -593,7 +600,7 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
     }
   }
 
-  # Initialize plot
+  # set plot type to square
   op1 <- par(pty="s")
 
   # If alpha transparency is supported, use 70%=180
@@ -608,10 +615,10 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
                    alpha=180, maxColorValue=255)
   }
   
-  xcomp <- comps[1] # Component for x axis
-  ycomp <- comps[2] # Component for y axis
+  xcomp <- comps[1] # component for x axis
+  ycomp <- comps[2] # component for y axis
 
-  # Axis labels
+  # axis labels
   labs <- paste("PC ", c(xcomp, ycomp),
                 " (", round(100*R2[c(xcomp,ycomp)],0), "% TSS)", sep="")
   if(!is.null(xlab)) {
@@ -621,46 +628,43 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
     if(ylab=="auto") ylab <- labs[2]
   }
 
-  expand.range <- function(xx) { # Make sure range includes origin
+  expand.range <- function(xx) { # make sure the range includes origin
     if(xx[1] > 0) xx[1] <-  - xx[1]
     else if(xx[2] < 0) xx[2] <-  - xx[2]
     return(xx)
   }
 
-  # Below is all a bit of a mess that was inherited from the original biplot
-  # code.  It would be better to compute a scaling factor for gen/env and then
-  # calculate new coordinates and have just one plotting window!
-
-    # We are most interested in genotypes, so define the plotting window for
-  # genotypes before locations.
-
+  # we are most interested in genotypes, so define the plotting window to 
+  # have the best fit for the genotypes
   if(origin=="auto"){
-  # First, expand the genotype ranges to include 0 in both axes
+    # expand the genotype ranges to include 0 in both axes
     rg1 <- expand.range(range(genCoord[, xcomp]))
     rg2 <- expand.range(range(genCoord[, ycomp]))
-    # Make genotypes fill as much of the window as possible.  
+    # make genotypes fill the plotting window  
     xmid <- mean(range(rg1))
     ymid <- mean(range(rg2))
-    # Half-width (and half-height) of box. Make axes same length.
+    # half-width (and half-height) of box
     half <- 1.05 * max(diff(rg1), diff(rg2))/2 # Add 5% on each side
   } else { # origin at 0,0
     xmid <- ymid <- 0
     half <- 1.05 * max(abs(genCoord[, c(xcomp,ycomp)]))
   }
-  # Plot window for genotypes
+  # square window for plotting genotypes with equal-length sides, but not
+  # necessarily the same coordinates for the two sides
   xlimg <- c(xmid-half, xmid+half)
   ylimg <- c(ymid-half, ymid+half)
 
-  # Then find the scaling factor to make locations fill the window.
-  # Manual tweaking of limits is done with zoom.env
-  # Block coord are always 'inside' loc coord box
+  # calculate 'ratio' to shrink/expand window to fit the environments
+  # we do not worry about block coords...they are always inside loc coord box
   re1 <- expand.range(range(locCoord[, xcomp]))
   re2 <- expand.range(range(locCoord[, ycomp]))
   ratio <- max(c(re1, re2)/c(xlimg, ylimg)) * 1.1 # 1.1 adds extra space
+  
+  # lastly, manual zooming of environment window
   xlime <- xlimg * ratio / zoom.env
   ylime <- ylimg * ratio / zoom.env
 
-  # Set up plot for environment vectors
+  # set up plot for environment vectors
   plot(NULL, type = "n", xaxt="n", yaxt="n", xlab="", ylab="",
        xlim=xlime, ylim=ylime)
 
@@ -670,13 +674,14 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
   mtext(main, side=3, line=2.5)
   mtext(subtitle, side=3, line=0.9, cex=.7)
 
-  # Note that each environment vector has length 1:
+  # is this true for different focusing?
+  # because of the SVD, each environment vector has length 1
   # round(apply(x$locCoord, 1, function(x) sum(x*x)),2)
   # E1 E2 E3 E4 E5 
   #  1  1  1  1  1
-  # For standardized biplots, draw a circle of radius 1 on locCoord scale
-  # Do this first so we don't overwrite labels
-
+  
+  # for standardized biplots, draw a circle of radius 1 on locCoord scale
+  # do this first so we don't overwrite labels
   if(x$scale) {
     angles <- seq(from=0, to=2*pi, length=100)
     radius <- 1
@@ -685,7 +690,7 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
     lines(xc, yc, col="tan")
   }
 
-  # Plot locs first (points OR labels, but not both) colored by group
+  # plot locs first (points OR labels, but not both) colored by group
   if(is.null(env.group)) {
     eix <- rep(1, nrow(locCoord))
   } else eix <- as.numeric(factor(env.group))
@@ -702,6 +707,7 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
   if(n.env.grp == 0){
     segments(0, 0, .95*locCoord[,xcomp], .95*locCoord[,ycomp], col = col.env[1])
   }
+  
   # One or more groups. Draw solid/dashed group vector
   if(n.env.grp >= 1) {
     # Draw solid-line part of the group vector
@@ -718,6 +724,14 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
     # Add group label
     text(.95*xy[,1], .95*xy[,2], rownames(ubc), cex = 1, col=col.env)
   }
+  
+  # One group. Add dashed line group vector in opposite direction
+  if(n.env.grp == 1){
+    ubc = -1 * ubc 
+    xy <- extend( ubc[ , xcomp], ubc[ , ycomp], xlime, ylime)
+    segments(0, 0, .90*xy[,1], .90*xy[,2], lty = 3, col=col.env)
+  }
+  
   # Two or more groups. Draw residual vector from group mean to each loc
   if((n.env.grp >=  2) & res.vec) {
     segments(blockCoord[ , xcomp], blockCoord[ , ycomp],
@@ -734,16 +748,12 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
     pch.gen <- rep(pch.gen, length=n.gen.grp)
   }
 
-  # --- New coordinate system for genotypes ---
-  par(new = TRUE)
-  # Manual tweaking of limits is done with zoom.gen
-  xlimg = xlimg / zoom.gen
-  ylimg = ylimg / zoom.gen
-  plot(NULL, type = "n", xaxt="n", yaxt="n", xlab="", ylab="",
-       xlim=xlimg, ylim=ylimg)
+  # use 'ratio' to scale genotype coordinates to fill environment window
+  # manual adjustment is done with zoom.gen
+  genCoord = genCoord * ratio / zoom.gen
   
-  # AEC - average environment coordinate
-  # One env group. Draw genotype perpendicular projection onto average environment
+  # AEC = Average Environment Coordinate
+  # One env group. Draw genotype perpendicular projection onto AEC
   if(n.env.grp == 1){
     m1 = blockCoord[1,2] / blockCoord[1,1] # slope of AEC line
     # See formula here: https://stackoverflow.com/questions/1811549
@@ -756,6 +766,7 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
     y4 = genCoord[,2] + k
     segments(genCoord[,1], genCoord[,2], x4, y4, col="gray80")
   }
+  
   # Now overlay genotype labels and/or points
   if(n.gen.grp < 2) {
     text(genCoord[, c(xcomp, ycomp)], rownames(genCoord), cex=cex.gen, col=col.gen)
