@@ -1,4 +1,8 @@
 
+# gge 1.3 - unpublished
+
+Note: I can only use RStudio Build menu.  build() and Emacs are no go.
+
 # gge 1.2 - May 2017
 
 New function `nipals()` for finding principal components using C++.  Code from `pcaMethods` package. (GPL-3 license.)

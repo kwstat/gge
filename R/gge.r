@@ -1,5 +1,5 @@
 # gge.R
-# Time-stamp: <24 May 2017 17:03:50 c:/x/rpack/gge/R/gge.R>
+# Time-stamp: <26 Jul 2017 16:00:13 c:/x/rpack/gge/R/gge.R>
 
 #' GGE and GGB biplots
 #' 
@@ -117,7 +117,10 @@ RedGrayBlue <- colorRampPalette(c("firebrick", "lightgray", "#375997"))
 #'   # biplot3d(m2)
 #' }
 #' 
-#'
+#' dat2$avg <- "Avg"
+#' m3 <- gge(yield~gen*loc, dat2, env.group=avg, scale=FALSE)
+#' biplot(m3)
+#' 
 #' @import reshape2
 #' @export gge
 gge <- function(x, ...) UseMethod("gge")
@@ -348,7 +351,6 @@ gge.matrix <- function(x, center=TRUE, scale=TRUE,
   if(method=="svd") {
     U <- x.svd$u
   } else if (method=="nipals" | method=="rnipals"){
-    #browser()
     U <- x.pca$scores %*% diag(1/sqrt(x.pca$eval))
   }
 
@@ -573,7 +575,7 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
   # Replicate colors if not enough have been specified
   col.env <- c(col.env, "blue","black","purple","darkgreen", "red",
                "dark orange", "deep pink", "#999999", "#a6761d")
-  if(n.env.grp < 2) {
+  if(n.env.grp == 1) {
     col.env <- col.env[1]
   } else {
     col.env <- rep(col.env, length=n.env.grp)
@@ -625,7 +627,11 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
     return(xx)
   }
 
-  # We are most interested in genotypes, so define the plotting window for
+  # Below is all a bit of a mess that was inherited from the original biplot
+  # code.  It would be better to compute a scaling factor for gen/env and then
+  # calculate new coordinates and have just one plotting window!
+
+    # We are most interested in genotypes, so define the plotting window for
   # genotypes before locations.
 
   if(origin=="auto"){
@@ -637,11 +643,11 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
     ymid <- mean(range(rg2))
     # Half-width (and half-height) of box. Make axes same length.
     half <- 1.05 * max(diff(rg1), diff(rg2))/2 # Add 5% on each side
-  } else {
+  } else { # origin at 0,0
     xmid <- ymid <- 0
     half <- 1.05 * max(abs(genCoord[, c(xcomp,ycomp)]))
   }
-  # Plot limits for genotypes
+  # Plot window for genotypes
   xlimg <- c(xmid-half, xmid+half)
   ylimg <- c(ymid-half, ymid+half)
 
@@ -692,20 +698,14 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
            cex = cex.env, col = col.env[eix]) # pch = (1:n.env.grp)[eix])
   }
 
-  # Draw vectors.  Shorten by 5% to reduce over-plotting the label
-  if(n.env.grp < 2){
-    # Draw vector to each loc
+  # No groups. Draw vector to each loc, shorten to reduce over-plotting the label
+  if(n.env.grp == 0){
     segments(0, 0, .95*locCoord[,xcomp], .95*locCoord[,ycomp], col = col.env[1])
-  } else {
-    # Short residual vectors from group mean to each loc
-    if(res.vec) {
-      segments(blockCoord[ , xcomp], blockCoord[ , ycomp],
-               locCoord[ , xcomp], locCoord[ , ycomp],
-               col = col.env[eix], lwd = .5)
-    }
-
+  }
+  # One or more groups. Draw solid/dashed group vector
+  if(n.env.grp >= 1) {
     # Draw solid-line part of the group vector
-    ubc <- blockCoord[groupNames,] # Get unique row for each group
+    ubc <- blockCoord[groupNames,,drop=FALSE] # Get unique row for each group
     segments(0, 0, ubc[ , xcomp], ubc[ , ycomp], lwd = 2, col=col.env) # no 'eix'
     # End point
     # points(ubc[ , c(xcomp,ycomp)], pch = 16, col=col.env) # no 'eix'
@@ -717,6 +717,12 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
              .90*xy[,1], .90*xy[,2], lty = 3, col=col.env)
     # Add group label
     text(.95*xy[,1], .95*xy[,2], rownames(ubc), cex = 1, col=col.env)
+  }
+  # Two or more groups. Draw residual vector from group mean to each loc
+  if((n.env.grp >=  2) & res.vec) {
+    segments(blockCoord[ , xcomp], blockCoord[ , ycomp],
+             locCoord[ , xcomp], locCoord[ , ycomp],
+             col = col.env[eix], lwd = .5)
   }
 
   pch.gen <- c(pch.gen, setdiff(1:20, pch.gen))
@@ -736,6 +742,20 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
   plot(NULL, type = "n", xaxt="n", yaxt="n", xlab="", ylab="",
        xlim=xlimg, ylim=ylimg)
   
+  # AEC - average environment coordinate
+  # One env group. Draw genotype perpendicular projection onto average environment
+  if(n.env.grp == 1){
+    m1 = blockCoord[1,2] / blockCoord[1,1] # slope of AEC line
+    # See formula here: https://stackoverflow.com/questions/1811549
+    # x1=0, y1=0, x2=1, y2=m1, x3 & y3 are genCoord
+    # k = (m1 * x3 - y3) / (m1^2 + 1)
+    # x4 = x3 - k * m1
+    # y4 = y3 + k
+    k = (m1 * genCoord[,1] - genCoord[,2])
+    x4 = genCoord[,1] - k * m1
+    y4 = genCoord[,2] + k
+    segments(genCoord[,1], genCoord[,2], x4, y4, col="gray80")
+  }
   # Now overlay genotype labels and/or points
   if(n.gen.grp < 2) {
     text(genCoord[, c(xcomp, ycomp)], rownames(genCoord), cex=cex.gen, col=col.gen)
@@ -746,7 +766,7 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
          cex=cex.gen, col=col.gen[gix], adj=c(0,.5))
   }
 
-  # Which-won-where polygon
+  # which-won-where polygon
   # http://zonalandeducation.com/mmts/intersections/intersectionOfTwoLines1/intersectionOfTwoLines1.html
   if(hull){
     # Hull polygon
@@ -756,6 +776,7 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
     lines(segs, col="gray60")
     # Lines perpendicular to hull polygon
     for(ii in 1:(length(ch)-1)){
+      # coordinates of endpoints for polygon line segment
       x11 <- segs[ii,1] ; y11 <- segs[ii,2]
       x22 <- segs[ii+1,1] ; y22 <- segs[ii+1,2]
       if(x22-x11 == 0) { # Polygon line is vertical
@@ -804,8 +825,7 @@ biplot3d.gge <- function(x,
   blockCoord <- x$blockCoord
   R2 <- x$R2
 
-  if(is.null(env.group)) n.env.grp <- 0
-  else n.env.grp <- length(unique(env.group))
+  n.env.grp <- length(unique(env.group)) # 0 for NULL
 
   if(length(R2) == 2)
     stop("Only two principal components--3D biplot not available.")
@@ -816,7 +836,7 @@ biplot3d.gge <- function(x,
   # Replicate colors if not enough have been specified
   col.env <- c(col.env, "blue","black","purple","darkgreen", "red",
                "dark orange", "deep pink", "#999999", "#a6761d")
-  if(n.env.grp < 2) {
+  if(n.env.grp == 1) {
     col.env <- col.env[1]
   } else {
     col.env <- rep(col.env, length=n.env.grp)
@@ -885,7 +905,7 @@ biplot3d.gge <- function(x,
          texts=zlab, cex=cex.env, col=col.axis, alpha=0.5)
 
   # Add vectors (and group labels, if needed)
-  if(n.env.grp < 2) {
+  if(n.env.grp == 0) {
     # Draw vector to each loc
     apply(cbind(locCoord[,c(xcomp, ycomp, zcomp)], col.env[1]), 1,
           function(xx) {

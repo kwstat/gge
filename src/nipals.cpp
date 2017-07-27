@@ -1,6 +1,8 @@
 // This C++ code is by Henning Redestig, taken from pcaMethods package
 // https://github.com/hredestig/pcaMethods/blob/master/src/nipals.cpp
-// Captured 29 Apr 2017 via GPL3 license.  Used with permission.
+// Downloaded 29 Apr 2017. License: GPL >= 3.
+// Used with permission of Henning Redestig.
+// Slightly modified the names of the rparams.
 
 #include <math.h>
 #include <Rcpp.h>
