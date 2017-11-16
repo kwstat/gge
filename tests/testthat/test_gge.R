@@ -95,11 +95,6 @@ m31 <- gge(mat1, method="svd")
 biplot(m31)
 m32 <- gge(mat1, method="nipals")
 biplot(m32)
-m33 <- gge(mat1, method="rnipals", maxiter=500)
-biplot(m33)
-
-# check that maxiter is passed through from gge to rnipals
-# m33 <- gge(mat1, method="rnipals", maxiter=500) # error
 
 m34 <- gge(mat2) # should switch to 'nipals'
 biplot(m34)
@@ -107,12 +102,6 @@ m35 <- gge(mat2, method="svd") # should switch to 'nipals'
 biplot(m35)
 m36 <- gge(mat2, method="nipals")
 biplot(m36)
-m37 <- gge(mat2, method="rnipals")
-biplot(m37)
-
-# verbose
-m38 <- gge(mat2, method="rnipals", verbose=FALSE)
-m38 <- gge(mat2, method="rnipals", verbose=1)
 
 # matrix data with env.group, gen.group
 m24 <- gge(mat2, env.group=c(1,1,1,2,2))
@@ -134,9 +123,9 @@ biplot(m33, res.vec=TRUE) # default is to label locs
 biplot(m33, res.vec=FALSE) # default is to label locs
 
 # Average environment coordinate
-bar$aec="AEC"
-m34 <- gge(yield~variety*env, bar, env.group=aec)
-biplot(m34)
+#bar$aec="AEC"
+#m34 <- gge(yield~variety*env, bar, env.group=aec)
+#biplot(m34)
 
 # Custom colors for gen/env. Example matrix data from Laffont
 mat6 <- structure(c(120, 140, 131, 144, 120, 129, 131, 135, 107, 132, 123,

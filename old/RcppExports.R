@@ -2,6 +2,6 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 Nipals <- function(Mat, params) {
-    .Call('gge_Nipals', PACKAGE = 'gge', Mat, params)
+    .Call('_gge_Nipals', PACKAGE = 'gge', Mat, params)
 }
 

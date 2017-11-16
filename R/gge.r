@@ -7,8 +7,6 @@
 #' @aliases gge package-gge
 #' @author Kevin Wright, Jean-Louis Laffont
 #' @docType package
-#' @importFrom Rcpp evalCpp
-#' @useDynLib gge
 NULL
 
 # ----------------------------------------------------------------------------
@@ -44,10 +42,8 @@ RedGrayBlue <- colorRampPalette(c("firebrick", "lightgray", "#375997"))
 #' 
 #' The NIPALS algorithm can be used when there are missing data.
 #' 
-#' The argument 'method' can be one of
-#' (1) 'svd' for complete-data
-#' (2) 'nipals' for missing-data (coded in C++)
-#' (3) 'rnipals' for missing-data
+#' The argument 'method' can be either
+#' 'svd' for complete-data or 'nipals' for missing-data.
 #' 
 #' @rdname gge
 #' 
@@ -254,7 +250,7 @@ gge.matrix <- function(x, center=TRUE, scale=TRUE,
 
   ##   # cat("Using pcaMethods\n")
 
-  ##   if(!is.element(method, c('bpca', 'nipals', 'ppca', 'rnipals', 'svd', 'svdImpute')))
+  ##   if(!is.element(method, c('bpca', 'nipals', 'ppca', 'svd', 'svdImpute')))
   ##     stop("Unknown method type for pcaMethods::pca")
 
   ##   # ----- pcaMethods -----
@@ -285,8 +281,8 @@ gge.matrix <- function(x, center=TRUE, scale=TRUE,
 
   pcameth <- FALSE
 
-  if(!is.element(method, c('svd', 'nipals', 'rnipals')))
-    stop("Unknown method.  Use 'svd' or 'nipals' or 'rnipals'.")
+  if(!is.element(method, c('svd', 'nipals')))
+    stop("Unknown method.  Use 'svd' or 'nipals'.")
 
   # Scale data
   x <- scale(x, center=center, scale=scale)  # Center / scale each environment
@@ -308,12 +304,12 @@ gge.matrix <- function(x, center=TRUE, scale=TRUE,
     x <- x.pca$completeObs # replaces missing values with estimates
     x <- scale(x, center=center, scale=scale)
 
-  } else if(method=="rnipals"){
-    x.svd <- NULL
-    x.pca <- rnipals(x, center=FALSE, scale.=FALSE, ...)
-    R2 <- x.pca$R2
-    x <- x.pca$completeObs # replaces missing values with estimates
-    x <- scale(x, center=center, scale=scale)    
+  #} else if(method=="rnipals"){
+    #x.svd <- NULL
+    #x.pca <- rnipals(x, center=FALSE, scale.=FALSE, ...)
+    #R2 <- x.pca$R2
+    #x <- x.pca$completeObs # replaces missing values with estimates
+    #x <- scale(x, center=center, scale=scale)    
   }
 
 	if(!is.null(x.svd) && length(x.svd$d) == 1)
@@ -351,7 +347,7 @@ gge.matrix <- function(x, center=TRUE, scale=TRUE,
   #} else {
   if(method=="svd") {
     U <- x.svd$u
-  } else if (method=="nipals" | method=="rnipals"){
+  } else if (method=="nipals"){
     U <- x.pca$scores %*% diag(1/sqrt(x.pca$eval))
   }
 
@@ -960,109 +956,6 @@ biplot3d.gge <- function(x,
 
 # ----------------------------------------------------------------------------
 
-#' PCA by non-linear iterative partial least squares in C++
-#'
-#' Used for finding principal components of a numeric matrix.  Components
-#' are extracted one a time.  Missing values in the matrix are allowed.
-#'
-#' @param x Numerical matrix
-#' 
-#' @param maxcomp Maximum number of principal components to extract.
-#'
-#' @param maxiter Maximum number of NIPALS iterations to perform.
-#'
-#' @param propvar The proportion of variance that should be explained by the
-#' returned principal components. If propvar < 1, then \code{maxcomp} is ignored.
-#'
-#' @param tol Default 1e-6 tolerance for testing convergence of the algorithm.
-#'
-#' @param center If TRUE, do center columns.
-#'
-#' @param scale. If FALSE, do not scale columns.
-#'
-#' @param ... Only used for passing through arguments.
-#' 
-#' @return A list with components.
-#' 
-#' @references
-#' Wold, H. (1966) Estimation of principal components and
-#' related models by iterative least squares. In Multivariate
-#' Analysis (Ed., P.R. Krishnaiah), Academic Press, NY, 391-420.
-#' 
-#' @author Henning Redestig
-#' 
-#' @export
-nipals <- function(x, maxcomp=min(nrow(x), ncol(x)-1),
-                   maxiter=5000,
-                   tol=1e-6, propvar=1,  
-                   center=TRUE, scale.=FALSE, ...) {
-  
-  x <- as.matrix(x)
-  x.orig <- x # Save x for replacing missing values
-  
-  x <- scale(x, center=center, scale=scale.)
-  cen <- attr(x, "scaled:center")
-  sc <- attr(x, "scaled:scale")
-  if (any(sc == 0))
-    stop("cannot rescale a constant/zero column to unit variance")
-  
-  # Check for a column/row with all NAs
-  col.count <- apply(x, 2, function(x) sum(!is.na(x)))
-  if(any(col.count==0)) warning("At least one column is all NAs")
-  row.count <- apply(x, 1, function(x) sum(!is.na(x)))
-  if(any(row.count==0)) warning("At least one row is all NAs")
-  
-  # danger! scale() adds additional attributes to 'x' which confuses the C code
-  # and over-writes some memory. Remove these attributes before handing to C
-  mat=x
-  attr(mat, "scaled:center") <- NULL
-  attr(mat, "scaled:scale") <- NULL
-  nipRes <- .Call("gge_Nipals", mat,
-                  params=list(maxcomp=maxcomp,
-                              propvar=propvar,
-                              tol=tol,
-                              maxiter=maxiter),
-                  PACKAGE="gge")
-  
-  scores <- nipRes$scores
-  loadings <- nipRes$loadings
-  R2cum <- nipRes$R2cum
-  
-  # un-cumulate R2
-  R2 <- c(R2cum[1], diff(R2cum))
-  
-  # eigen values
-  eval = apply(scores, 2, function(x) sum(x*x))
-  
-  # re-construction of x using maxcomp principal components
-  fitted.values <- scores[ , 1:maxcomp] %*% t(loadings[ , 1:maxcomp])
-  if(scale.) fitted.values <- fitted.values * attr(x, "scaled:scale")
-  if(center) fitted.values <- fitted.values + attr(x, "scaled:center")
-  
-  # replace missing values in the original matrix with fitted values
-  completeObs <- x.orig
-  completeObs[is.na(x.orig)] <- fitted.values[is.na(x.orig)]
-  
-  # prepare output
-  rownames(scores) <- rownames(x)
-  colnames(scores) <- paste("PC", 1:ncol(scores), sep="")
-  rownames(loadings) <- colnames(x)
-  colnames(loadings) <- paste("PC", 1:ncol(loadings), sep="")
-  out <- list(scores = scores, rotation = loadings,
-              completeObs = completeObs,
-              maxcomp = maxcomp,
-              center=if(is.null(cen)) FALSE else cen,
-              scale=if(is.null(sc)) FALSE else sc,
-              sdev=apply(scores, 2, sd), # needed for prcomp print method
-              R2 = R2,
-              eval=eval,
-              propvar = propvar)
-  class(out) <- c("nipals","prcomp")
-  return(out)
-}
-
-# ----------------------------------------------------------------------------
-
 
 #' PCA by non-linear iterative partial least squares, coded in R.
 #' 
@@ -1088,7 +981,7 @@ nipals <- function(x, maxcomp=min(nrow(x), ncol(x)-1),
 #' @author Kevin Wright
 #' 
 #' @export
-rnipals <- function(x, maxcomp=min(nrow(x), ncol(x)-1),
+nipals <- function(x, maxcomp=min(nrow(x), ncol(x)-1),
                     maxiter=5000,
                     tol=1e-6, propvar=1,
                     center=TRUE, scale.=FALSE, verbose=FALSE) {

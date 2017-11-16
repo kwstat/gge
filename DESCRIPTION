@@ -1,19 +1,15 @@
 Package: gge
 Title: Genotype Plus Genotype-by-Environment Biplots
-Version: 1.2
-Date: 2017-05-25
+Version: 1.3
+Date: 2017-11-15
 Authors@R: c(
   person("Kevin","Wright", email="kw.stat@gmail.com", role=c("aut","cre")),
-  person("Jean-Louis","Laffont", role="aut"),
-  person("Henning","Redestig", role="cph",
-          comment="NIPALS C++ code")
+  person("Jean-Louis","Laffont", role="aut")
   )
 Description: Create biplots for GGE (genotype plus genotype-by-environment) and
     GGB (genotype plus genotype-by-block-of-environments) models.
 Type: Package
-LinkingTo: Rcpp
 Imports:
-    Rcpp,
     rgl,
     reshape2
 Suggests:
