@@ -1,5 +1,5 @@
 # test_gge.R
-# Time-stamp: <24 May 2017 12:50:36 c:/x/rpack/gge/tests/testthat/test_gge.R>
+# Time-stamp: <16 Nov 2017 19:48:01 c:/x/rpack/gge/tests/testthat/test_gge.R>
 
 context("test_gge.R")
 
@@ -255,3 +255,27 @@ if(FALSE) {
   # "m"
 }
 
+if(0) {
+# focus
+dat <- yan.winterwheat
+
+m1 <- gge(yield ~ gen*env, data=dat, scale=FALSE) # default focus="env"
+biplot(m1, hull=TRUE)
+
+m2 <- gge(yield ~ gen*env, data=dat, scale=FALSE, focus="gen")
+biplot(m2, hull=TRUE, flip=c(1,1)) # Yan book p 43
+
+m3 <- gge(yield ~ gen*env, data=dat, scale=FALSE, focus="env")
+biplot(m3, hull=TRUE, flip=c(1,1)) # Yan book p 45
+
+m4 <- gge(yield ~ gen*env, data=dat, scale=FALSE, focus="symm")  # <-- short lines
+biplot(m4, hull=TRUE, flip=c(1,1)) # Yan book p 46
+
+m5 <- gge(yield ~ gen*env, data=dat, scale=FALSE, focus="dual")
+biplot(m5, hull=TRUE, flip=c(1,1)) # OBS! Not Yan book p 48
+
+m2 <- gge(yield ~ gen*env, data=dat, scale=FALSE, focus="gen")
+biplot(m2, aec=TRUE, flip=c(1,1)) # Yan book p 43
+ggbiplot(m2, type="aec")
+
+}

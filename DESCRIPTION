@@ -10,13 +10,14 @@ Description: Create biplots for GGE (genotype plus genotype-by-environment) and
     GGB (genotype plus genotype-by-block-of-environments) models.
 Type: Package
 Imports:
-    rgl,
-    reshape2
+  nipals,
+  rgl,
+  reshape2
 Suggests:
-    agridat,
-    knitr,
-    lattice,
-    testthat
+  agridat,
+  knitr,
+  lattice,
+  testthat
 License: GPL-3
 LazyData: yes
 URL: https://github.com/kwstat/gge

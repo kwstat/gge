@@ -40,9 +40,7 @@ RedGrayBlue <- colorRampPalette(c("firebrick", "lightgray", "#375997"))
 #' The singular value decomposition of \code{x} is used to calculate the
 #' principal components for the biplot.  Missing values are NOT allowed.
 #' 
-#' The NIPALS algorithm can be used when there are missing data.
-#' 
-#' The argument 'method' can be either
+#' The argument \code{method} can be either
 #' 'svd' for complete-data or 'nipals' for missing-data.
 #' 
 #' @rdname gge
@@ -52,17 +50,24 @@ RedGrayBlue <- colorRampPalette(c("firebrick", "lightgray", "#375997"))
 #' @param ... Other arguments (e.g. maxiter)
 #' 
 #' @return A list of class \code{gge} containing:
-#' \item{method}{Method used to calculate principal components.}
+#' \item{x}{The filled-in data}
+#' \item{x.orig}{The original data}
+#' \item{genCoord}{genotype coordinates}
+#' \item{locCoord}{loc coordinates}
+#' \item{blockCoord}{block coordinates}
+#' \item{gen.group}{If not NULL, this specifies a
+#'   classification of genotypes into groups.}
+#' \item{env.group}{If not NULL, this specifies a classification of
+#'   environments into groups.}
+#' \item{genMeans}{genotype means}
+#' \item{mosdat}{mosaic plot data}
+#' \item{R2}{variation explained by eact PC}
 #' \item{center}{Data centered?}
 #' \item{scale}{Data scaled?}
-#' \item{gen.group}{This is only used for plotting.  If not NULL, this specifies a
-#' classification of genotypes into groups.  }
-#' \item{env.group}{ If not NULL, this specifies a classification of
-#' environments into groups.  When using the formula method, then
-#' \code{envGroup} is the name of a column in the \code{data}.
-#' When using the matrix method, then \code{envGroup} must be a
-#' vector the same length as the number of columns in \code{data}, the contents
-#' of the vector contain the grouping information.  }
+#' \item{method}{Method used to calculate principal components.}
+#' \item{pctMiss}{Percent of x that is missing values}
+#' \item{maxPCs}{Maximum number of PCs}
+#' 
 #' @author
 #' Jean-Louis Laffont, Kevin Wright
 #' 
@@ -205,12 +210,13 @@ gge.formula <- function(formula, data=NULL,
 #' @param method method used to find principal component directions
 #' 
 #' @rdname gge
+#' 
+#' @importFrom nipals nipals
+#' 
 #' @export
 gge.matrix <- function(x, center=TRUE, scale=TRUE,
                        gen.group=NULL, env.group = NULL,
                        comps=c(1,2), method="svd", ...) {
-
-  # Author: Kevin Wright, based on S-Plus code by Jean-Louis Laffont.
 
   # x: matrix of rows=genotypes, cols=environments
   # env.group: vector having the group class for each loc
@@ -240,69 +246,26 @@ gge.matrix <- function(x, center=TRUE, scale=TRUE,
   # Maximum number of PCs
   maxPCs <- min(nrow(x), ncol(x)-1)
 
-  # Find principal components
-
-  ## # If pcaMethods package is installed, use it
-  ## #if(is.element("package:pcaMethods", search())){
-  ## if(require("pcaMethods")){
-
-  ##   pcameth <- TRUE
-
-  ##   # cat("Using pcaMethods\n")
-
-  ##   if(!is.element(method, c('bpca', 'nipals', 'ppca', 'svd', 'svdImpute')))
-  ##     stop("Unknown method type for pcaMethods::pca")
-
-  ##   # ----- pcaMethods -----
-  ##   # bpca does NOT require orthogonal PCs
-  ##   # nipals can handle small amount of missing values
-  ##   # ppca allows NA
-  ##   # svd is the same as base R svd
-  ##   # svdImpute allows NA
-
-  ##   ## if(is.logical(scale) && scale) {
-  ##   ##   # warning("Changing scale from TRUE to 'uv' for pcaMethods.\n")
-  ##   ##   scale <- "uv"
-  ##   ## }
-  ##   ## if(is.logical(scale) && !scale) {
-  ##   ##   # warning("Changing scale from FALSE to 'none' for pcaMethods.\n")
-  ##   ##   scale <- "none"
-  ##   ## }
-
-  ##   x.svd <- NULL
-  ##   pcascale <- ifelse(scale, 'uv', 'none') # Chg T/F to uv/none
-  ##   x.pca <- pca(x, maxcomp=min(nrow(x), ncol(x)-1), completeObs=TRUE,
-  ##                center=center, scale=pcascale, verbose=TRUE, method=method)
-  ##   R2 <- x.pca@R2
-  ##   x <- x.pca@completeObs # missing values are replaced with estimates
-  ##   x <- scale(x, center=center, scale=scale)
-
-  ## } else { # Use built-in svd or our nipals
-
-  pcameth <- FALSE
-
   if(!is.element(method, c('svd', 'nipals')))
     stop("Unknown method.  Use 'svd' or 'nipals'.")
 
   # Scale data
   x <- scale(x, center=center, scale=scale)  # Center / scale each environment
 
-  if(method=="svd"){ # ----- SVD -----
+  if(method=="svd"){
 
     x.pca <- NULL
     x.svd <- svd(x)
     R2 <- x.svd$d^2/sum(x.svd$d^2)
 
-  } else if(method=="nipals"){ # ----- Nipals
+  } else if(method=="nipals"){
 
-    #oo <- nipals(x, center=FALSE, scale.=FALSE)
-    #nn <- nipalsPca(x, center=FALSE, scale.=FALSE)
-    
     x.svd <- NULL
-    x.pca <- nipals(x, center=FALSE, scale.=FALSE, ...)
+    x.pca <- nipals(x, center=FALSE, scale=FALSE, fitted=TRUE, ...)
     R2 <- x.pca$R2
-    x <- x.pca$completeObs # replaces missing values with estimates
-    x <- scale(x, center=center, scale=scale)
+    x[is.na(x)] <- x.pca$fitted[is.na(x)]
+    #x <- x.pca$completeObs # replaces missing values with estimates
+    #x <- scale(x, center=center, scale=scale)
 
   #} else if(method=="rnipals"){
     #x.svd <- NULL
@@ -332,6 +295,7 @@ gge.matrix <- function(x, center=TRUE, scale=TRUE,
     groupNames <- names(table(env.group))
     for(i in groupNames) {
       # Need 'drop' so that a single-column is not converted to vector
+      # block coord
       x.grp <- cbind(x.grp, rowMeans(x.cc[, env.group==i, drop=FALSE]))
     }
     colnames(x.grp) <- groupNames
@@ -341,14 +305,18 @@ gge.matrix <- function(x, center=TRUE, scale=TRUE,
   x.r <- x - x.g - x.gb
 
   # Orthogonal rotation matrix U
-  #if(pcameth) { # pcaMethods package
-  #  eval <- apply(x.pca@scores^2, 2, sum) # eigen values
-  #  U <- x.pca@scores %*% diag(1/sqrt(eval))
-  #} else {
+  # # pcaMethods package
+  # eval <- apply(x.pca@scores^2, 2, sum) # eigen values
+  # U <- x.pca@scores %*% diag(1/sqrt(eval))
+  
+  # Orthogonal rotation matrix U
   if(method=="svd") {
     U <- x.svd$u
+    D <- x.svd$d
   } else if (method=="nipals"){
-    U <- x.pca$scores %*% diag(1/sqrt(x.pca$eval))
+    # U <- x.pca$scores %*% diag(1/sqrt(x.pca$eval))
+    U <- x.pca$scores
+    D <- x.pca$eig
   }
 
   # Partition SSG, SSGB, SSR along each axis
@@ -365,28 +333,26 @@ gge.matrix <- function(x, center=TRUE, scale=TRUE,
   rownames(mosdat) <- 1:nrow(mosdat)
   names(dimnames(mosdat)) <- c("PC","")
 
-  # Calculate coordinates (along all kept components) for genotypes
-  maxcomp <- 5
-  maxcomp <- min(maxcomp, nrow(x), ncol(x)-1)
-  ROT <- U[ , 1:maxcomp]
+  # coordinates (along at most 5 components) for genotypes
+  maxcomp <- min(5, nrow(x), ncol(x)-1)
+  U <- U[ , 1:maxcomp]
+  D <- D[1:maxcomp]
+  #ROT <- U[ , 1:maxcomp]
   n.gen <- nrow(x)
-  genCoord <- ROT * sqrt(n.gen - 1)
+  
+  # focus=="env"
+  genCoord <- U * sqrt(n.gen-1)
+  blockCoord <- t(x.g + x.gb) %*% U / sqrt(n.gen - 1)
+  resCoord <- t(x.r) %*% U * (1/sqrt(n.gen - 1))
 
-  # Block coordinates
-  blockCoord <- t(x.g + x.gb) %*% ROT / sqrt(n.gen - 1)
-
-  # Loc coordinates = Block + Residual
-  resCoord <- t(x.r) %*% ROT * (1/sqrt(n.gen - 1))
   locCoord <- blockCoord + resCoord
-  # locCoord = t(x.g + x.gb + x.r) %*% ROT / sqrt(n.gen -1)
-  #  = t(x) %*% ROT / sqrt(n.gen -1)
-
+  
   # completeObs matrix lacks rownames ?
   rownames(genCoord) <- rownames(x.orig)
   rownames(locCoord) <- colnames(x.orig)
   rownames(blockCoord) <- env.group
 
-  ret <- list(x=x,
+  ret <- list(x=x, x.orig=x.orig,
               genCoord=genCoord, locCoord=locCoord, blockCoord=blockCoord,
               gen.group=gen.group, env.group=env.group,
               genMeans=genMeans, mosdat=mosdat, R2=R2,
@@ -397,11 +363,17 @@ gge.matrix <- function(x, center=TRUE, scale=TRUE,
   return(ret)
 }
 
+expand.range <- function(xx) { 
+  # make sure the range includes origin
+  if(xx[1] > 0) xx[1] <-  - xx[1]
+  else if(xx[2] < 0) xx[2] <-  - xx[2]
+  return(xx)
+}
+
 extend <- function(x,y,xlim,ylim){
-  # Given a vector of points (x,y) this function extends the points outward
-  # along a vector from (0,0) to the border of the box defined by (xlim,ylim).
+  # extend vectors(0,0,x,y) to the edge of the box defined by (xlim,ylim)
   # This box has four 'quadrants' bottom,right,top,left.
-  # The 'right' quadrant is a triangle bound by:
+  # The 'right' quadrant is a triangle bounded by:
   # (0, bottom-right corner, top-right corner)
 
   xmin <- xlim[1]; xmax <- xlim[2]
@@ -414,17 +386,17 @@ extend <- function(x,y,xlim,ylim){
   phi <- atan2(y, x)      # Angle to each point
 
   # Instead of many "if-else" terms, just sum(quadrant_indicator * ordinate)
-  xb <- (bl < phi & phi <= br) * (ymin*x/y) + # bottom edge
+  x2 <- (bl < phi & phi <= br) * (ymin*x/y) + # bottom edge
         (br < phi & phi <= tr) * (xmax) +     # right
         (tr < phi & phi <= tl) * (ymax*x/y) + # top
         (phi <= bl | phi > tl) * (xmin)       # left
 
-  yb <- (bl < phi & phi <= br) * (ymin) +
+  y2 <- (bl < phi & phi <= br) * (ymin) +
         (br < phi & phi <= tr) * (xmax*y/x) +
         (tr < phi & phi <= tl) * (ymax) +
         (phi <= bl | phi > tl) * (xmin*y/x)
 
-  return(cbind(xb, yb))
+  return(data.frame(x0=0, y0=0, x1=x, y1=y, x2=x2, y2=y2))
 }
 
 # ----------------------------------------------------------------------------
@@ -447,7 +419,6 @@ plot.gge <- function(x, main=substitute(x), ...) {
   R2 <- x$R2
 
   # Scree plot
-  #op2 <- par(pty='s', mar=c(3,5,2,1))
   plot(1:length(R2), R2, type="b", axes=FALSE,
        main="", xlab="", ylab="Scree plot - Pct SS")
   axis(1, at=pretty(1:length(R2)), cex.axis=0.75)
@@ -460,7 +431,7 @@ plot.gge <- function(x, main=substitute(x), ...) {
   mtext(main, line=.5, cex=1)
 
   # Heatmap
-  Y <- x$x
+  Y <- x$x.orig
   image(t(Y), col=RedGrayBlue(12), axes=FALSE)
   axis(2, seq(from=0, to=1, length=nrow(Y)), labels=rownames(Y),
        tick=FALSE, cex.axis=.4, col.axis="black", las=2, line=-.8)
@@ -574,15 +545,6 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
                  "dark orange", "deep pink", "#999999", "#a6761d")
     col.env <- rep(col.env, length=n.env.grp)
   }
-#  # environment (group) colors (first one is used for environments)
-#  # replicate colors if not enough have been specified
-#  col.env <- c(col.env, "blue","black","purple","darkgreen", "red",
-#               "dark orange", "deep pink", "#999999", "#a6761d")
-#  if(n.env.grp == 1) {
-#    col.env <- col.env[1]
-#  } else {
-#    col.env <- rep(col.env, length=n.env.grp)
-#  }
 
   # flip. If 'auto', flip the axis so that genotype ordinate is positively
   # correlated with genotype means.
@@ -624,12 +586,6 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
     if(ylab=="auto") ylab <- labs[2]
   }
 
-  expand.range <- function(xx) { # make sure the range includes origin
-    if(xx[1] > 0) xx[1] <-  - xx[1]
-    else if(xx[2] < 0) xx[2] <-  - xx[2]
-    return(xx)
-  }
-
   # we are most interested in genotypes, so define the plotting window to 
   # have the best fit for the genotypes
   if(origin=="auto"){
@@ -660,6 +616,10 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
   xlime <- xlimg * ratio / zoom.env
   ylime <- ylimg * ratio / zoom.env
 
+  # use 'ratio' to scale genotype coordinates to fill environment window
+  # manual adjustment is done with zoom.gen
+  genCoord = genCoord * ratio / zoom.gen
+  
   # set up plot for environment vectors
   plot(NULL, type = "n", xaxt="n", yaxt="n", xlab="", ylab="",
        xlim=xlime, ylim=ylime)
@@ -716,16 +676,16 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
     # Now the extended dashed-line part of the group vector.  Shorten by 10%
     # to reduce over-plotting.
     segments(ubc[ , xcomp], ubc[ , ycomp],
-             .90*xy[,1], .90*xy[,2], lty = 3, col=col.env)
+             .90*xy$x2, .90*xy$x2, lty = 3, col=col.env)
     # Add group label
-    text(.95*xy[,1], .95*xy[,2], rownames(ubc), cex = 1, col=col.env)
+    text(.95*xy$x2, .95*xy$y2, rownames(ubc), cex = 1, col=col.env)
   }
   
   # One group. Add dashed line group vector in opposite direction
   if(n.env.grp == 1){
     ubc = -1 * ubc 
     xy <- extend( ubc[ , xcomp], ubc[ , ycomp], xlime, ylime)
-    segments(0, 0, .90*xy[,1], .90*xy[,2], lty = 3, col=col.env)
+    segments(0, 0, .90*xy$x2, .90*xy$y2, lty = 3, col=col.env)
   }
   
   # Two or more groups. Draw residual vector from group mean to each loc
@@ -744,23 +704,19 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
     pch.gen <- rep(pch.gen, length=n.gen.grp)
   }
 
-  # use 'ratio' to scale genotype coordinates to fill environment window
-  # manual adjustment is done with zoom.gen
-  genCoord = genCoord * ratio / zoom.gen
-  
   # AEC = Average Environment Coordinate
   # One env group. Draw genotype perpendicular projection onto AEC
   if(n.env.grp == 1){
-    m1 = blockCoord[1,2] / blockCoord[1,1] # slope of AEC line
+    m1 = blockCoord[1,ycomp] / blockCoord[1,xcomp] # slope of AEC line
     # See formula here: https://stackoverflow.com/questions/1811549
     # x1=0, y1=0, x2=1, y2=m1, x3 & y3 are genCoord
     # k = (m1 * x3 - y3) / (m1^2 + 1)
     # x4 = x3 - k * m1
     # y4 = y3 + k
-    k = (m1 * genCoord[,1] - genCoord[,2])
-    x4 = genCoord[,1] - k * m1
-    y4 = genCoord[,2] + k
-    segments(genCoord[,1], genCoord[,2], x4, y4, col="gray80")
+    k = (m1 * genCoord[,xcomp] - genCoord[,ycomp])
+    x4 = genCoord[,xcomp] - k * m1
+    y4 = genCoord[,ycomp] + k
+    segments(genCoord[,xcomp], genCoord[,ycomp], x4, y4, col="gray80")
   }
   
   # Now overlay genotype labels and/or points
@@ -797,7 +753,7 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
       # Draw to edge of genotype box
       xy <- extend(xnew, ynew, xlimg, ylimg)
       # Now the extended dashed-line part of the group vector.  Extend 10% to edge.
-      segments(0, 0, 1.1*xy[,1], 1.1*xy[,2], lty = 2, col="gray60")
+      segments(0, 0, 1.1*xy$x2, 1.1*xy$y2, lty = 2, col="gray60")
     }
   }
 
@@ -981,125 +937,125 @@ biplot3d.gge <- function(x,
 #' @author Kevin Wright
 #' 
 #' @export
-nipals <- function(x, maxcomp=min(nrow(x), ncol(x)-1),
-                    maxiter=5000,
-                    tol=1e-6, propvar=1,
-                    center=TRUE, scale.=FALSE, verbose=FALSE) {
-  # Calculate principal components using NIPALS
-  # Author: Kevin Wright
-
-  # A nice summary of NIPALS is here:
-  # http://statmaster.sdu.dk/courses/ST02/module06/index.html
-
-  # This currently produces an object of class 'prcomp', but maybe it
-  # would be better to return objects the same way that svd does???
-
-  x <- as.matrix(x)
-  x.orig <- x # Save x for replacing missing values
-  x <- scale(x, center=center, scale=scale.)
-  cen <- attr(x, "scaled:center")
-  sc <- attr(x, "scaled:scale")
-  if (any(sc == 0))
-    stop("cannot rescale a constant/zero column to unit variance")
-
-  # sum(NA, na.rm=TRUE) is 0, but we want NA
-  sum.na <- function(x){ ifelse(all(is.na(x)), NA, sum(x, na.rm=TRUE))}
-
-  n.missing <- sum(is.na(x))
-
-  # Check for a column/row with all NAs
-  col.count <- apply(x, 2, function(x) sum(!is.na(x)))
-  if(any(col.count==0)) warning("At least one column is all NAs")
-  row.count <- apply(x, 1, function(x) sum(!is.na(x)))
-  if(any(row.count==0)) warning("At least one row is all NAs")
-
-  # Find a starting column (with fewest number of NAs)
-  # startingColumn <- which.max(col.count)
-  startingColumn <- ncol(x)
-
-  if(verbose >= 1) cat("Starting column: ", startingColumn, "\n")
-
-  TotalSS <- sum(x*x, na.rm=TRUE)
-
-  eval <- R2cum <- scores <- loadings <- NULL
-  anotherPC <- TRUE
-  comp <- 1
-
-  while(anotherPC) {
-    iter <- 0
-    u <- x[,startingColumn]
-    continue <- TRUE
-    if(verbose >= 1) cat(paste("Calculating PC", comp, sep=""))
-
-    while(continue) {
-      iter <- iter+1
-
-      # Calculate LOADINGS v=x'u, then normalize
-      # Note x*u is column-wise multiplication
-      v <- apply(x*u, 2, sum.na)
-      v <- v / sqrt(sum(v*v, na.rm=TRUE))
-
-      # Calculate SCORES u = xv
-      # Cute trick: To get row-wise multiplication, use t(x)*v, then
-      # be sure to use apply(,2,) and NOT apply(,1,)!
-      u.old <- u
-      u <- apply(t(x)*v, 2, sum.na)
-
-      # Check convergence criteria
-      if (iter > maxiter) stop("Exceeding ", maxiter, " iterations, quitting")
-      if( sum((u.old-u)^2, na.rm=TRUE)<tol ) continue=FALSE
-
-      if (verbose >= 1) cat(".")
-    }
-    if (verbose >= 1) cat("\n")
-    
-    # Remove the estimated principal component from x, x-uv'
-    x <- x - (u %*% t(v))
-    scores <- cbind(scores, u)
-    loadings <- cbind(loadings, v)
-    eval <- c(eval, sum(u*u))
-
-    # Cumulative proportion of variance
-    R2cum <- c(R2cum, 1 - (sum(x*x,na.rm=TRUE) / TotalSS))
-    if(comp==maxcomp)
-      anotherPC <- FALSE
-    else if(R2cum[comp] >= propvar) {
-      # Maybe I should set maxcomp=comp here?  Will the user be confused
-      # if he requests 10 comps and only 9 are returned?
-      maxcomp <- comp
-      anotherPC <- FALSE
-    } else
-      comp <- comp + 1
-
-  } # Done finding PCs
-
-  # un-cumulate R2
-  R2 <- c(R2cum[1], diff(R2cum))
-  
-  # re-construction of x using maxcomp principal components
-  fitted.values <- scores[ , 1:maxcomp] %*% t(loadings[ , 1:maxcomp])
-  if(scale.) fitted.values <- fitted.values * attr(x, "scaled:scale")
-  if(center) fitted.values <- fitted.values + attr(x, "scaled:center")
-
-  # replace missing values in the original matrix with fitted values
-  completeObs <- x.orig
-  completeObs[is.na(x.orig)] <- fitted.values[is.na(x.orig)]
-
-  # prepare output
-  rownames(scores) <- rownames(x)
-  colnames(scores) <- paste("PC", 1:ncol(scores), sep="")
-  rownames(loadings) <- colnames(x)
-  colnames(loadings) <- paste("PC", 1:ncol(loadings), sep="")
-  out <- list(scores=scores, rotation=as.matrix(loadings),
-              completeObs=completeObs,
-              maxcomp=maxcomp,
-              center=if(is.null(cen)) FALSE else cen,
-              scale=if(is.null(sc)) FALSE else sc,
-              sdev=apply(scores, 2, sd),
-              R2=R2,
-              eval=eval,
-              propvar=propvar)
-  class(out) <- c("nipals","prcomp")
-  return(out)
-}
-
+# nipals <- function(x, maxcomp=min(nrow(x), ncol(x)-1),
+#                     maxiter=5000,
+#                     tol=1e-6, propvar=1,
+#                     center=TRUE, scale.=FALSE, verbose=FALSE) {
+#   # Calculate principal components using NIPALS
+#   # Author: Kevin Wright
+# 
+#   # A nice summary of NIPALS is here:
+#   # http://statmaster.sdu.dk/courses/ST02/module06/index.html
+# 
+#   # This currently produces an object of class 'prcomp', but maybe it
+#   # would be better to return objects the same way that svd does???
+# 
+#   x <- as.matrix(x)
+#   x.orig <- x # Save x for replacing missing values
+#   x <- scale(x, center=center, scale=scale.)
+#   cen <- attr(x, "scaled:center")
+#   sc <- attr(x, "scaled:scale")
+#   if (any(sc == 0))
+#     stop("cannot rescale a constant/zero column to unit variance")
+# 
+#   # sum(NA, na.rm=TRUE) is 0, but we want NA
+#   sum.na <- function(x){ ifelse(all(is.na(x)), NA, sum(x, na.rm=TRUE))}
+# 
+#   n.missing <- sum(is.na(x))
+# 
+#   # Check for a column/row with all NAs
+#   col.count <- apply(x, 2, function(x) sum(!is.na(x)))
+#   if(any(col.count==0)) warning("At least one column is all NAs")
+#   row.count <- apply(x, 1, function(x) sum(!is.na(x)))
+#   if(any(row.count==0)) warning("At least one row is all NAs")
+# 
+#   # Find a starting column (with fewest number of NAs)
+#   # startingColumn <- which.max(col.count)
+#   startingColumn <- ncol(x)
+# 
+#   if(verbose >= 1) cat("Starting column: ", startingColumn, "\n")
+# 
+#   TotalSS <- sum(x*x, na.rm=TRUE)
+# 
+#   eval <- R2cum <- scores <- loadings <- NULL
+#   anotherPC <- TRUE
+#   comp <- 1
+# 
+#   while(anotherPC) {
+#     iter <- 0
+#     u <- x[,startingColumn]
+#     continue <- TRUE
+#     if(verbose >= 1) cat(paste("Calculating PC", comp, sep=""))
+# 
+#     while(continue) {
+#       iter <- iter+1
+# 
+#       # Calculate LOADINGS v=x'u, then normalize
+#       # Note x*u is column-wise multiplication
+#       v <- apply(x*u, 2, sum.na)
+#       v <- v / sqrt(sum(v*v, na.rm=TRUE))
+# 
+#       # Calculate SCORES u = xv
+#       # Cute trick: To get row-wise multiplication, use t(x)*v, then
+#       # be sure to use apply(,2,) and NOT apply(,1,)!
+#       u.old <- u
+#       u <- apply(t(x)*v, 2, sum.na)
+# 
+#       # Check convergence criteria
+#       if (iter > maxiter) stop("Exceeding ", maxiter, " iterations, quitting")
+#       if( sum((u.old-u)^2, na.rm=TRUE)<tol ) continue=FALSE
+# 
+#       if (verbose >= 1) cat(".")
+#     }
+#     if (verbose >= 1) cat("\n")
+#     
+#     # Remove the estimated principal component from x, x-uv'
+#     x <- x - (u %*% t(v))
+#     scores <- cbind(scores, u)
+#     loadings <- cbind(loadings, v)
+#     eval <- c(eval, sum(u*u))
+# 
+#     # Cumulative proportion of variance
+#     R2cum <- c(R2cum, 1 - (sum(x*x,na.rm=TRUE) / TotalSS))
+#     if(comp==maxcomp)
+#       anotherPC <- FALSE
+#     else if(R2cum[comp] >= propvar) {
+#       # Maybe I should set maxcomp=comp here?  Will the user be confused
+#       # if he requests 10 comps and only 9 are returned?
+#       maxcomp <- comp
+#       anotherPC <- FALSE
+#     } else
+#       comp <- comp + 1
+# 
+#   } # Done finding PCs
+# 
+#   # un-cumulate R2
+#   R2 <- c(R2cum[1], diff(R2cum))
+#   
+#   # re-construction of x using maxcomp principal components
+#   fitted.values <- scores[ , 1:maxcomp] %*% t(loadings[ , 1:maxcomp])
+#   if(scale.) fitted.values <- fitted.values * attr(x, "scaled:scale")
+#   if(center) fitted.values <- fitted.values + attr(x, "scaled:center")
+# 
+#   # replace missing values in the original matrix with fitted values
+#   completeObs <- x.orig
+#   completeObs[is.na(x.orig)] <- fitted.values[is.na(x.orig)]
+# 
+#   # prepare output
+#   rownames(scores) <- rownames(x)
+#   colnames(scores) <- paste("PC", 1:ncol(scores), sep="")
+#   rownames(loadings) <- colnames(x)
+#   colnames(loadings) <- paste("PC", 1:ncol(loadings), sep="")
+#   out <- list(scores=scores, rotation=as.matrix(loadings),
+#               completeObs=completeObs,
+#               maxcomp=maxcomp,
+#               center=if(is.null(cen)) FALSE else cen,
+#               scale=if(is.null(sc)) FALSE else sc,
+#               sdev=apply(scores, 2, sd),
+#               R2=R2,
+#               eval=eval,
+#               propvar=propvar)
+#   class(out) <- c("nipals","prcomp")
+#   return(out)
+# }
+# 
