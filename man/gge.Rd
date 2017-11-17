@@ -98,17 +98,23 @@ Not used for 3D biplots.}
 }
 \value{
 A list of class \code{gge} containing:
-\item{method}{Method used to calculate principal components.}
+\item{x}{The filled-in data}
+\item{x.orig}{The original data}
+\item{genCoord}{genotype coordinates}
+\item{locCoord}{loc coordinates}
+\item{blockCoord}{block coordinates}
+\item{gen.group}{If not NULL, this specifies a
+  classification of genotypes into groups.}
+\item{env.group}{If not NULL, this specifies a classification of
+  environments into groups.}
+\item{genMeans}{genotype means}
+\item{mosdat}{mosaic plot data}
+\item{R2}{variation explained by eact PC}
 \item{center}{Data centered?}
 \item{scale}{Data scaled?}
-\item{gen.group}{This is only used for plotting.  If not NULL, this specifies a
-classification of genotypes into groups.  }
-\item{env.group}{ If not NULL, this specifies a classification of
-environments into groups.  When using the formula method, then
-\code{envGroup} is the name of a column in the \code{data}.
-When using the matrix method, then \code{envGroup} must be a
-vector the same length as the number of columns in \code{data}, the contents
-of the vector contain the grouping information.  }
+\item{method}{Method used to calculate principal components.}
+\item{pctMiss}{Percent of x that is missing values}
+\item{maxPCs}{Maximum number of PCs}
 }
 \description{
 GGE and GGB biplots
@@ -122,9 +128,7 @@ before constructing the biplot.
 The singular value decomposition of \code{x} is used to calculate the
 principal components for the biplot.  Missing values are NOT allowed.
 
-The NIPALS algorithm can be used when there are missing data.
-
-The argument 'method' can be either
+The argument \code{method} can be either
 'svd' for complete-data or 'nipals' for missing-data.
 }
 \examples{
