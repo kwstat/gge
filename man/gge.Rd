@@ -158,14 +158,10 @@ if(require(agridat)){
                                c("KN","NB","PA","BJ","IL","TC", "JM","PI","AS","ID","SC","SS",
                                  "SJ","MS","MG","MM")), "Grp1", "Grp2")
   m2 <- gge(yield~gen*loc, dat2, env.group=eg, scale=FALSE)
+  plot(m2)
   biplot(m2, lab.env=TRUE, main="crossa.wheat")
   # biplot3d(m2)
 }
-
-# Average Environment Coordinate
-dat2$avg <- "Avg"
-m3 <- gge(yield~gen*loc, dat2, env.group=avg, scale=FALSE)
-biplot(m3)
 
 }
 \references{

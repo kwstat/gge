@@ -68,23 +68,23 @@ rnipals <- function(x, maxcomp=min(nrow(x), ncol(x)-1),
   
   while(anotherPC) {
     iter <- 0
-    u <- x[,startingColumn]
+    t <- x[,startingColumn]
     continue <- TRUE
     if(verbose >= 1) cat(paste("Calculating PC", comp, sep=""))
     
     while(continue) {
       iter <- iter+1
       
-      # Calculate LOADINGS v=x'u, then normalize
-      # Note x*u is column-wise multiplication
-      v <- apply(x*u, 2, sum.na)
-      v <- v / sqrt(sum(v*v, na.rm=TRUE))
+      # Calculate LOADINGS p=x't, then normalize
+      # Note x*t is column-wise multiplication
+      p <- apply(x*t, 2, sum.na)
+      p <- p / sqrt(sum(p*p, na.rm=TRUE))
       
-      # Calculate SCORES u = xv
-      # Cute trick: To get row-wise multiplication, use t(x)*v, then
+      # Calculate SCORES t = xp
+      # Cute trick: To get row-wise multiplication, use t(x)*p, then
       # be sure to use apply(,2,) and NOT apply(,1,)!
-      u.old <- u
-      u <- apply(t(x)*v, 2, sum.na)
+      t.old <- t
+      t <- apply(t(x)*p, 2, sum.na)
       
       # Check convergence criteria
       if (iter > maxiter) stop("Exceeding ", maxiter, " iterations, quitting")
