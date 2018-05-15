@@ -1,5 +1,5 @@
 # gge.R
-# Time-stamp: <18 Nov 2017 11:18:39 c:/x/rpack/gge/R/gge.r>
+# Time-stamp: <12 May 2018 11:22:59 c:/x/rpack/gge/R/gge.R>
 
 #' GGE and GGB biplots
 #' 
@@ -47,7 +47,7 @@ RedGrayBlue <- colorRampPalette(c("firebrick", "lightgray", "#375997"))
 #' 
 #' @param x A matrix or data.frame.
 #' 
-#' @param ... Other arguments (e.g. maxiter)
+#' @param ... Other arguments (e.g. maxiter, gramschmidt)
 #' 
 #' @return A list of class \code{gge} containing:
 #' \item{x}{The filled-in data}
@@ -144,7 +144,7 @@ gge.formula <- function(formula, data=NULL,
     stop("This usage of gge requires a formula AND data frame.")
 
   # previous subset/filter could leave extra levels behind
-  data = droplevels(data)
+  data <- droplevels(data)
   
   # Get character representations of all necessary variables.
   # There is probably a more R-like (obscure) way to do this, but this works.
@@ -184,7 +184,7 @@ gge.formula <- function(formula, data=NULL,
                           fun.aggregate=mean, na.rm=TRUE, value.var=.y)
   datm[is.nan(datm)] <- NA # Use NA instead of NaN
 
-  # Make gen.group and env.group to be vectors corresponding to rows/cols of datm
+  # Make gen.group and env.group to be vectors for to rows/cols of datm
   if(!is.null(gen.group)) {
     ix1 <- match(rownames(datm), data[[.gen]])
     gen.group <- data[[gen.group]][ix1]
@@ -279,7 +279,7 @@ gge.matrix <- function(x, center=TRUE, scale=TRUE,
   x.g <-  genMeans %*% t(rep(1, ncol(x)))
 
   # x.gb is the same size as x, but has the G*B effect
-  # First remove gen effects, then average by group, then expand back to size of x
+  # First remove gen effects, average by group, then expand back to size of x
   x.cc <- x - x.g # x.cc = x.orig - envmeans - genmeans
   x.grp <- NULL
 
@@ -328,7 +328,7 @@ gge.matrix <- function(x, center=TRUE, scale=TRUE,
   D <- D[1:maxcomp]
   n.gen <- nrow(x)
   
-  focus="env" # fixme: add options other focus methods
+  focus <- "env" # fixme: add options other focus methods
   
   # other biplot programs use 'v' matrix in calculating coordinates
   # but we create block coordinates, and then rotate into position
@@ -450,7 +450,7 @@ plot.gge <- function(x, main=substitute(x), ...) {
 #'
 #' @param ylab Label along axis. Default "auto" shows percent of variation explained. Use NULL to suppress.
 #' 
-#' @param cex.gen Character expansion for genotypes
+#' @param cex.gen Character expansion for genotypes, default 0.6. Use 0 to omit genotypes.
 #' 
 #' @param cex.env Character expansion for environments
 #' 
@@ -527,7 +527,7 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
 
   # add options to the subtitle
   if(is.null(subtitle)) {
-    subtitle = ""
+    subtitle <- ""
   } else {
     if(subtitle != "") subtitle <- paste0(subtitle, ", ")
     subtitle <- paste0(subtitle, "method=", x$method)
@@ -615,7 +615,7 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
 
   # use 'ratio' to scale genotype coordinates to fill environment window
   # manual adjustment is done with zoom.gen
-  genCoord = genCoord * ratio / zoom.gen
+  genCoord <-  genCoord * ratio / zoom.gen
   
   # set up plot for environment vectors
   plot(NULL, type = "n", xaxt="n", yaxt="n", xlab="", ylab="",
@@ -656,7 +656,7 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
            cex = cex.env, col = col.env[eix]) # pch = (1:n.env.grp)[eix])
   }
 
-  # No groups. Draw vector to each loc, shorten to reduce over-plotting the label
+  # No groups. Draw vector to each loc, shorten to reduce over-plotting
   if(n.env.grp == 0){
     segments(0, 0, .95*locCoord[,xcomp], .95*locCoord[,ycomp], col = col.env[1])
   }
@@ -665,7 +665,8 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
   if(n.env.grp >= 1) {
     # Draw solid-line part of the group vector
     ubc <- blockCoord[groupNames,,drop=FALSE] # Get unique row for each group
-    segments(0, 0, ubc[ , xcomp], ubc[ , ycomp], lwd = 2, col=col.env) # no 'eix'
+    segments(0, 0, ubc[ , xcomp], ubc[ , ycomp], 
+             lwd = 2, col=col.env) # no 'eix'
     # End point
     # points(ubc[ , c(xcomp,ycomp)], pch = 16, col=col.env) # no 'eix'
     # The 'xy' variable extends the vector to the edge of plot
@@ -680,7 +681,7 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
   
   # One group. Add dashed line group vector in opposite direction for AEC
   if(n.env.grp == 1){
-    ubc = -1 * ubc 
+    ubc <- -1 * ubc 
     xy <- extend( ubc[ , xcomp], ubc[ , ycomp], xlime, ylime)
     segments(0, 0, .90*xy$x2, .90*xy$y2, lty = 3, col=col.env)
   }
@@ -704,24 +705,26 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
   # AEC = Average Environment Coordinate
   # One env group. Draw genotype perpendicular projection onto AEC
   if(n.env.grp == 1){
-    m1 = blockCoord[1,ycomp] / blockCoord[1,xcomp] # slope of AEC line
+    m1 <- blockCoord[1,ycomp] / blockCoord[1,xcomp] # slope of AEC line
     # See formula here: https://stackoverflow.com/questions/1811549
     # x1=0, y1=0, x2=1, y2=m1, x3 & y3 are genCoord
     # k = (m1 * x3 - y3) / (m1^2 + 1)
     # x4 = x3 - k * m1
     # y4 = y3 + k
-    k = (m1 * genCoord[,xcomp] - genCoord[,ycomp])
-    x4 = genCoord[,xcomp] - k * m1
-    y4 = genCoord[,ycomp] + k
+    k <- (m1 * genCoord[,xcomp] - genCoord[,ycomp])
+    x4 <- genCoord[,xcomp] - k * m1
+    y4 <- genCoord[,ycomp] + k
     segments(genCoord[,xcomp], genCoord[,ycomp], x4, y4, col="gray80")
   }
   
   # Now overlay genotype labels and/or points
-  if(n.gen.grp < 2) {
-    text(genCoord[, c(xcomp, ycomp)], rownames(genCoord), cex=cex.gen, col=col.gen)
-  } else {
+  if(cex.gen > 0 & n.gen.grp < 2) {
+    text(genCoord[, c(xcomp, ycomp)], rownames(genCoord), 
+         cex=cex.gen, col=col.gen)
+  } else if (cex.gen > 0 & n.gen.grp >= 2) {
     gix <- as.numeric(as.factor(gen.group))
-    points(genCoord[, c(xcomp, ycomp)], cex=cex.gen, col=col.gen[gix], pch=pch.gen[gix])
+    points(genCoord[, c(xcomp, ycomp)], 
+           cex=cex.gen, col=col.gen[gix], pch=pch.gen[gix])
     text(genCoord[, c(xcomp, ycomp)], paste(" ",rownames(genCoord)),
          cex=cex.gen, col=col.gen[gix], adj=c(0,.5))
   }
@@ -749,7 +752,7 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
       ynew <- m2 * xnew
       # Draw to edge of genotype box
       xy <- extend(xnew, ynew, xlimg, ylimg)
-      # Now the extended dashed-line part of the group vector.  Extend 10% to edge.
+      # Extended dashed-line part of the group vector.  Extend 10% to edge.
       segments(0, 0, 1.1*xy$x2, 1.1*xy$y2, lty = 2, col="gray60")
     }
   }
@@ -767,7 +770,6 @@ biplot3d <- function(x, ...) UseMethod("biplot3d", x)
 
 #' @rdname gge
 #' @method biplot3d gge
-#' @import rgl
 #' @export
 biplot3d.gge <- function(x,
                          cex.gen=0.6, cex.env=.5,
@@ -803,8 +805,8 @@ biplot3d.gge <- function(x,
   }
 
   # Set up device
-  open3d()
-  bg3d(color="white")
+  rgl::open3d()
+  rgl::bg3d(color="white")
 
   xcomp <- comps[1] # Component for x axis
   ycomp <- comps[2] # Component for y axis
@@ -827,12 +829,12 @@ biplot3d.gge <- function(x,
   } else eix <- as.numeric(factor(env.group))
 
   if(lab.env==TRUE){
-    text3d(locCoord[,xcomp], locCoord[,ycomp], locCoord[,zcomp],
-           texts=rownames(locCoord),
-           cex=cex.env, col=col.env[eix], alpha=0.7)
+    rgl::text3d(locCoord[,xcomp], locCoord[,ycomp], locCoord[,zcomp],
+                texts=rownames(locCoord),
+                cex=cex.env, col=col.env[eix], alpha=0.7)
   } else {
-    spheres3d(locCoord[,xcomp], locCoord[,ycomp], locCoord[,zcomp],
-              radius=0.01*diff(xlim), col=col.env[eix], alpha=0.5)
+    rgl::spheres3d(locCoord[,xcomp], locCoord[,ycomp], locCoord[,zcomp],
+                   radius=0.01*diff(xlim), col=col.env[eix], alpha=0.5)
   }
 
   # Plot the environments (points OR labels, but not both).
@@ -848,56 +850,59 @@ biplot3d.gge <- function(x,
   col.axis <- 'black'
 
   # Draw axes and label
-  lines3d(xlim, rep(ylim[1],2), rep(zlim[1], 2),  col=col.axis, alpha=0.5)
-  text3d(xlim[2], ylim[1], zlim[1],
-         texts=xlab, cex=cex.env, col=col.axis, alpha=0.5)
-  lines3d(rep(xlim[1],2), ylim, rep(zlim[1], 2), col=col.axis, alpha=0.5)
-  text3d(xlim[1], ylim[2], zlim[1],
-         texts=ylab, cex=cex.env, col=col.axis, alpha=0.5)
-  lines3d(rep(xlim[1],2), rep(ylim[1],2), zlim, col=col.axis, alpha=0.5)
-  text3d(xlim[1], ylim[1], zlim[2],
-         texts=zlab, cex=cex.env, col=col.axis, alpha=0.5)
+  rgl::lines3d(xlim, rep(ylim[1],2), rep(zlim[1], 2),  col=col.axis, alpha=0.5)
+  rgl::text3d(xlim[2], ylim[1], zlim[1],
+              texts=xlab, cex=cex.env, col=col.axis, alpha=0.5)
+  rgl::lines3d(rep(xlim[1],2), ylim, rep(zlim[1], 2), col=col.axis, alpha=0.5)
+  rgl::text3d(xlim[1], ylim[2], zlim[1],
+              texts=ylab, cex=cex.env, col=col.axis, alpha=0.5)
+  rgl::lines3d(rep(xlim[1],2), rep(ylim[1],2), zlim, col=col.axis, alpha=0.5)
+  rgl::text3d(xlim[1], ylim[1], zlim[2],
+              texts=zlab, cex=cex.env, col=col.axis, alpha=0.5)
 
   # Add vectors (and group labels, if needed)
   if(n.env.grp == 0) {
     # Draw vector to each loc
     apply(cbind(locCoord[,c(xcomp, ycomp, zcomp)], col.env[1]), 1,
           function(xx) {
-            segments3d(c(0, xx[1]), c(0, xx[2]), c(0, xx[3]),
-                       col=xx[4], alpha=0.5) })
+            rgl::segments3d(c(0, xx[1]), c(0, xx[2]), c(0, xx[3]),
+                            col=xx[4], alpha=0.5) })
   } else {
     # Short residual vectors from group mean to each loc
     if(res.vec) {
-      apply(cbind(blockCoord[ , c(xcomp,ycomp,zcomp)], locCoord[ , c(xcomp,ycomp,zcomp)], col.env[eix]), 1,
+      apply(cbind(blockCoord[ , c(xcomp,ycomp,zcomp)],
+                  locCoord[ , c(xcomp,ycomp,zcomp)],
+                  col.env[eix]), 1,
             function(xx) {
-              segments3d(c(xx[1], xx[4]), c(xx[2], xx[5]), c(xx[3], xx[6]),
-                         col = xx[7], alpha=0.5) })
+              rgl::segments3d(c(xx[1], xx[4]), c(xx[2], xx[5]), c(xx[3], xx[6]),
+                              col = xx[7], alpha=0.5) })
     }
 
     # Draw solid-line part of the group vector
     apply(cbind(blockCoord[,c(xcomp, ycomp, zcomp)], col.env[eix]), 1,
           function(xx) {
-            segments3d(c(0, xx[1]), c(0, xx[2]), c(0, xx[3]),
-                       col=xx[4], alpha=0.5, lwd=4) })
+            rgl::segments3d(c(0, xx[1]), c(0, xx[2]), c(0, xx[3]),
+                            col=xx[4], alpha=0.5, lwd=4) })
     
     # Origin is a black dot
-    spheres3d(0,0,0, 
-              radius=0.01*diff(xlim),
-              col="black", alpha=0.5)
+    rgl::spheres3d(0,0,0, 
+                   radius=0.01*diff(xlim), col="black", alpha=0.5)
     
     # Add group label
-    text3d(blockCoord[, xcomp], blockCoord[, ycomp], blockCoord[, zcomp],
-           texts=rownames(blockCoord),
-           cex=cex.env*1.5, col=col.env[eix], alpha=0.9)
+    rgl::text3d(blockCoord[, xcomp], blockCoord[, ycomp], blockCoord[, zcomp],
+                texts=rownames(blockCoord),
+                cex=cex.env*1.5, col=col.env[eix], alpha=0.9)
   }
 
   # Overlay the genotype names (re-scale to fill the graph)
   genRange <- expand.range(range(genCoord[, c(xcomp,ycomp,zcomp)]))
   ratio <- min(xlim/genRange) * zoom.gen # Why only xlim?
-  text3d(genCoord[,xcomp]*ratio, genCoord[,ycomp]*ratio, genCoord[,zcomp]*ratio,
-         texts=rownames(genCoord),
-         cex=cex.gen, color=col.gen, alpha=0.5)
+  if(cex.gen > 0) {
+    rgl::text3d(genCoord[,xcomp]*ratio, genCoord[,ycomp]*ratio, genCoord[,zcomp]*ratio,
+                texts=rownames(genCoord),
+                cex=cex.gen, color=col.gen, alpha=0.5)
+  }
 
-  return()
+  invisible()
 }
 

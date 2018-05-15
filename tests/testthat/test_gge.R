@@ -1,5 +1,5 @@
 # test_gge.R
-# Time-stamp: <16 Nov 2017 19:48:01 c:/x/rpack/gge/tests/testthat/test_gge.R>
+# Time-stamp: <12 May 2018 11:07:10 c:/x/rpack/gge/tests/testthat/test_gge.R>
 
 context("test_gge.R")
 
@@ -29,17 +29,17 @@ bar <- transform(lattice::barley, env=paste0(site,year))
 
 test_that("minimum matrix size", {
   x33 <- matrix(c(2.2,3.1,4.0, 2.5,1.9,2.3, 1.5,2.7,2.8), ncol=3)
-  m33 = gge(x33)
+  m33 <- gge(x33)
   biplot(m33) # ok
   
-  x32 = x33[,1:2] # 2 columns
-  m32 = gge(x32)
+  x32 <- x33[,1:2] # 2 columns
+  m32 <- gge(x32)
   biplot(m32) # ok
 
-  x31 = x33[,1,drop=FALSE] # 1 column
+  x31 <-  x33[,1,drop=FALSE] # 1 column
   expect_error(gge(x31)) # fails
   
-  x23 = x33[1:2,] # 2 rows
+  x23 <- x33[1:2,] # 2 rows
   expect_error(gge(x23)) # fails
 })
 
@@ -75,9 +75,10 @@ test_that("nipals",{
 # ----------------------------------------------------------------------------
 
 test_that("Checking arguments of biplot", {
-  m11 = gge(mat1)
+  m11 <- gge(mat1)
   plot(m11)
-  m21 = gge(mat2)
+
+  m21 <- gge(mat2)
   plot(m21)
 
   biplot(m11)
@@ -88,6 +89,7 @@ test_that("Checking arguments of biplot", {
   biplot(m11, xlab=NULL, ylab=NULL)
   biplot(m11, xlab="Axis 1", ylab="Axis 2")
   biplot(m11, main=NULL, subtitle=NULL) # suppress title & subtitle
+  biplot(m11, cex.gen=0)
   biplot(m11, cex.gen=2)
   biplot(m11, cex.env=2)
   biplot(m11, col.gen="blue")
@@ -157,6 +159,7 @@ test_that("Polygon hull.  Yan 2006 fig 12", {
 
 
 test_that("rgl works", {
+expect_silent({
   #skip_on_cran()
   require(agridat)
   dat <- yan.winterwheat
@@ -165,6 +168,7 @@ test_that("rgl works", {
   # Tests for 3D
   biplot3d(m2)
   biplot3d(m2, cex.gen=1)
+  # biplot3d(m2, cex.gen=0) # omit genotype names
   biplot3d(m2, cex.env=1)
   biplot3d(m2, col.gen="red")
   biplot3d(m2, col.env=c("red","blue")) # should ignore blue
@@ -183,6 +187,7 @@ test_that("rgl works", {
   m4 <- gge(yield ~ gen*env, data=dat, env.group=eg, scale=FALSE)
   biplot3d(m4)  
 })
+})
 
 
 # check par() settings are restored
@@ -199,7 +204,7 @@ if(FALSE) {
   rownames(B) <- c("G1","G2","G3","G4","G5","G6","G7")
   colnames(B) <- c("E1","E2","E3","E4","E5")
       
-  m1 = gge(B)
+  m1 <- gge(B)
   plot(m1)
   par()$pty
   # "m"

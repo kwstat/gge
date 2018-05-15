@@ -6,6 +6,12 @@ New function `ggbiplot()` function using `ggplot2` graphics to draw the biplot.
 
 Average Environment Coordinate
 
+# gge 1.4 - May 2018
+
+Use `cex.gen=0` to omit genotype names.
+
+On some Windows machines, `library(rgl)` crashes R, perhaps because of a DLL conflict with Windows. Removed `@import rgl` so that `rgl` is not loaded by default, and now `biplot3d` uses calls like `rgl::text3d`.
+
 # gge 1.3 - Dec 2017
 
 The `nipals()` function using C++ code has been removed.

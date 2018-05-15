@@ -1,3 +1,21 @@
+# Version 1.4
+
+## test environments
+
+local R 3.5.0 on Windows 7
+
+win-builder release
+
+win-builder devel
+
+## R CMD check results
+
+There were no NOTEs, ERRORs, or WARNINGs.
+
+## Downstream dependencies
+
+No ERRORs in agridat, GGEBiplots.
+
 # Version 1.3
 
 ## test environments
