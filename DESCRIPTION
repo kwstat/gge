@@ -3,11 +3,13 @@ Title: Genotype Plus Genotype-by-Environment Biplots
 Version: 1.4
 Date: 2018-05-12
 Authors@R: c(
-  person("Kevin","Wright", email="kw.stat@gmail.com", comment=c(ORCID = "0000-0002-0617-8673"), role=c("aut","cre")),
+  person("Kevin","Wright", email="kw.stat@gmail.com", 
+  comment=c(ORCID = "0000-0002-0617-8673"), role=c("aut","cre")),
   person("Jean-Louis","Laffont", role="aut")
   )
 Description: Create biplots for GGE (genotype plus genotype-by-environment) and
-    GGB (genotype plus genotype-by-block-of-environments) models.
+    GGB (genotype plus genotype-by-block-of-environments) models. 
+    See Laffont et al. (2013) <doi:10.2135/cropsci2013.03.0178>.
 Type: Package
 Imports:
   nipals,

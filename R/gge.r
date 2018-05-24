@@ -76,7 +76,7 @@ RedGrayBlue <- colorRampPalette(c("firebrick", "lightgray", "#375997"))
 #' Jean-Louis Laffont, Kevin Wright and Mohamed Hanafi (2013).
 #' Genotype + Genotype x Block of Environments (GGB) Biplots.
 #' \emph{Crop Science}, 53, 2332-2341.
-#' \url{https://doi.org/10.2135/cropsci2013.03.0178}.
+#' \doi{10.2135/cropsci2013.03.0178}.
 #' 
 #' Kroonenberg, Pieter M. (1997).
 #' \emph{Introduction to Biplots for GxE Tables},

@@ -4,6 +4,7 @@ author: "Kevin Wright"
 date: "`r Sys.Date()`"
 bibliography: gge.bib
 output:
+  rmarkdown::html_vignette: default
   html_document:
     highlight: tango
 vignette: >
