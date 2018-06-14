@@ -152,10 +152,5 @@ As with all biplots, the environment vectors can be arbitrarily scaled so that t
 The algorithm that physically centers the biplot and scales it on the page is not perfect and has opportunities for improvement.
 
 
-## Session info
-
-```{r session}
-sessionInfo()
-```
 
 ## References

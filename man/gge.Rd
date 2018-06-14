@@ -55,7 +55,8 @@ biplot3d(x, ...)
 
 \item{comps}{Principal components to use for the biplot. Default c(1,2).}
 
-\item{method}{method used to find principal component directions}
+\item{method}{method used to find principal component directions. Either
+"svd" or "nipals".}
 
 \item{main}{Title, by default the name of the data. Use NULL to suppress the title.}
 
@@ -154,10 +155,7 @@ if(require(agridat)){
   # Specify env.group as column in data frame
   data(crossa.wheat)
   dat2 <- crossa.wheat
-  dat2$eg <- ifelse(is.element(dat2$loc,
-                               c("KN","NB","PA","BJ","IL","TC", "JM","PI","AS","ID","SC","SS",
-                                 "SJ","MS","MG","MM")), "Grp1", "Grp2")
-  m2 <- gge(yield~gen*loc, dat2, env.group=eg, scale=FALSE)
+  m2 <- gge(yield~gen*loc, dat2, env.group=locgroup, scale=FALSE)
   plot(m2)
   biplot(m2, lab.env=TRUE, main="crossa.wheat")
   # biplot3d(m2)

@@ -1,5 +1,5 @@
 # gge.R
-# Time-stamp: <12 May 2018 11:22:59 c:/x/rpack/gge/R/gge.R>
+# Time-stamp: <14 Jun 2018 12:39:30 c:/x/rpack/gge/R/gge.R>
 
 #' GGE and GGB biplots
 #' 
@@ -110,10 +110,7 @@ RedGrayBlue <- colorRampPalette(c("firebrick", "lightgray", "#375997"))
 #'   # Specify env.group as column in data frame
 #'   data(crossa.wheat)
 #'   dat2 <- crossa.wheat
-#'   dat2$eg <- ifelse(is.element(dat2$loc,
-#'                                c("KN","NB","PA","BJ","IL","TC", "JM","PI","AS","ID","SC","SS",
-#'                                  "SJ","MS","MG","MM")), "Grp1", "Grp2")
-#'   m2 <- gge(yield~gen*loc, dat2, env.group=eg, scale=FALSE)
+#'   m2 <- gge(yield~gen*loc, dat2, env.group=locgroup, scale=FALSE)
 #'   plot(m2)
 #'   biplot(m2, lab.env=TRUE, main="crossa.wheat")
 #'   # biplot3d(m2)
@@ -147,7 +144,7 @@ gge.formula <- function(formula, data=NULL,
   data <- droplevels(data)
   
   # Get character representations of all necessary variables.
-  # There is probably a more R-like (obscure) way to do this, but this works.
+  # There is probably a more R-like (tidyeval?) way to do this. Oh well.
   vars <- all.vars(formula)
   # Check for valid names (in the data)
   if(!all(is.element(vars,names(data))))
@@ -204,7 +201,8 @@ gge.formula <- function(formula, data=NULL,
 #' 
 #' @param scale If TRUE, scale values for each environment
 #' 
-#' @param method method used to find principal component directions
+#' @param method method used to find principal component directions. Either
+#' "svd" or "nipals".
 #' 
 #' @rdname gge
 #' 
@@ -331,7 +329,7 @@ gge.matrix <- function(x, center=TRUE, scale=TRUE,
   focus <- "env" # fixme: add options other focus methods
   
   # other biplot programs use 'v' matrix in calculating coordinates
-  # but we create block coordinates, and then rotate into position
+  # but we create block coordinates, and then use U to rotate into position
   #browser()
   # commented code below comes from bpca
   # https://github.com/cran/bpca/blob/master/R/bpca.default.R
@@ -349,7 +347,11 @@ gge.matrix <- function(x, center=TRUE, scale=TRUE,
   rownames(genCoord) <- rownames(x.orig)
   rownames(locCoord) <- colnames(x.orig)
   rownames(blockCoord) <- env.group
-
+  # nipals results have column names, but svd does not, so tidy up
+  colnames(genCoord) <- paste0("PC", 1:maxcomp)
+  colnames(locCoord) <- paste0("PC", 1:maxcomp)
+  colnames(blockCoord) <- paste0("PC", 1:maxcomp)
+  
   ret <- list(x=x, x.orig=x.orig,
               genCoord=genCoord, locCoord=locCoord, blockCoord=blockCoord,
               gen.group=gen.group, env.group=env.group,
@@ -369,19 +371,21 @@ expand.range <- function(xx) {
 }
 
 extend <- function(x,y,xlim,ylim){
-  # extend vectors(0,0,x,y) to the edge of the box defined by (xlim,ylim)
-  # This box has four 'quadrants' bottom,right,top,left.
-  # The 'right' quadrant is a triangle bounded by:
+  # Extend the line (0,0)-(x,y) to the edge of the box defined by (xlim,ylim)
+  # This box has four 'quadrants' bottom,right,top,left. For example, 
+  # the 'right' quadrant is a triangle bounded by the points:
   # (0, bottom-right corner, top-right corner)
 
-  xmin <- xlim[1]; xmax <- xlim[2]
-  ymin <- ylim[1]; ymax <- ylim[2]
+  xmin <- xlim[1]
+  xmax <- xlim[2]
+  ymin <- ylim[1]
+  ymax <- ylim[2]
 
-  tr <- atan2(ymax, xmax) # Angle to top-right corner
+  tr <- atan2(ymax, xmax) # Angle of line from 0 to top-right corner
   tl <- atan2(ymax, xmin) #   top-left
   bl <- atan2(ymin, xmin) #   bottom-left
   br <- atan2(ymin, xmax) #   bottom-right
-  phi <- atan2(y, x)      # Angle to each point
+  phi <- atan2(y, x)      # Angle of line to each point
 
   # Instead of many "if-else" terms, just sum(quadrant_indicator * ordinate)
   x2 <- (bl < phi & phi <= br) * (ymin*x/y) + # bottom edge
@@ -746,8 +750,8 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
         xnew <- x11
       } else {
         m1 <- (y22-y11) / (x22-x11)        # Slope of polygon line
-        m2 <- -1/m1                        # Slope of perp line
-        xnew <- (m1 * x11 - y11) / (m1-m2) # Point on polygon line   
+        m2 <- -1/m1                        # Slope of perpendicular line
+        xnew <- (m1 * x11 - y11) / (m1-m2) # Point of intersection of the two lines
       }
       ynew <- m2 * xnew
       # Draw to edge of genotype box
