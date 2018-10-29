@@ -1,5 +1,5 @@
 # gge.R
-# Time-stamp: <14 Jun 2018 12:39:30 c:/x/rpack/gge/R/gge.R>
+# Time-stamp: <25 Oct 2018 15:00:25 c:/x/rpack/gge/R/gge.R>
 
 #' GGE and GGB biplots
 #' 
@@ -325,9 +325,9 @@ gge.matrix <- function(x, center=TRUE, scale=TRUE,
   U <- U[ , 1:maxcomp]
   D <- D[1:maxcomp]
   n.gen <- nrow(x)
-  
+
   focus <- "env" # fixme: add options other focus methods
-  
+
   # other biplot programs use 'v' matrix in calculating coordinates
   # but we create block coordinates, and then use U to rotate into position
   #browser()
@@ -342,7 +342,7 @@ gge.matrix <- function(x, center=TRUE, scale=TRUE,
   }
 
   locCoord <- blockCoord + resCoord
-  
+
   # completeObs matrix lacks rownames ?
   rownames(genCoord) <- rownames(x.orig)
   rownames(locCoord) <- colnames(x.orig)
@@ -351,7 +351,7 @@ gge.matrix <- function(x, center=TRUE, scale=TRUE,
   colnames(genCoord) <- paste0("PC", 1:maxcomp)
   colnames(locCoord) <- paste0("PC", 1:maxcomp)
   colnames(blockCoord) <- paste0("PC", 1:maxcomp)
-  
+
   ret <- list(x=x, x.orig=x.orig,
               genCoord=genCoord, locCoord=locCoord, blockCoord=blockCoord,
               gen.group=gen.group, env.group=env.group,
@@ -363,8 +363,13 @@ gge.matrix <- function(x, center=TRUE, scale=TRUE,
   return(ret)
 }
 
-expand.range <- function(xx) { 
-  # make sure the range includes origin
+expand.range <- function(xx) {
+  # make sure the range of xx includes 0
+  # xx is an object coming from range(), so xx[1] < xx[2]
+  # expand.range(c(-2,-1)) = -2, 1
+  # expand.range(c(-2,2))  = -2  2
+  # expand.range(c(1,2))   = -1  2
+
   if(xx[1] > 0) xx[1] <-  - xx[1]
   else if(xx[2] < 0) xx[2] <-  - xx[2]
   return(xx)

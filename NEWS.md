@@ -18,7 +18,7 @@ The `nipals()` function using C++ code has been removed.
 
 The `rnipals()` function has been removed. 
 
-The `gge` package now imports the `nipals` package.
+The `gge` package now imports the `nipals` package, which is new.
 
 # gge 1.2 - May 2017
 
