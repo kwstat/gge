@@ -1,7 +1,5 @@
 # test_gge.R
-# Time-stamp: <12 May 2018 11:07:10 c:/x/rpack/gge/tests/testthat/test_gge.R>
-
-context("test_gge.R")
+# Time-stamp: <23 Apr 2019 15:01:35 c:/x/rpack/gge/tests/testthat/test_gge.R>
 
 require(gge)
 
@@ -166,6 +164,7 @@ expect_silent({
   m2 <- gge(yield ~ gen*env, data=dat, scale=FALSE)
   
   # Tests for 3D
+  require(rgl)
   biplot3d(m2)
   biplot3d(m2, cex.gen=1)
   # biplot3d(m2, cex.gen=0) # omit genotype names
@@ -185,7 +184,8 @@ expect_silent({
     match(dat$env, c("BH93","EA93","HW93","ID93","KE93","NN93","OA93","RN93","WP93"))]
   
   m4 <- gge(yield ~ gen*env, data=dat, env.group=eg, scale=FALSE)
-  biplot3d(m4)  
+  biplot3d(m4)
+  while (rgl.cur() > 0) { rgl.close() }
 })
 })
 

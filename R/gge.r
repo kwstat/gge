@@ -1,5 +1,5 @@
 # gge.R
-# Time-stamp: <25 Oct 2018 15:00:25 c:/x/rpack/gge/R/gge.R>
+# Time-stamp: <29 Apr 2019 22:50:28 c:/x/rpack/gge/R/gge.R>
 
 #' GGE and GGB biplots
 #' 
@@ -181,7 +181,7 @@ gge.formula <- function(formula, data=NULL,
                           fun.aggregate=mean, na.rm=TRUE, value.var=.y)
   datm[is.nan(datm)] <- NA # Use NA instead of NaN
 
-  # Make gen.group and env.group to be vectors for to rows/cols of datm
+  # Make gen.group and env.group to be vectors for the rows/cols of datm
   if(!is.null(gen.group)) {
     ix1 <- match(rownames(datm), data[[.gen]])
     gen.group <- data[[gen.group]][ix1]
@@ -330,7 +330,7 @@ gge.matrix <- function(x, center=TRUE, scale=TRUE,
 
   # other biplot programs use 'v' matrix in calculating coordinates
   # but we create block coordinates, and then use U to rotate into position
-  #browser()
+  # browser()
   # commented code below comes from bpca
   # https://github.com/cran/bpca/blob/master/R/bpca.default.R
   if(focus=="env"){
@@ -461,11 +461,13 @@ plot.gge <- function(x, main=substitute(x), ...) {
 #' 
 #' @param cex.gen Character expansion for genotypes, default 0.6. Use 0 to omit genotypes.
 #' 
-#' @param cex.env Character expansion for environments
+#' @param cex.env Character expansion for environment labels.
 #' 
-#' @param col.gen Color for genotypes
+#' @param col.gen Color for genotype labels.  May be a single color for all genotypes,
+#' or a vector of colors for each genotype.
 #' 
-#' @param col.env Color for environments
+#' @param col.env Color for environments. May be a single color for all environments,
+#' or a vector of colors for each environment.
 #' 
 #' @param pch.gen Plot character for genotypes
 #' 
@@ -545,6 +547,7 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
     subtitle <- paste0(subtitle, ", missing: ", round(pctMiss*100,1), "%")
   }
 
+  # 
   # if the user did not give enough environment vector colors, add more
   if(n.env.grp > length(col.env)) {
     col.env <- c(col.env, "blue","black","purple","darkgreen", "red",

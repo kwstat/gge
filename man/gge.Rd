@@ -5,7 +5,6 @@
 \alias{gge}
 \alias{package-gge}
 \alias{gge-package}
-\alias{gge}
 \alias{gge.formula}
 \alias{gge.matrix}
 \alias{plot.gge}
@@ -19,8 +18,9 @@ gge(x, ...)
 \method{gge}{formula}(formula, data = NULL, gen.group = NULL,
   env.group = NULL, ...)
 
-\method{gge}{matrix}(x, center = TRUE, scale = TRUE, gen.group = NULL,
-  env.group = NULL, comps = c(1, 2), method = "svd", ...)
+\method{gge}{matrix}(x, center = TRUE, scale = TRUE,
+  gen.group = NULL, env.group = NULL, comps = c(1, 2),
+  method = "svd", ...)
 
 \method{plot}{gge}(x, main = substitute(x), ...)
 
@@ -68,11 +68,13 @@ biplot3d(x, ...)
 
 \item{cex.gen}{Character expansion for genotypes, default 0.6. Use 0 to omit genotypes.}
 
-\item{cex.env}{Character expansion for environments}
+\item{cex.env}{Character expansion for environment labels.}
 
-\item{col.gen}{Color for genotypes}
+\item{col.gen}{Color for genotype labels.  May be a single color for all genotypes,
+or a vector of colors for each genotype.}
 
-\item{col.env}{Color for environments}
+\item{col.env}{Color for environments. May be a single color for all environments,
+or a vector of colors for each environment.}
 
 \item{pch.gen}{Plot character for genotypes}
 
@@ -118,8 +120,6 @@ A list of class \code{gge} containing:
 \item{maxPCs}{Maximum number of PCs}
 }
 \description{
-GGE and GGB biplots
-
 Fit a GGE (genotype + genotype * environment) model and display the results.
 }
 \details{

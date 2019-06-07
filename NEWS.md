@@ -6,65 +6,67 @@ New function `ggbiplot()` function using `ggplot2` graphics to draw the biplot.
 
 Average Environment Coordinate
 
-# gge 1.4 - May 2018
+Bootstrap testing for PCs (Forkman 2019 paper)
 
-Use `cex.gen=0` to omit genotype names.
+# gge 1.4 (15 May 2018)
 
-On some Windows machines, `library(rgl)` crashes R, perhaps because of a DLL conflict with Windows. Removed `@import rgl` so that `rgl` is not loaded by default, and now `biplot3d` uses calls like `rgl::text3d`.
+* Use `cex.gen=0` to omit genotype names.
 
-# gge 1.3 - Dec 2017
+* On some Windows machines, `library(rgl)` crashes R, perhaps because of a DLL conflict with Windows. Removed `@import rgl` so that `rgl` is not loaded by default, and now `biplot3d` uses calls like `rgl::text3d`.
 
-The `nipals()` function using C++ code has been removed.
+# gge 1.3 (14 Dec 2017)
 
-The `rnipals()` function has been removed. 
+* The `nipals()` function using C++ code has been removed.
 
-The `gge` package now imports the `nipals` package, which is new.
+* The `rnipals()` function has been removed.
 
-# gge 1.2 - May 2017
+* The `gge` package now imports the `nipals` package, which is new.
 
-New function `nipals()` for finding principal components using C++.  Code from `pcaMethods` package. (GPL-3 license.)
+# gge 1.2 (25 May 2017)
 
-New function `rnipals()` for finding principal components in R.
+* New function `nipals()` for finding principal components using C++.  Code from `pcaMethods` package.
 
-New function `biplot3d()` to draw 3d biplots using `rgl` package.
+* New function `rnipals()` for finding principal components in R.
 
-Modifed `main`, `subtitle`, `xlab`, `ylab` arguments to allow removal.
+* New function `biplot3d()` to draw 3d biplots using `rgl` package.
 
-Changed `title` argument to `main` for consistency with other packages.
+* Modifed `main`, `subtitle`, `xlab`, `ylab` arguments to allow removal.
 
-Now using `testthat` and `covr` packages.
+* Changed `title` argument to `main` for consistency with other packages.
 
-Added package logo on github.
+* Now using `testthat` and `covr` packages.
 
-# gge 1.1 - Oct 2016
+* Added package logo on github.
 
-Added zoom.gen, zoom.env arguments to `biplot()`for M.Zoric.
+# gge 1.1 (8 Oct 2016)
 
-Moved tests to tests/gge_tests.R
+* Added `zoom.gen` and `zoom.env` arguments to `biplot()` for  M.Zoric.
 
-# gge 1.0 - Dec 2015
+* Moved tests to `tests/gge_tests.R`
 
-Package forked and split off from agridat package.
+# gge 1.0 (14 Dec 2015)
 
-Added origin/hull arguments to `biplot()`.
+* Package `gge` is split off from `agridat` package.
 
-# gge 0.1 - 2013
+* Added `origin`, `hull` arguments to `biplot()`.
 
-Added `gge()` to agridat package.
+# gge 0.1 (2013)
 
-# gge 0.0 - May 2004
+* Added `gge()` to agridat package.
 
-Created function `gge()` to fit and plot GGE biplots.
+# gge 0.0 (May 2004)
+
+* Created function `gge()` to fit and plot GGE biplots.
 
 ## A history of NIPALS functions
 
-2007. Created `nipals()` based on `pcaMethods::nipalsPca()`.  Modified the function for faster execution and submitted a patch back to `pcaMethods`.
+1. (2007) Created `nipals()` based on `pcaMethods::nipalsPca()`.  Modified the function for faster execution and submitted a patch back to `pcaMethods`.
 
-2010. Henning Redestig created a C++ version of NIPALS for the `pcaMethods` package.
+2. (2010) Henning Redestig created a C++ version of NIPALS for the `pcaMethods` package.
 
-2017. The `gge::nipals()` R function is re-named `rnipals()`, and a new `nipals()` function is created, based on the C++ code in `pcaMethods`. Released gge version 1.2.
+3. (2017) The `gge::nipals()` R function is re-named `rnipals()`, and a new `nipals()` function is created, based on the C++ code in `pcaMethods`. Released gge version 1.2.
 
-2017. Discovered that `mixOmics::nipals()` is a pure R function that is faster than the C++ version, so `gge::nipals()` was re-written into a pure R function. The C++ version was removed from the `gge` package. 
+4. (2017) Discovered that `mixOmics::nipals()` is a pure R function that is faster than the C++ version, so `gge::nipals()` was re-written into a pure R function. The C++ version was removed from the `gge` package. 
 
-The `gge::nipals` function is moved to a new package, `nipals::nipals`. The function is optimized for performance, improved to better handle missing values and to orthogonalize the principal components. 
+5. The `gge::nipals` function is moved to a new package, `nipals::nipals`. The function is optimized for performance, improved to better handle missing values and to orthogonalize the principal components. 
 
