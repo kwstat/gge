@@ -22,7 +22,8 @@ Suggests:
   testthat
 License: GPL-3
 LazyData: yes
-URL: https://github.com/kwstat/gge
+URL: http://kwstat.github.io/gge/
 BugReports: https://github.com/kwstat/gge/issues
 VignetteBuilder: knitr
 RoxygenNote: 6.1.1
+Encoding: UTF-8
