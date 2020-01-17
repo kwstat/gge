@@ -826,7 +826,7 @@ biplot3d.gge <- function(x,
 
   # Axis labels
   labs <- paste("PC ", c(xcomp, ycomp, zcomp),
-                  " (", round(100*R2[c(xcomp,ycomp)],0), "% TSS)", sep="")
+                  " (", round(100*R2[c(xcomp,ycomp,zcomp)],0), "% TSS)", sep="")
   xlab <- labs[1]
   ylab <- labs[2]
   zlab <- labs[3]

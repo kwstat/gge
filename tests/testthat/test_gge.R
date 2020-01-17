@@ -1,5 +1,5 @@
 # test_gge.R
-# Time-stamp: <23 Apr 2019 15:01:35 c:/x/rpack/gge/tests/testthat/test_gge.R>
+# Time-stamp: <07 Jan 2020 09:13:39 c:/x/rpack/gge/tests/testthat/test_gge.R>
 
 require(gge)
 
@@ -157,36 +157,40 @@ test_that("Polygon hull.  Yan 2006 fig 12", {
 
 
 test_that("rgl works", {
-expect_silent({
-  #skip_on_cran()
-  require(agridat)
-  dat <- yan.winterwheat
-  m2 <- gge(yield ~ gen*env, data=dat, scale=FALSE)
   
-  # Tests for 3D
-  require(rgl)
-  biplot3d(m2)
-  biplot3d(m2, cex.gen=1)
-  # biplot3d(m2, cex.gen=0) # omit genotype names
-  biplot3d(m2, cex.env=1)
-  biplot3d(m2, col.gen="red")
-  biplot3d(m2, col.env=c("red","blue")) # should ignore blue
-  biplot3d(m2, comps=c(1,2,4))
+  require(rgl) # gives a message, so put this before expect_silent
+
+  expect_silent({
+    #skip_on_cran()
+    require(agridat)
+    dat <- yan.winterwheat
+    m2 <- gge(yield ~ gen*env, data=dat, scale=FALSE)
+    
+    # Tests for 3D
+    biplot3d(m2)
+    biplot3d(m2, cex.gen=1)
+    # biplot3d(m2, cex.gen=0) # omit genotype names
+    biplot3d(m2, cex.env=1)
+    biplot3d(m2, col.gen="red")
+    biplot3d(m2, col.env=c("red","blue")) # should ignore blue
+    biplot3d(m2, comps=c(1,2,4))
+    biplot3d(m2, lab.env=FALSE)
+    biplot3d(m2, res.vec=FALSE)
+    biplot3d(m2, zoom.gen=2)
+    #dat2 <- data.frame(
+    #  env=c("BH93","EA93","HW93","ID93","KE93","NN93","OA93","RN93","WP93"),
+    #  grp=c("G2","G2","G2","G2","G1","G2","G1","G2","G2"))    
+  
+    dat$eg <- c("G2","G2","G2","G2","G1","G2","G1","G2","G2")[
+      match(dat$env, c("BH93","EA93","HW93","ID93","KE93","NN93","OA93","RN93","WP93"))]
+  
+    m4 <- gge(yield ~ gen*env, data=dat, env.group=eg, scale=FALSE)
+    biplot3d(m4)
+    while (rgl.cur() > 0) { rgl.close() }
+  })
+  
   expect_error(biplot3d(m2, comps=1:2))
-  biplot3d(m2, lab.env=FALSE)
-  biplot3d(m2, res.vec=FALSE)
-  biplot3d(m2, zoom.gen=2)
-  #dat2 <- data.frame(
-  #  env=c("BH93","EA93","HW93","ID93","KE93","NN93","OA93","RN93","WP93"),
-  #  grp=c("G2","G2","G2","G2","G1","G2","G1","G2","G2"))    
-  
-  dat$eg <- c("G2","G2","G2","G2","G1","G2","G1","G2","G2")[
-    match(dat$env, c("BH93","EA93","HW93","ID93","KE93","NN93","OA93","RN93","WP93"))]
-  
-  m4 <- gge(yield ~ gen*env, data=dat, env.group=eg, scale=FALSE)
-  biplot3d(m4)
-  while (rgl.cur() > 0) { rgl.close() }
-})
+
 })
 
 
