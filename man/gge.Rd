@@ -4,7 +4,6 @@
 \name{gge}
 \alias{gge}
 \alias{package-gge}
-\alias{gge-package}
 \alias{gge.formula}
 \alias{gge.matrix}
 \alias{plot.gge}
@@ -15,26 +14,57 @@
 \usage{
 gge(x, ...)
 
-\method{gge}{formula}(formula, data = NULL, gen.group = NULL,
-  env.group = NULL, ...)
+\method{gge}{formula}(formula, data = NULL, gen.group = NULL, env.group = NULL, ...)
 
-\method{gge}{matrix}(x, center = TRUE, scale = TRUE,
-  gen.group = NULL, env.group = NULL, comps = c(1, 2),
-  method = "svd", ...)
+\method{gge}{matrix}(
+  x,
+  center = TRUE,
+  scale = TRUE,
+  gen.group = NULL,
+  env.group = NULL,
+  comps = c(1, 2),
+  method = "svd",
+  ...
+)
 
 \method{plot}{gge}(x, main = substitute(x), ...)
 
-\method{biplot}{gge}(x, main = substitute(x), subtitle = "",
-  xlab = "auto", ylab = "auto", cex.gen = 0.6, cex.env = 0.5,
-  col.gen = "darkgreen", col.env = "orange3", pch.gen = 1,
-  lab.env = TRUE, comps = 1:2, flip = "auto", origin = "auto",
-  res.vec = TRUE, hull = FALSE, zoom.gen = 1, zoom.env = 1, ...)
+\method{biplot}{gge}(
+  x,
+  main = substitute(x),
+  subtitle = "",
+  xlab = "auto",
+  ylab = "auto",
+  cex.gen = 0.6,
+  cex.env = 0.5,
+  col.gen = "darkgreen",
+  col.env = "orange3",
+  pch.gen = 1,
+  lab.env = TRUE,
+  comps = 1:2,
+  flip = "auto",
+  origin = "auto",
+  res.vec = TRUE,
+  hull = FALSE,
+  zoom.gen = 1,
+  zoom.env = 1,
+  ...
+)
 
 biplot3d(x, ...)
 
-\method{biplot3d}{gge}(x, cex.gen = 0.6, cex.env = 0.5,
-  col.gen = "darkgreen", col.env = "orange3", comps = 1:3,
-  lab.env = TRUE, res.vec = TRUE, zoom.gen = 1, ...)
+\method{biplot3d}{gge}(
+  x,
+  cex.gen = 0.6,
+  cex.env = 0.5,
+  col.gen = "darkgreen",
+  col.env = "orange3",
+  comps = 1:3,
+  lab.env = TRUE,
+  res.vec = TRUE,
+  zoom.gen = 1,
+  ...
+)
 }
 \arguments{
 \item{x}{A matrix or data.frame.}
