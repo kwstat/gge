@@ -1,5 +1,5 @@
 # test_gge.R
-# Time-stamp: <07 Jan 2020 09:13:39 c:/x/rpack/gge/tests/testthat/test_gge.R>
+# Time-stamp: <08 Jul 2020 22:39:16 c:/x/rpack/gge/tests/testthat/test_gge.R>
 
 require(gge)
 
@@ -49,14 +49,19 @@ test_that("errors with gge.matrix", {
 
 test_that("errors with gge.formula", {
   bar <- transform(lattice::barley, env=paste0(site,year))
-  gge(yield~variety*site, bar)
+  expect_message( gge(yield~variety*site, bar))
+})
+
+test_that("errors with gge.data.frame", {
+  bar <- transform(lattice::barley, env=paste0(site,year))
+  gge(bar, yield~variety*site)
   expect_error(gge(yield~variety*site)) # no data
-  expect_error(gge(yield~variety*loc, bar)) # no 'loc'
-  expect_error(gge(yield~variety*site, bar, gen.group=loc)) # no 'loc'
-  expect_error(gge(yield~variety*site, bar, env.group=loc)) # no 'loc'
+  expect_error(gge(bar, yield~variety*loc)) # no 'loc'
+  expect_error(gge(bar, yield~variety*site, gen.group=loc)) # no 'loc'
+  expect_error(gge(bar, yield~variety*site, env.group=loc)) # no 'loc'
   bar$junk <- c('A','B','C','D')
-  expect_error(gge(yield~variety*site, bar, env.group=junk)) # multiple env.group
-  expect_error(gge(yield~variety*site, bar, gen.group=junk)) # multiple gen.group
+  expect_error(m1 <- gge(bar, yield~variety*site, env.group=junk)) # multiple env.group
+  expect_error(gge(bar, yield~variety*site, gen.group=junk)) # multiple gen.group
   
 })
 
@@ -73,6 +78,8 @@ test_that("nipals",{
 # ----------------------------------------------------------------------------
 
 test_that("Checking arguments of biplot", {
+  expect_silent(NULL) # hack to avoid testthat warning
+  
   m11 <- gge(mat1)
   plot(m11)
 
@@ -93,6 +100,7 @@ test_that("Checking arguments of biplot", {
   biplot(m11, col.gen="blue")
   biplot(m11, col.gen=c("blue","red")) # With 1 group, only use first
   biplot(m11, pch.gen=20) # Ignored with 1 group
+  biplot(m11, col.env=c("red","blue")) # blue is ignored
   biplot(m11, comps=2:3)
   biplot(m11, lab.env=FALSE)
   
@@ -131,9 +139,9 @@ test_that("Checking arguments of biplot", {
   
   # Environment groups. Use the lattice::barley data
   require(lattice)
-  m32 <- gge(yield~variety*env, bar)
+  m32 <- gge(bar, yield~variety*env)
   biplot(m32)
-  m33 <- gge(yield~variety*env, bar, env.group=year) # env.group
+  m33 <- gge(bar, yield~variety*env, env.group=year) # env.group
   plot(m33)
   biplot(m33)
   biplot(m33, lab.env=FALSE) # label locs
@@ -147,12 +155,16 @@ test_that("Checking arguments of biplot", {
 test_that("Polygon hull.  Yan 2006 fig 12", {
   require(agridat)
   dat <- yan.winterwheat
-  m1 <- gge(yield ~ gen*env, data=dat, scale=FALSE)
-  biplot(m1, main="yan.winterwheat - GGE biplot",
-         flip=c(1,0), hull=TRUE)
+  m1 <- gge(dat, yield ~ gen*env, scale=FALSE)
+  expect_silent(
+    biplot(m1, main="yan.winterwheat - GGE biplot",
+           flip=c(1,0), hull=TRUE)
+  )
   
-  biplot(m1, main="yan.winterwheat - GGE biplot",
-         flip=c(1,0), origin=0,  hull=TRUE)
+  expect_silent(
+    biplot(m1, main="yan.winterwheat - GGE biplot",
+           flip=c(1,0), origin=0,  hull=TRUE)
+  )
 })
 
 
@@ -161,10 +173,10 @@ test_that("rgl works", {
   require(rgl) # gives a message, so put this before expect_silent
 
   expect_silent({
-    #skip_on_cran()
+    skip_on_cran()
     require(agridat)
     dat <- yan.winterwheat
-    m2 <- gge(yield ~ gen*env, data=dat, scale=FALSE)
+    m2 <- gge(dat, yield ~ gen*env, scale=FALSE)
     
     # Tests for 3D
     biplot3d(m2)
@@ -184,7 +196,7 @@ test_that("rgl works", {
     dat$eg <- c("G2","G2","G2","G2","G1","G2","G1","G2","G2")[
       match(dat$env, c("BH93","EA93","HW93","ID93","KE93","NN93","OA93","RN93","WP93"))]
   
-    m4 <- gge(yield ~ gen*env, data=dat, env.group=eg, scale=FALSE)
+    m4 <- gge(dat, yield ~ gen*env, env.group=eg, scale=FALSE)
     biplot3d(m4)
     while (rgl.cur() > 0) { rgl.close() }
   })
@@ -221,24 +233,24 @@ if(0) {
 # focus...not yet implemented
 dat <- yan.winterwheat
 
-m1 <- gge(yield ~ gen*env, data=dat, scale=FALSE) # default focus="env"
+m1 <- gge(dat, yield ~ gen*env, scale=FALSE) # default focus="env"
 biplot(m1, hull=TRUE)
 
-m2 <- gge(yield ~ gen*env, data=dat, scale=FALSE, focus="gen")
+m2 <- gge(dat, yield ~ gen*env, scale=FALSE, focus="gen")
 biplot(m2, hull=TRUE, flip=c(1,1)) # Yan book p 43
 
-m3 <- gge(yield ~ gen*env, data=dat, scale=FALSE, focus="env")
+m3 <- gge(dat, yield ~ gen*env, scale=FALSE, focus="env")
 biplot(m3, hull=TRUE, flip=c(1,1)) # Yan book p 45
 
-m4 <- gge(yield ~ gen*env, data=dat, scale=FALSE, focus="symm")  # <-- short lines
+m4 <- gge(dat, yield ~ gen*env, scale=FALSE, focus="symm")  # <-- short lines
 biplot(m4, hull=TRUE, flip=c(1,1)) # Yan book p 46
 
-m5 <- gge(yield ~ gen*env, data=dat, scale=FALSE, focus="dual")
+m5 <- gge(dat, yield ~ gen*env, scale=FALSE, focus="dual")
 biplot(m5, hull=TRUE, flip=c(1,1)) # OBS! Not Yan book p 48
 
-m2 <- gge(yield ~ gen*env, data=dat, scale=FALSE, focus="gen")
+m2 <- gge(dat, yield ~ gen*env, scale=FALSE, focus="gen")
 biplot(m2, aec=TRUE, flip=c(1,1)) # Yan book p 43
-ggbiplot(m2, type="aec")
+#ggbiplot(m2, type="aec")
 
 }
 
@@ -283,10 +295,16 @@ if(FALSE){
                                        "E16", "E17", "E18", "E19", "E20")))
   
   # specify 'gen.group' and 'env.group' as a vector with matrix data
+  m61 <- gge(mat6, scale=TRUE,
+             env.group=c(rep("Blk1",3), rep("Blk2",5),rep("Blk3", 5), rep("Blk4", 7)),
+             gen.group=rep(letters[1:3], each=5) )
+  biplot(m61, flip=c(1,1), col.env=c("red","orange","blue","purple") )
   m61 <- gge(mat6, scale=FALSE,
              env.group=c(rep("Blk1",3), rep("Blk2",5),rep("Blk3", 5), rep("Blk4", 7)),
-             gen.group=rep(letters[1:3], each=5))
-  biplot(m61, flip=c(1,1))
+             gen.group=rep(letters[1:3], each=5), ggb=TRUE)
+  biplot(m61, flip=c(1,1),
+         col.env=c("red","orange","blue","purple"),
+         col.gen=c("gray","darkgreen"))
   
   # Crossa example
   require("reshape2")
@@ -299,9 +317,10 @@ if(FALSE){
   mat7 <- mat7[, c("SR","SG","CA","AK","TB","SE","ES","EB","EG",
                    "KN","NB","PA","BJ","IL","TC","JM","PI","AS","ID",
                    "SC","SS","SJ","MS","MG","MM")]
-  
-  m7 <- gge(mat7, env.group=c(rep("Grp2",9), rep("Grp1", 16)), lab="Y",
-            scale=FALSE)
+
+  egp <- c(rep("Grp2",9), rep("Grp1", 16))
+  m7 <- gge(mat7, env.group=egp, ggb=FALSE, lab="Y", scale=FALSE)
+  m7 <- gge(mat7, env.group=egp, ggb=TRUE, lab="Y", scale=FALSE)
   biplot(m7, main="CYMMIT wheat")
   plot(m7)
   

@@ -8,6 +8,14 @@ Average Environment Coordinate
 
 Bootstrap testing for PCs (Forkman 2019 paper)
 
+Bootstrap conf int
+
+# gge 1.5 (20 Jul 2020)
+
+* Please use `gge(data,formula)` instead of `gge(formula,data)`.
+
+* New argument `ggb=TRUE` to request construction of GGB biplot.
+
 # gge 1.4 (15 May 2018)
 
 * Use `cex.gen=0` to omit genotype names.
@@ -69,4 +77,3 @@ Bootstrap testing for PCs (Forkman 2019 paper)
 4. (2017) Discovered that `mixOmics::nipals()` is a pure R function that is faster than the C++ version, so `gge::nipals()` was re-written into a pure R function. The C++ version was removed from the `gge` package. 
 
 5. The `gge::nipals` function is moved to a new package, `nipals::nipals`. The function is optimized for performance, improved to better handle missing values and to orthogonalize the principal components. 
-

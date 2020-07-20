@@ -2,6 +2,7 @@
 
 S3method(biplot,gge)
 S3method(biplot3d,gge)
+S3method(gge,data.frame)
 S3method(gge,formula)
 S3method(gge,matrix)
 S3method(plot,gge)

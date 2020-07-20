@@ -4,6 +4,7 @@
 \name{gge}
 \alias{gge}
 \alias{package-gge}
+\alias{gge.data.frame}
 \alias{gge.formula}
 \alias{gge.matrix}
 \alias{plot.gge}
@@ -14,7 +15,9 @@
 \usage{
 gge(x, ...)
 
-\method{gge}{formula}(formula, data = NULL, gen.group = NULL, env.group = NULL, ...)
+\method{gge}{data.frame}(x, formula, gen.group = NULL, env.group = NULL, ggb = FALSE, ...)
+
+\method{gge}{formula}(formula, data, gen.group = NULL, env.group = NULL, ggb = FALSE, ...)
 
 \method{gge}{matrix}(
   x,
@@ -22,6 +25,7 @@ gge(x, ...)
   scale = TRUE,
   gen.group = NULL,
   env.group = NULL,
+  ggb = FALSE,
   comps = c(1, 2),
   method = "svd",
   ...
@@ -73,11 +77,13 @@ biplot3d(x, ...)
 
 \item{formula}{A formula}
 
-\item{data}{Data frame}
-
 \item{gen.group}{genotype group}
 
 \item{env.group}{env group}
+
+\item{ggb}{If TRUE, fit a GGB biplot model.}
+
+\item{data}{Data frame}
 
 \item{center}{If TRUE, center values for each environment}
 
@@ -136,10 +142,11 @@ A list of class \code{gge} containing:
 \item{genCoord}{genotype coordinates}
 \item{locCoord}{loc coordinates}
 \item{blockCoord}{block coordinates}
-\item{gen.group}{If not NULL, this specifies a
-  classification of genotypes into groups.}
-\item{env.group}{If not NULL, this specifies a classification of
-  environments into groups.}
+\item{gen.group}{If not NULL, use this to specify a column of the
+  data.frame to classify genotypes into groups.}
+\item{env.group}{If not NULL, use this to specify a column of the
+  data.frame to classify environments into groups.}
+\item{ggb}{If TRUE, create a GGB biplot}
 \item{genMeans}{genotype means}
 \item{mosdat}{mosaic plot data}
 \item{R2}{variation explained by eact PC}
@@ -174,6 +181,7 @@ B <- matrix(c(50, 67, 90, 98, 120,
 rownames(B) <- c("G1","G2","G3","G4","G5","G6","G7")
 colnames(B) <- c("E1","E2","E3","E4","E5")
 
+library(gge)
 m1 = gge(B)
 plot(m1)
 biplot(m1, main="Example biplot")

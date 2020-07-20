@@ -1,5 +1,12 @@
 # gge.R
-# Time-stamp: <29 Apr 2019 22:50:28 c:/x/rpack/gge/R/gge.R>
+# Time-stamp: <07 Jul 2020 17:32:34 c:/x/rpack/gge/R/gge.R>
+
+
+# Note: 
+# gge.formula and gge.data.frame are identical
+# gge.formula will be deprecated at some point
+
+
 
 #' GGE and GGB biplots
 #' 
@@ -55,10 +62,11 @@ RedGrayBlue <- colorRampPalette(c("firebrick", "lightgray", "#375997"))
 #' \item{genCoord}{genotype coordinates}
 #' \item{locCoord}{loc coordinates}
 #' \item{blockCoord}{block coordinates}
-#' \item{gen.group}{If not NULL, this specifies a
-#'   classification of genotypes into groups.}
-#' \item{env.group}{If not NULL, this specifies a classification of
-#'   environments into groups.}
+#' \item{gen.group}{If not NULL, use this to specify a column of the
+#'   data.frame to classify genotypes into groups.}
+#' \item{env.group}{If not NULL, use this to specify a column of the
+#'   data.frame to classify environments into groups.}
+#' \item{ggb}{If TRUE, create a GGB biplot}
 #' \item{genMeans}{genotype means}
 #' \item{mosdat}{mosaic plot data}
 #' \item{R2}{variation explained by eact PC}
@@ -98,7 +106,8 @@ RedGrayBlue <- colorRampPalette(c("firebrick", "lightgray", "#375997"))
 #'               75, 95, 117, 133, 155), ncol=5, byrow=TRUE)
 #' rownames(B) <- c("G1","G2","G3","G4","G5","G6","G7")
 #' colnames(B) <- c("E1","E2","E3","E4","E5")
-#' 
+#'
+#' library(gge)
 #' m1 = gge(B)
 #' plot(m1)
 #' biplot(m1, main="Example biplot")
@@ -117,27 +126,36 @@ RedGrayBlue <- colorRampPalette(c("firebrick", "lightgray", "#375997"))
 #' }
 #' 
 #' @import reshape2
-#' @export gge
+#' 
+#' @export
 gge <- function(x, ...) UseMethod("gge")
 
 # ----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
-#' @param formula A formula
-#' 
 #' @param data Data frame
+#' 
+#' @param formula A formula
 #' 
 #' @param gen.group genotype group
 #' 
 #' @param env.group env group
+#'
+#' @param ggb If TRUE, fit a GGB biplot model.
 #' 
 #' @rdname gge
 #' 
 #' @export
-gge.formula <- function(formula, data=NULL,
-                        gen.group=NULL, env.group=NULL, ...) {
+gge.data.frame <- function(x,
+                           formula,
+                           gen.group=NULL,
+                           env.group=NULL,
+                           ggb=FALSE,
+                           ...) {
   # Author: Kevin Wright
 
-  if(is.null(data))
+  data=x
+  if(missing(formula))
     stop("This usage of gge requires a formula AND data frame.")
 
   # previous subset/filter could leave extra levels behind
@@ -150,14 +168,14 @@ gge.formula <- function(formula, data=NULL,
   if(!all(is.element(vars,names(data))))
     stop("Some of the terms in the formula are not found in the data.")
   .y <- vars[1]
-  .gen <- vars[2] # Note that 'gen' may already a variable in the data
+  .gen <- vars[2]
   .env <- vars[3]
 
   # Make gen.group & env.group either NULL or quoted name in the data
   gen.group <- substitute(gen.group)
   env.group <- substitute(env.group)
   if(!is.null(gen.group)) {
-    gen.group <- deparse(gen.group) # convert to text
+    gen.group <- deparse(gen.group) # convert gen.group to text
     if(!is.element(gen.group, names(data)))
       stop("The argument 'gen.group' refers to non-existant column of data.")
 
@@ -175,7 +193,8 @@ gge.formula <- function(formula, data=NULL,
       env.group <- NULL
     }
   }
-
+  if(is.null(env.group)) ggb <- FALSE
+  
   # Finally, reshape data into a matrix, average values in each cell
   datm <- reshape2::acast(data, formula(paste(.gen, "~", .env)),
                           fun.aggregate=mean, na.rm=TRUE, value.var=.y)
@@ -192,7 +211,83 @@ gge.formula <- function(formula, data=NULL,
   }
 
   # Now call the matrix method and return the results
-  invisible(gge.matrix(datm, gen.group=gen.group, env.group=env.group, ...))
+  invisible(gge.matrix(datm, gen.group=gen.group, env.group=env.group, ggb=ggb, ...))
+}
+
+## gge.formula and gge.data.frame are identical
+## gge.formula will be deprecated
+
+#' @rdname gge
+#' 
+#' @export
+gge.formula <- function(formula,
+                        data,
+                        gen.group=NULL,
+                        env.group=NULL,
+                        ggb=FALSE,
+                        ...) {
+  # Author: Kevin Wright
+
+  # Message introduced Jun 2020.  Plan to deprecate end of 2021.
+  message("Please use `gge(data,formula)` instead of `gge(formula,data)`\n")
+  
+  if(is.null(data))
+    stop("This usage of gge requires a formula AND data frame.")
+
+  # previous subset/filter could leave extra levels behind
+  data <- droplevels(data)
+  
+  # Get character representations of all necessary variables.
+  # There is probably a more R-like (tidyeval?) way to do this. Oh well.
+  vars <- all.vars(formula)
+  # Check for valid names (in the data)
+  if(!all(is.element(vars,names(data))))
+    stop("Some of the terms in the formula are not found in the data.")
+  .y <- vars[1]
+  .gen <- vars[2]
+  .env <- vars[3]
+
+  # Make gen.group & env.group either NULL or quoted name in the data
+  gen.group <- substitute(gen.group)
+  env.group <- substitute(env.group)
+  if(!is.null(gen.group)) {
+    gen.group <- deparse(gen.group) # convert gen.group to text
+    if(!is.element(gen.group, names(data)))
+      stop("The argument 'gen.group' refers to non-existant column of data.")
+
+    if(any(colSums(table(data[[gen.group]], data[[.gen]])>0)>1)){
+      stop("Some values of '", .gen, "' have multiple gen.group.")
+    }
+  }
+  if(!is.null(env.group)) {
+    env.group <- deparse(env.group)
+    if(!is.element(env.group, names(data)))
+      stop("The argument 'env.group' refers to non-existant column of data.")
+
+    if(any(colSums(table(data[[env.group]], data[[.env]])>0)>1)){
+      stop("Some values of '", .env, "' have multiple env.group.")
+      env.group <- NULL
+    }
+  }
+  if(is.null(env.group)) ggb <- FALSE
+  
+  # Finally, reshape data into a matrix, average values in each cell
+  datm <- reshape2::acast(data, formula(paste(.gen, "~", .env)),
+                          fun.aggregate=mean, na.rm=TRUE, value.var=.y)
+  datm[is.nan(datm)] <- NA # Use NA instead of NaN
+
+  # Make gen.group and env.group to be vectors for the rows/cols of datm
+  if(!is.null(gen.group)) {
+    ix1 <- match(rownames(datm), data[[.gen]])
+    gen.group <- data[[gen.group]][ix1]
+  }
+  if(!is.null(env.group)) {
+    ix2 <- match(colnames(datm), data[[.env]])
+    env.group <- data[[env.group]][ix2]
+  }
+
+  # Now call the matrix method and return the results
+  invisible(gge.matrix(datm, gen.group=gen.group, env.group=env.group, ggb=ggb, ...))
 }
 
 # ----------------------------------------------------------------------------
@@ -209,8 +304,11 @@ gge.formula <- function(formula, data=NULL,
 #' @importFrom nipals nipals
 #' 
 #' @export
-gge.matrix <- function(x, center=TRUE, scale=TRUE,
-                       gen.group=NULL, env.group = NULL,
+gge.matrix <- function(x,
+                       center=TRUE, scale=TRUE,
+                       gen.group=NULL,
+                       env.group = NULL,
+                       ggb=FALSE,
                        comps=c(1,2), method="svd", ...) {
 
   # x: matrix of rows=genotypes, cols=environments
@@ -240,7 +338,7 @@ gge.matrix <- function(x, center=TRUE, scale=TRUE,
   if(any(genPct<.2) || any(envPct<.2))
     warning("Missing data may be structured.")
 
-  # Maximum number of PCs. Because of column-centering row rank is reduced by 1
+  # Maximum number of PCs. Because of column-centering, row rank is reduced by 1
   maxPCs <- min(nrow(x)-1, ncol(x))
 
   if(!is.element(method, c('svd', 'nipals')))
@@ -281,9 +379,7 @@ gge.matrix <- function(x, center=TRUE, scale=TRUE,
   x.cc <- x - x.g # x.cc = x.orig - envmeans - genmeans
   x.grp <- NULL
 
-  if(is.null(env.group)){
-    x.gb <- x.cc # No groups (each loc is its own group)
-  } else {
+  if(ggb & !is.null(env.group)){
     groupNames <- names(table(env.group))
     for(i in groupNames) {
       # Need 'drop' so that a single-column is not converted to vector
@@ -292,7 +388,10 @@ gge.matrix <- function(x, center=TRUE, scale=TRUE,
     }
     colnames(x.grp) <- groupNames
     x.gb <- x.grp[,match(env.group, colnames(x.grp))]
+  } else {
+    x.gb <- x.cc # No groups (each loc is its own group)
   }
+
   # x.r is a matrix of residuals = x.orig - colmeans - rowmeans - G*B
   x.r <- x - x.g - x.gb
 
@@ -354,7 +453,7 @@ gge.matrix <- function(x, center=TRUE, scale=TRUE,
 
   ret <- list(x=x, x.orig=x.orig,
               genCoord=genCoord, locCoord=locCoord, blockCoord=blockCoord,
-              gen.group=gen.group, env.group=env.group,
+              gen.group=gen.group, env.group=env.group, ggb=ggb,
               genMeans=genMeans, mosdat=mosdat, R2=R2,
               center=center, scale=scale, method=method,
               pctMiss=pctMiss, maxPCs=maxPCs)
@@ -416,8 +515,8 @@ plot.gge <- function(x, main=substitute(x), ...) {
   # title deprecated in gge 1.2, 2017
   args <- match.call()
   if( is.element("title", names(args)) ) {
-    main <- args$title
-    cat("Argument 'title' will be deprecated. Use 'main' instead.\n")
+    #main <- args$title
+    stop("Argument 'title' is deprecated. Use 'main' instead.\n")
   }
   
   op1 <- par(mfrow=c(2,2), pty="s", mar=c(3,5,2,1))
@@ -525,6 +624,7 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
 
   gen.group <- x$gen.group
   env.group <- x$env.group
+  ggb <- x$ggb
   genCoord <- x$genCoord
   locCoord <- x$locCoord
   blockCoord <- x$blockCoord
@@ -547,7 +647,6 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
     subtitle <- paste0(subtitle, ", missing: ", round(pctMiss*100,1), "%")
   }
 
-  # 
   # if the user did not give enough environment vector colors, add more
   if(n.env.grp > length(col.env)) {
     col.env <- c(col.env, "blue","black","purple","darkgreen", "red",
@@ -621,12 +720,12 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
   re2 <- expand.range(range(locCoord[, ycomp]))
   ratio <- max(c(re1, re2)/c(xlimg, ylimg)) * 1.1 # 1.1 adds extra space
   
-  # lastly, manual zooming of environment window
+  # lastly, manual override zooming of environment window
   xlime <- xlimg * ratio / zoom.env
   ylime <- ylimg * ratio / zoom.env
 
   # use 'ratio' to scale genotype coordinates to fill environment window
-  # manual adjustment is done with zoom.gen
+  # manual override zooming
   genCoord <-  genCoord * ratio / zoom.gen
   
   # set up plot for environment vectors
@@ -658,7 +757,9 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
   # plot locs first (points OR labels, but not both) colored by group
   if(is.null(env.group)) {
     eix <- rep(1, nrow(locCoord))
-  } else eix <- as.numeric(factor(env.group))
+  } else {
+    eix <- as.numeric(factor(env.group))
+  }
 
   if(lab.env == TRUE) {
     text(locCoord[ , c(xcomp, ycomp), drop = FALSE],
@@ -668,38 +769,44 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
            cex = cex.env, col = col.env[eix]) # pch = (1:n.env.grp)[eix])
   }
 
-  # No groups. Draw vector to each loc, shorten to reduce over-plotting
+  # No env groups. Draw vector to each loc, shorten to reduce over-plotting
   if(n.env.grp == 0){
-    segments(0, 0, .95*locCoord[,xcomp], .95*locCoord[,ycomp], col = col.env[1])
+    segments(0, 0, .95*locCoord[,xcomp], .95*locCoord[,ycomp],
+             col = col.env[1])
   }
-  
-  # One or more groups. Draw solid/dashed group vector
-  if(n.env.grp >= 1) {
+
+  # One or more groups. NOT GGB. Draw vector to each loc, colored by group.
+  if(n.env.grp >= 1 & !ggb){
+    segments(0, 0, .95*locCoord[,xcomp], .95*locCoord[,ycomp],
+             col = col.env[eix])
+  }
+  # One or more groups. IS GGB.
+  if(n.env.grp >= 1 & ggb) {
     # Draw solid-line part of the group vector
-    ubc <- blockCoord[groupNames,,drop=FALSE] # Get unique row for each group
-    segments(0, 0, ubc[ , xcomp], ubc[ , ycomp], 
+    unibc <- blockCoord[groupNames,,drop=FALSE] # Get unique row for each group
+    segments(0, 0, unibc[ , xcomp], unibc[ , ycomp], 
              lwd = 2, col=col.env) # no 'eix'
     # End point
-    # points(ubc[ , c(xcomp,ycomp)], pch = 16, col=col.env) # no 'eix'
+    # points(unibc[ , c(xcomp,ycomp)], pch = 16, col=col.env) # no 'eix'
     # The 'xy' variable extends the vector to the edge of plot
-    xy <- extend(ubc[ , xcomp], ubc[ , ycomp], xlime, ylime)
+    xy <- extend(unibc[ , xcomp], unibc[ , ycomp], xlime, ylime)
     # Now the extended dashed-line part of the group vector.  Shorten by 10%
     # to reduce over-plotting.
-    segments(ubc[ , xcomp], ubc[ , ycomp],
+    segments(unibc[ , xcomp], unibc[ , ycomp],
              .90*xy$x2, .90*xy$y2, lty = 3, col=col.env)
     # Add group label
-    text(.95*xy$x2, .95*xy$y2, rownames(ubc), cex = 1, col=col.env)
+    text(.95*xy$x2, .95*xy$y2, rownames(unibc), cex = 1, col=col.env)
   }
   
   # One group. Add dashed line group vector in opposite direction for AEC
   if(n.env.grp == 1){
-    ubc <- -1 * ubc 
-    xy <- extend( ubc[ , xcomp], ubc[ , ycomp], xlime, ylime)
+    unibc <- -1 * unibc 
+    xy <- extend( unibc[ , xcomp], unibc[ , ycomp], xlime, ylime)
     segments(0, 0, .90*xy$x2, .90*xy$y2, lty = 3, col=col.env)
   }
   
-  # Two or more groups. Draw residual vector from group mean to each loc
-  if((n.env.grp >=  2) & res.vec) {
+  # GGB with two or more groups. Draw residual vector from group mean to each loc
+  if(ggb & n.env.grp >=  2 & res.vec) {
     segments(blockCoord[ , xcomp], blockCoord[ , ycomp],
              locCoord[ , xcomp], locCoord[ , ycomp],
              col = col.env[eix], lwd = .5)
