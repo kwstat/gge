@@ -29,7 +29,7 @@ devtools::install_github("kwstat/gge")
 ```
 ## Usage
 
-In the exmple GGE biplot below, the genotypes are shown by green labels and the environments are shown by blue/gold labels. Each color determines a mega-environment or block-of-environments.  A thick, solid line is drawn from the origin to the 'average' of the environments within each block, and then a thinner line is drawn from the average to the individual environments.  These 'residual' vectors show the deviations within each group.  A dashed line extends to the edge of the plotting window and labels the group.
+In the example GGE biplot below, the genotypes are shown by green labels and the environments are shown by blue/gold labels. Each color determines a mega-environment or block-of-environments.  A thick, solid line is drawn from the origin to the 'average' of the environments within each block, and then a thinner line is drawn from the average to the individual environments.  These 'residual' vectors show the deviations within each group.  A dashed line extends to the edge of the plotting window and labels the group.
 
 ![gge](man/figures/crossa_wheat.png?raw=true)
 

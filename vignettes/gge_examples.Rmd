@@ -37,7 +37,7 @@ biplot(m1, main="yan.winterwheat - GGE biplot",
        flip=c(1,0), origin=0, hull=TRUE)
 ```
 
-Many people prefer to use 'standardized' biplots, in which the data for each environement has been centered and scaled.  For standardized biplots, a unit circle is drawn.  Environment vectors that reach out to the unit circle are perfectly represented in the two dimensional plane.
+Many people prefer to use 'standardized' biplots, in which the data for each environment has been centered and scaled.  For standardized biplots, a unit circle is drawn.  Environment vectors that reach out to the unit circle are perfectly represented in the two dimensional plane.
 ```{r}
 m2 <- gge(dat1, yield~gen*env, scale=TRUE)
 biplot(m2, main="yan.winterwheat - GGE biplot",
@@ -97,7 +97,7 @@ v <- Xc.svd$v
 (u %*% s)[,1:2]
 t[,1:2]
 ```
-The environment coordinates are the first two colunns of
+The environment coordinates are the first two columns of
 $\bf E_{gf} = V$ (from the SVD) or
 $\bf E_{gf} = P$ (from NIPALS).
 ```{r , eval=0}

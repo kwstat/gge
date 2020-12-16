@@ -10,6 +10,12 @@ Bootstrap testing for PCs (Forkman 2019 paper)
 
 Bootstrap conf int
 
+# gge 1.6 ()
+
+Brian Ripley wrote: "The future of OpenGL is uncertain (except on macOS, where it has no future).  So it seems reasonable to require `rgl` only when essential to the package.  These packages have it in Depends/Imports but seem not to actually call it in their checks (established using a fake install).  It is possible that the sole purpose of the package might be to do interactive visualizations which are not checked, but that seems not to be the case here.  We noticed calls to rgl functions in \dontrun{}, but they would better be conditioned by if(interactive()) (see 'Writing R Extensions'). Please move rgl to Suggests and use conditionally (see §1.1.3.1 of 'Writing R Extensions') at the next package update.""
+
+* Moved rgl to Suggests. Cannot use `require(rgl)` because that crashes R for some users, so use `if("rgl" %in% installed.packages() )` to check for installation and then call functions `rgl::open3d()`
+
 # gge 1.5 (20 Jul 2020)
 
 * Please use `gge(data,formula)` instead of `gge(formula,data)`.
@@ -20,7 +26,7 @@ Bootstrap conf int
 
 * Use `cex.gen=0` to omit genotype names.
 
-* On some Windows machines, `library(rgl)` crashes R, perhaps because of a DLL conflict with Windows. Removed `@import rgl` so that `rgl` is not loaded by default, and now `biplot3d` uses calls like `rgl::text3d`.
+* On some Windows machines, `library(rgl)` crashes R, perhaps because of a dll conflict with Windows. Removed `@import rgl` so that `rgl` is not loaded by default, and now `biplot3d` uses calls like `rgl::text3d`.
 
 # gge 1.3 (14 Dec 2017)
 

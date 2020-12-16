@@ -1,4 +1,3 @@
-# test_gge.R
 # Time-stamp: <08 Jul 2020 22:39:16 c:/x/rpack/gge/tests/testthat/test_gge.R>
 
 require(gge)
@@ -326,13 +325,13 @@ if(FALSE){
   
   # Specify env.group as column in data frame
   dat2 <- crossa.wheat
-  dat2$eg <- ifelse(dat2$loc %in% c("KN","NB","PA","BJ","IL","TC","JM","PI","AS","ID",
-                                    "SC","SS","SJ","MS","MG","MM"), "Grp1", "Grp2")
-  m8 <- gge(yield~gen*loc, dat2, env.group=eg, scale=FALSE)
+
+  m8 <- gge(dat2, yield~gen*loc, 
+            env.group=locgroup, gen.group=gengroup, scale=FALSE)
   biplot(m8)
   
   # No env.group
-  m9 <- gge(yield~gen*loc, dat2, scale=FALSE)
+  m9 <- gge(dat2, yield~gen*loc, scale=FALSE)
   biplot(m9)
   
   # 3D

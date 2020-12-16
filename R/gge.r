@@ -69,7 +69,7 @@ RedGrayBlue <- colorRampPalette(c("firebrick", "lightgray", "#375997"))
 #' \item{ggb}{If TRUE, create a GGB biplot}
 #' \item{genMeans}{genotype means}
 #' \item{mosdat}{mosaic plot data}
-#' \item{R2}{variation explained by eact PC}
+#' \item{R2}{variation explained by each PC}
 #' \item{center}{Data centered?}
 #' \item{scale}{Data scaled?}
 #' \item{method}{Method used to calculate principal components.}
@@ -887,6 +887,7 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
 #' @export
 biplot3d <- function(x, ...) UseMethod("biplot3d", x)
 
+#' @importFrom utils installed.packages
 #' @rdname gge
 #' @method biplot3d gge
 #' @export
@@ -898,6 +899,10 @@ biplot3d.gge <- function(x,
                          res.vec=TRUE,
                          zoom.gen=1,
                          ...){
+  
+  if(!("rgl" %in% installed.packages() ))
+    stop("You must install the `rgl` package first.")
+    
   # title/subtitle are not used
   gen.group <- x$gen.group
   env.group <- x$env.group

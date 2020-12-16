@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">gge</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6</span>
       </span>
     </div>
 
@@ -140,68 +140,68 @@
     <p>Fit a GGE (genotype + genotype * environment) model and display the results.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>gge</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+    <pre class="usage"><span class='fu'>gge</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for data.frame</span>
-<span class='fu'>gge</span>(<span class='no'>x</span>, <span class='no'>formula</span>, <span class='kw'>gen.group</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>env.group</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>ggb</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
+<span class='fu'>gge</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>formula</span>, gen.group <span class='op'>=</span> <span class='cn'>NULL</span>, env.group <span class='op'>=</span> <span class='cn'>NULL</span>, ggb <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for formula</span>
-<span class='fu'>gge</span>(<span class='no'>formula</span>, <span class='no'>data</span>, <span class='kw'>gen.group</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>env.group</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>ggb</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
+<span class='fu'>gge</span><span class='op'>(</span><span class='va'>formula</span>, <span class='va'>data</span>, gen.group <span class='op'>=</span> <span class='cn'>NULL</span>, env.group <span class='op'>=</span> <span class='cn'>NULL</span>, ggb <span class='op'>=</span> <span class='cn'>FALSE</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for matrix</span>
-<span class='fu'>gge</span>(
-  <span class='no'>x</span>,
-  <span class='kw'>center</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>scale</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>gen.group</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>env.group</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>ggb</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>comps</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>2</span>),
-  <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"svd"</span>,
-  <span class='no'>...</span>
-)
+<span class='fu'>gge</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  center <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  scale <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  gen.group <span class='op'>=</span> <span class='cn'>NULL</span>,
+  env.group <span class='op'>=</span> <span class='cn'>NULL</span>,
+  ggb <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  comps <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>2</span><span class='op'>)</span>,
+  method <span class='op'>=</span> <span class='st'>"svd"</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span>
 
 <span class='co'># S3 method for gge</span>
-<span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>x</span>, <span class='kw'>main</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/substitute.html'>substitute</a></span>(<span class='no'>x</span>), <span class='no'>...</span>)
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>x</span>, main <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/substitute.html'>substitute</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for gge</span>
-<span class='fu'><a href='https://rdrr.io/r/stats/biplot.html'>biplot</a></span>(
-  <span class='no'>x</span>,
-  <span class='kw'>main</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/substitute.html'>substitute</a></span>(<span class='no'>x</span>),
-  <span class='kw'>subtitle</span> <span class='kw'>=</span> <span class='st'>""</span>,
-  <span class='kw'>xlab</span> <span class='kw'>=</span> <span class='st'>"auto"</span>,
-  <span class='kw'>ylab</span> <span class='kw'>=</span> <span class='st'>"auto"</span>,
-  <span class='kw'>cex.gen</span> <span class='kw'>=</span> <span class='fl'>0.6</span>,
-  <span class='kw'>cex.env</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
-  <span class='kw'>col.gen</span> <span class='kw'>=</span> <span class='st'>"darkgreen"</span>,
-  <span class='kw'>col.env</span> <span class='kw'>=</span> <span class='st'>"orange3"</span>,
-  <span class='kw'>pch.gen</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>lab.env</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>comps</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>2</span>,
-  <span class='kw'>flip</span> <span class='kw'>=</span> <span class='st'>"auto"</span>,
-  <span class='kw'>origin</span> <span class='kw'>=</span> <span class='st'>"auto"</span>,
-  <span class='kw'>res.vec</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>hull</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>zoom.gen</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>zoom.env</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='no'>...</span>
-)
+<span class='fu'><a href='https://rdrr.io/r/stats/biplot.html'>biplot</a></span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  main <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/substitute.html'>substitute</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>,
+  subtitle <span class='op'>=</span> <span class='st'>""</span>,
+  xlab <span class='op'>=</span> <span class='st'>"auto"</span>,
+  ylab <span class='op'>=</span> <span class='st'>"auto"</span>,
+  cex.gen <span class='op'>=</span> <span class='fl'>0.6</span>,
+  cex.env <span class='op'>=</span> <span class='fl'>0.5</span>,
+  col.gen <span class='op'>=</span> <span class='st'>"darkgreen"</span>,
+  col.env <span class='op'>=</span> <span class='st'>"orange3"</span>,
+  pch.gen <span class='op'>=</span> <span class='fl'>1</span>,
+  lab.env <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  comps <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>,
+  flip <span class='op'>=</span> <span class='st'>"auto"</span>,
+  origin <span class='op'>=</span> <span class='st'>"auto"</span>,
+  res.vec <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  hull <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  zoom.gen <span class='op'>=</span> <span class='fl'>1</span>,
+  zoom.env <span class='op'>=</span> <span class='fl'>1</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span>
 
-<span class='fu'>biplot3d</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+<span class='fu'>biplot3d</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for gge</span>
-<span class='fu'>biplot3d</span>(
-  <span class='no'>x</span>,
-  <span class='kw'>cex.gen</span> <span class='kw'>=</span> <span class='fl'>0.6</span>,
-  <span class='kw'>cex.env</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
-  <span class='kw'>col.gen</span> <span class='kw'>=</span> <span class='st'>"darkgreen"</span>,
-  <span class='kw'>col.env</span> <span class='kw'>=</span> <span class='st'>"orange3"</span>,
-  <span class='kw'>comps</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>3</span>,
-  <span class='kw'>lab.env</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>res.vec</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>zoom.gen</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='no'>...</span>
-)</pre>
+<span class='fu'>biplot3d</span><span class='op'>(</span>
+  <span class='va'>x</span>,
+  cex.gen <span class='op'>=</span> <span class='fl'>0.6</span>,
+  cex.env <span class='op'>=</span> <span class='fl'>0.5</span>,
+  col.gen <span class='op'>=</span> <span class='st'>"darkgreen"</span>,
+  col.env <span class='op'>=</span> <span class='st'>"orange3"</span>,
+  comps <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>,
+  lab.env <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  res.vec <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  zoom.gen <span class='op'>=</span> <span class='fl'>1</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -341,7 +341,7 @@ Not used for 3D biplots.</p></td>
 <dt>ggb</dt><dd><p>If TRUE, create a GGB biplot</p></dd>
 <dt>genMeans</dt><dd><p>genotype means</p></dd>
 <dt>mosdat</dt><dd><p>mosaic plot data</p></dd>
-<dt>R2</dt><dd><p>variation explained by eact PC</p></dd>
+<dt>R2</dt><dd><p>variation explained by each PC</p></dd>
 <dt>center</dt><dd><p>Data centered?</p></dd>
 <dt>scale</dt><dd><p>Data scaled?</p></dd>
 <dt>method</dt><dd><p>Method used to calculate principal components.</p></dd>
@@ -370,34 +370,41 @@ Brisbane, Australia.
 <a href='http://three-mode.leidenuniv.nl/document/biplot.pdf'>http://three-mode.leidenuniv.nl/document/biplot.pdf</a></p>
 <p>Yan, W. and Kang, M.S. (2003).
 <em>GGE Biplot Analysis</em>.  CRC Press.</p>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Kevin Wright, Jean-Louis Laffont</p>
+<p>Jean-Louis Laffont, Kevin Wright</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># Example 1.  Data is a data.frame in 'matrix' format</span>
-<span class='no'>B</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>50</span>, <span class='fl'>67</span>, <span class='fl'>90</span>, <span class='fl'>98</span>, <span class='fl'>120</span>,
+<span class='va'>B</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>50</span>, <span class='fl'>67</span>, <span class='fl'>90</span>, <span class='fl'>98</span>, <span class='fl'>120</span>,
               <span class='fl'>55</span>, <span class='fl'>71</span>, <span class='fl'>93</span>, <span class='fl'>102</span>, <span class='fl'>129</span>,
               <span class='fl'>65</span>, <span class='fl'>76</span>, <span class='fl'>95</span>, <span class='fl'>105</span>, <span class='fl'>134</span>,
               <span class='fl'>50</span>, <span class='fl'>80</span>, <span class='fl'>102</span>, <span class='fl'>130</span>, <span class='fl'>138</span>,
               <span class='fl'>60</span>, <span class='fl'>82</span>, <span class='fl'>97</span>, <span class='fl'>135</span>, <span class='fl'>151</span>,
               <span class='fl'>65</span>, <span class='fl'>89</span>, <span class='fl'>106</span>, <span class='fl'>137</span>, <span class='fl'>153</span>,
-              <span class='fl'>75</span>, <span class='fl'>95</span>, <span class='fl'>117</span>, <span class='fl'>133</span>, <span class='fl'>155</span>), <span class='kw'>ncol</span><span class='kw'>=</span><span class='fl'>5</span>, <span class='kw'>byrow</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>rownames</a></span>(<span class='no'>B</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"G1"</span>,<span class='st'>"G2"</span>,<span class='st'>"G3"</span>,<span class='st'>"G4"</span>,<span class='st'>"G5"</span>,<span class='st'>"G6"</span>,<span class='st'>"G7"</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span>(<span class='no'>B</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"E1"</span>,<span class='st'>"E2"</span>,<span class='st'>"E3"</span>,<span class='st'>"E4"</span>,<span class='st'>"E5"</span>)
+              <span class='fl'>75</span>, <span class='fl'>95</span>, <span class='fl'>117</span>, <span class='fl'>133</span>, <span class='fl'>155</span><span class='op'>)</span>, ncol<span class='op'>=</span><span class='fl'>5</span>, byrow<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>rownames</a></span><span class='op'>(</span><span class='va'>B</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"G1"</span>,<span class='st'>"G2"</span>,<span class='st'>"G3"</span>,<span class='st'>"G4"</span>,<span class='st'>"G5"</span>,<span class='st'>"G6"</span>,<span class='st'>"G7"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>B</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"E1"</span>,<span class='st'>"E2"</span>,<span class='st'>"E3"</span>,<span class='st'>"E4"</span>,<span class='st'>"E5"</span><span class='op'>)</span>
 
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>gge</span>)
-<span class='no'>m1</span> <span class='kw'>=</span> <span class='fu'>gge</span>(<span class='no'>B</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>m1</span>)</div><div class='img'><img src='gge-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/stats/biplot.html'>biplot</a></span>(<span class='no'>m1</span>, <span class='kw'>main</span><span class='kw'>=</span><span class='st'>"Example biplot"</span>)</div><div class='img'><img src='gge-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='co'># biplot3d(m1)</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='http://kwstat.github.io/gge/'>gge</a></span><span class='op'>)</span>
+<span class='va'>m1</span> <span class='op'>=</span> <span class='fu'>gge</span><span class='op'>(</span><span class='va'>B</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>m1</span><span class='op'>)</span>
+</div><div class='img'><img src='gge-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/stats/biplot.html'>biplot</a></span><span class='op'>(</span><span class='va'>m1</span>, main<span class='op'>=</span><span class='st'>"Example biplot"</span><span class='op'>)</span>
+</div><div class='img'><img src='gge-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='co'># biplot3d(m1)</span>
 
-<span class='kw'>if</span>(<span class='fu'><a href='https://rdrr.io/r/base/library.html'>require</a></span>(<span class='no'>agridat</span>)){
+<span class='kw'>if</span><span class='op'>(</span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='op'>(</span><span class='va'><a href='http://kwstat.github.io/agridat/'>agridat</a></span><span class='op'>)</span><span class='op'>)</span><span class='op'>{</span>
   <span class='co'># crossa.wheat biplot</span>
 
   <span class='co'># Specify env.group as column in data frame</span>
-  <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>crossa.wheat</span>)
-  <span class='no'>dat2</span> <span class='kw'>&lt;-</span> <span class='no'>crossa.wheat</span>
-  <span class='no'>m2</span> <span class='kw'>&lt;-</span> <span class='fu'>gge</span>(<span class='no'>yield</span>~<span class='no'>gen</span>*<span class='no'>loc</span>, <span class='no'>dat2</span>, <span class='kw'>env.group</span><span class='kw'>=</span><span class='no'>locgroup</span>, <span class='kw'>scale</span><span class='kw'>=</span><span class='fl'>FALSE</span>)
-  <span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>m2</span>)
-  <span class='fu'><a href='https://rdrr.io/r/stats/biplot.html'>biplot</a></span>(<span class='no'>m2</span>, <span class='kw'>lab.env</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>main</span><span class='kw'>=</span><span class='st'>"crossa.wheat"</span>)
+  <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>crossa.wheat</span><span class='op'>)</span>
+  <span class='va'>dat2</span> <span class='op'>&lt;-</span> <span class='va'>crossa.wheat</span>
+  <span class='va'>m2</span> <span class='op'>&lt;-</span> <span class='fu'>gge</span><span class='op'>(</span><span class='va'>yield</span><span class='op'>~</span><span class='va'>gen</span><span class='op'>*</span><span class='va'>loc</span>, <span class='va'>dat2</span>, env.group<span class='op'>=</span><span class='va'>locgroup</span>, scale<span class='op'>=</span><span class='cn'>FALSE</span><span class='op'>)</span>
+  <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>m2</span><span class='op'>)</span>
+  <span class='fu'><a href='https://rdrr.io/r/stats/biplot.html'>biplot</a></span><span class='op'>(</span><span class='va'>m2</span>, lab.env<span class='op'>=</span><span class='cn'>TRUE</span>, main<span class='op'>=</span><span class='st'>"crossa.wheat"</span><span class='op'>)</span>
   <span class='co'># biplot3d(m2)</span>
-}</div><div class='output co'>#&gt; <span class='message'>Loading required package: agridat</span></div><div class='output co'>#&gt; <span class='message'>Please use `gge(data,formula)` instead of `gge(formula,data)`</span></div><div class='img'><img src='gge-3.png' alt='' width='700' height='433' /></div><div class='img'><img src='gge-4.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='op'>}</span>
+</div><div class='output co'>#&gt; <span class='message'>Loading required package: agridat</span></div><div class='output co'>#&gt; <span class='message'>Please use `gge(data,formula)` instead of `gge(formula,data)`</span></div><div class='img'><img src='gge-3.png' alt='' width='700' height='433' /></div><div class='img'><img src='gge-4.png' alt='' width='700' height='433' /></div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -414,7 +421,7 @@ Brisbane, Australia.
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

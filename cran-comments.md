@@ -1,5 +1,21 @@
-# gge 1.5
+# gge 1.6
 
+## Test environments & results
+
+* local R 4.0.3 on Windows 10
+* Rhub Fedora Linux, R-devel, clang, gfortran
+* WinBuilder R-devel
+
+## R CMD check results
+
+No ERRORs or WARNINGs or NOTEs
+ 
+## Reverse dependencies
+
+No ERRORs in agridat, GGEBiplots.
+
+
+# gge 1.5
 
 ## test environments
 

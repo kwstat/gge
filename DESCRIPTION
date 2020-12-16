@@ -1,7 +1,7 @@
 Package: gge
 Title: Genotype Plus Genotype-by-Environment Biplots
-Version: 1.5
-Date: 2020-07-20
+Version: 1.6
+Date: 2020-12-15
 Authors@R: c(
   person("Kevin","Wright", email="kw.stat@gmail.com", 
   comment=c(ORCID = "0000-0002-0617-8673"), role=c("aut","cre")),
@@ -13,12 +13,12 @@ Description: Create biplots for GGE (genotype plus genotype-by-environment) and
 Type: Package
 Imports:
   nipals,
-  rgl,
   reshape2
 Suggests:
   agridat,
   knitr,
   lattice,
+  rgl,
   rmarkdown,
   testthat
 License: GPL-3

@@ -149,7 +149,7 @@ A list of class \code{gge} containing:
 \item{ggb}{If TRUE, create a GGB biplot}
 \item{genMeans}{genotype means}
 \item{mosdat}{mosaic plot data}
-\item{R2}{variation explained by eact PC}
+\item{R2}{variation explained by each PC}
 \item{center}{Data centered?}
 \item{scale}{Data scaled?}
 \item{method}{Method used to calculate principal components.}
