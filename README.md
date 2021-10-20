@@ -11,7 +11,7 @@ Repository: https://github.com/kwstat/gge
 
 Functions for GGE (genotype plus genotype-by-environment) and GGB (genotype plus genotype-by-block-of-environments) biplots.
 
-Key features:
+## Key features
 
 * Stable, well-tested.
 

@@ -1,5 +1,7 @@
 # gge 1.6
 
+Moved rgl to Suggests at request of Brian Ripley.
+
 ## Test environments & results
 
 * local R 4.0.3 on Windows 10
