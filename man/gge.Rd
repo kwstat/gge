@@ -210,7 +210,7 @@ Kroonenberg, Pieter M. (1997).
 \emph{Introduction to Biplots for GxE Tables},
 Research Report 51, Centre for Statistics, The University of Queensland,
 Brisbane, Australia.
-\url{http://three-mode.leidenuniv.nl/document/biplot.pdf}
+\url{https://three-mode.leidenuniv.nl/document/biplot.pdf}
 
 Yan, W. and Kang, M.S. (2003).
 \emph{GGE Biplot Analysis}.  CRC Press.

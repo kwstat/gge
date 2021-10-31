@@ -1,4 +1,4 @@
-# Time-stamp: <08 Jul 2020 22:39:16 c:/x/rpack/gge/tests/testthat/test_gge.R>
+# Time-stamp: <30 Oct 2021 11:37:20 c:/one/rpack/gge/tests/testthat/test_gge.R>
 
 require(gge)
 
@@ -86,7 +86,7 @@ test_that("Checking arguments of biplot", {
   plot(m21)
 
   biplot(m11)
-  biplot(m11, title="Example biplot", subtitle="GGE biplot") # message
+  biplot(m11, main="Example biplot", subtitle="GGE biplot") # message
   biplot(m11, main="Example biplot", subtitle="GGE biplot")
   
   biplot(m11, subtitle=NULL) # suppress options subtitle

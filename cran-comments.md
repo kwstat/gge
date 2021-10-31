@@ -1,3 +1,18 @@
+# gge 1.7
+
+Fix a note about LazyData.
+
+## Test environments & results
+
+* local R 4.1.0 on Windows 10
+* WinBuilder R-devel
+* WinBuilder R-release
+
+## R CMD check results
+
+OK, except ONE platform on Rhub claims that `testthat` has an error, but it does not actually show any errors.  Weird.
+    
+
 # gge 1.6
 
 Moved rgl to Suggests at request of Brian Ripley.

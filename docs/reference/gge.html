@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">gge</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.7</span>
       </span>
     </div>
 
@@ -88,7 +88,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -114,7 +114,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/kwstat/gge/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -367,7 +367,7 @@ doi: <a href='https://doi.org/10.2135/cropsci2013.03.0178'>10.2135/cropsci2013.0
 <em>Introduction to Biplots for GxE Tables</em>,
 Research Report 51, Centre for Statistics, The University of Queensland,
 Brisbane, Australia.
-<a href='http://three-mode.leidenuniv.nl/document/biplot.pdf'>http://three-mode.leidenuniv.nl/document/biplot.pdf</a></p>
+<a href='https://three-mode.leidenuniv.nl/document/biplot.pdf'>https://three-mode.leidenuniv.nl/document/biplot.pdf</a></p>
 <p>Yan, W. and Kang, M.S. (2003).
 <em>GGE Biplot Analysis</em>.  CRC Press.</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
@@ -376,36 +376,42 @@ Brisbane, Australia.
 <p>Jean-Louis Laffont, Kevin Wright</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># Example 1.  Data is a data.frame in 'matrix' format</span>
-<span class='va'>B</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>50</span>, <span class='fl'>67</span>, <span class='fl'>90</span>, <span class='fl'>98</span>, <span class='fl'>120</span>,
-              <span class='fl'>55</span>, <span class='fl'>71</span>, <span class='fl'>93</span>, <span class='fl'>102</span>, <span class='fl'>129</span>,
-              <span class='fl'>65</span>, <span class='fl'>76</span>, <span class='fl'>95</span>, <span class='fl'>105</span>, <span class='fl'>134</span>,
-              <span class='fl'>50</span>, <span class='fl'>80</span>, <span class='fl'>102</span>, <span class='fl'>130</span>, <span class='fl'>138</span>,
-              <span class='fl'>60</span>, <span class='fl'>82</span>, <span class='fl'>97</span>, <span class='fl'>135</span>, <span class='fl'>151</span>,
-              <span class='fl'>65</span>, <span class='fl'>89</span>, <span class='fl'>106</span>, <span class='fl'>137</span>, <span class='fl'>153</span>,
-              <span class='fl'>75</span>, <span class='fl'>95</span>, <span class='fl'>117</span>, <span class='fl'>133</span>, <span class='fl'>155</span><span class='op'>)</span>, ncol<span class='op'>=</span><span class='fl'>5</span>, byrow<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>rownames</a></span><span class='op'>(</span><span class='va'>B</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"G1"</span>,<span class='st'>"G2"</span>,<span class='st'>"G3"</span>,<span class='st'>"G4"</span>,<span class='st'>"G5"</span>,<span class='st'>"G6"</span>,<span class='st'>"G7"</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>B</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"E1"</span>,<span class='st'>"E2"</span>,<span class='st'>"E3"</span>,<span class='st'>"E4"</span>,<span class='st'>"E5"</span><span class='op'>)</span>
-
-<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='http://kwstat.github.io/gge/'>gge</a></span><span class='op'>)</span>
-<span class='va'>m1</span> <span class='op'>=</span> <span class='fu'>gge</span><span class='op'>(</span><span class='va'>B</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>m1</span><span class='op'>)</span>
-</div><div class='img'><img src='gge-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/stats/biplot.html'>biplot</a></span><span class='op'>(</span><span class='va'>m1</span>, main<span class='op'>=</span><span class='st'>"Example biplot"</span><span class='op'>)</span>
-</div><div class='img'><img src='gge-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='co'># biplot3d(m1)</span>
-
-<span class='kw'>if</span><span class='op'>(</span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='op'>(</span><span class='va'><a href='http://kwstat.github.io/agridat/'>agridat</a></span><span class='op'>)</span><span class='op'>)</span><span class='op'>{</span>
-  <span class='co'># crossa.wheat biplot</span>
-
-  <span class='co'># Specify env.group as column in data frame</span>
-  <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>crossa.wheat</span><span class='op'>)</span>
-  <span class='va'>dat2</span> <span class='op'>&lt;-</span> <span class='va'>crossa.wheat</span>
-  <span class='va'>m2</span> <span class='op'>&lt;-</span> <span class='fu'>gge</span><span class='op'>(</span><span class='va'>yield</span><span class='op'>~</span><span class='va'>gen</span><span class='op'>*</span><span class='va'>loc</span>, <span class='va'>dat2</span>, env.group<span class='op'>=</span><span class='va'>locgroup</span>, scale<span class='op'>=</span><span class='cn'>FALSE</span><span class='op'>)</span>
-  <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>m2</span><span class='op'>)</span>
-  <span class='fu'><a href='https://rdrr.io/r/stats/biplot.html'>biplot</a></span><span class='op'>(</span><span class='va'>m2</span>, lab.env<span class='op'>=</span><span class='cn'>TRUE</span>, main<span class='op'>=</span><span class='st'>"crossa.wheat"</span><span class='op'>)</span>
-  <span class='co'># biplot3d(m2)</span>
-<span class='op'>}</span>
-</div><div class='output co'>#&gt; <span class='message'>Loading required package: agridat</span></div><div class='output co'>#&gt; <span class='message'>Please use `gge(data,formula)` instead of `gge(formula,data)`</span></div><div class='img'><img src='gge-3.png' alt='' width='700' height='433' /></div><div class='img'><img src='gge-4.png' alt='' width='700' height='433' /></div><div class='input'>
-</div></pre>
+    <pre class="examples"><span class='r-in'><span class='co'># Example 1.  Data is a data.frame in 'matrix' format</span></span>
+<span class='r-in'><span class='va'>B</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>50</span>, <span class='fl'>67</span>, <span class='fl'>90</span>, <span class='fl'>98</span>, <span class='fl'>120</span>,</span>
+<span class='r-in'>              <span class='fl'>55</span>, <span class='fl'>71</span>, <span class='fl'>93</span>, <span class='fl'>102</span>, <span class='fl'>129</span>,</span>
+<span class='r-in'>              <span class='fl'>65</span>, <span class='fl'>76</span>, <span class='fl'>95</span>, <span class='fl'>105</span>, <span class='fl'>134</span>,</span>
+<span class='r-in'>              <span class='fl'>50</span>, <span class='fl'>80</span>, <span class='fl'>102</span>, <span class='fl'>130</span>, <span class='fl'>138</span>,</span>
+<span class='r-in'>              <span class='fl'>60</span>, <span class='fl'>82</span>, <span class='fl'>97</span>, <span class='fl'>135</span>, <span class='fl'>151</span>,</span>
+<span class='r-in'>              <span class='fl'>65</span>, <span class='fl'>89</span>, <span class='fl'>106</span>, <span class='fl'>137</span>, <span class='fl'>153</span>,</span>
+<span class='r-in'>              <span class='fl'>75</span>, <span class='fl'>95</span>, <span class='fl'>117</span>, <span class='fl'>133</span>, <span class='fl'>155</span><span class='op'>)</span>, ncol<span class='op'>=</span><span class='fl'>5</span>, byrow<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>rownames</a></span><span class='op'>(</span><span class='va'>B</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"G1"</span>,<span class='st'>"G2"</span>,<span class='st'>"G3"</span>,<span class='st'>"G4"</span>,<span class='st'>"G5"</span>,<span class='st'>"G6"</span>,<span class='st'>"G7"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>B</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"E1"</span>,<span class='st'>"E2"</span>,<span class='st'>"E3"</span>,<span class='st'>"E4"</span>,<span class='st'>"E5"</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='http://kwstat.github.io/gge/'>gge</a></span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>m1</span> <span class='op'>=</span> <span class='fu'>gge</span><span class='op'>(</span><span class='va'>B</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>m1</span><span class='op'>)</span></span>
+<span class='r-plt img'><img src='gge-1.png' alt='' width='700' height='433' /></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/stats/biplot.html'>biplot</a></span><span class='op'>(</span><span class='va'>m1</span>, main<span class='op'>=</span><span class='st'>"Example biplot"</span><span class='op'>)</span></span>
+<span class='r-plt img'><img src='gge-2.png' alt='' width='700' height='433' /></span>
+<span class='r-in'><span class='co'># biplot3d(m1)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='kw'>if</span><span class='op'>(</span><span class='kw'><a href='https://rdrr.io/r/base/library.html'>require</a></span><span class='op'>(</span><span class='va'><a href='http://kwstat.github.io/agridat/'>agridat</a></span><span class='op'>)</span><span class='op'>)</span><span class='op'>{</span></span>
+<span class='r-in'>  <span class='co'># crossa.wheat biplot</span></span>
+<span class='r-in'></span>
+<span class='r-in'>  <span class='co'># Specify env.group as column in data frame</span></span>
+<span class='r-in'>  <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>crossa.wheat</span><span class='op'>)</span></span>
+<span class='r-in'>  <span class='va'>dat2</span> <span class='op'>&lt;-</span> <span class='va'>crossa.wheat</span></span>
+<span class='r-in'>  <span class='va'>m2</span> <span class='op'>&lt;-</span> <span class='fu'>gge</span><span class='op'>(</span><span class='va'>yield</span><span class='op'>~</span><span class='va'>gen</span><span class='op'>*</span><span class='va'>loc</span>, <span class='va'>dat2</span>, env.group<span class='op'>=</span><span class='va'>locgroup</span>, scale<span class='op'>=</span><span class='cn'>FALSE</span><span class='op'>)</span></span>
+<span class='r-in'>  <span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>m2</span><span class='op'>)</span></span>
+<span class='r-in'>  <span class='fu'><a href='https://rdrr.io/r/stats/biplot.html'>biplot</a></span><span class='op'>(</span><span class='va'>m2</span>, lab.env<span class='op'>=</span><span class='cn'>TRUE</span>, main<span class='op'>=</span><span class='st'>"crossa.wheat"</span><span class='op'>)</span></span>
+<span class='r-in'>  <span class='co'># biplot3d(m2)</span></span>
+<span class='r-in'><span class='op'>}</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Loading required package: agridat</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Please use `gge(data,formula)` instead of `gge(formula,data)`</span>
+<span class='r-plt img'><img src='gge-3.png' alt='' width='700' height='433' /></span>
+<span class='r-plt img'><img src='gge-4.png' alt='' width='700' height='433' /></span>
+<span class='r-in'></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

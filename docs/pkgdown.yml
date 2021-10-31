@@ -1,7 +1,7 @@
-pandoc: 2.9.2.1
+pandoc: 2.11.2
 pkgdown: 1.6.1
 pkgdown_sha: ~
 articles:
   gge_examples: gge_examples.html
-last_built: 2020-12-16T14:56Z
+last_built: 2021-10-31T14:09Z
 

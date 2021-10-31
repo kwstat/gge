@@ -1,5 +1,5 @@
 # gge.R
-# Time-stamp: <07 Jul 2020 17:32:34 c:/x/rpack/gge/R/gge.R>
+# Time-stamp: <30 Oct 2021 11:12:23 c:/one/rpack/gge/R/gge.R>
 
 
 # Note: 
@@ -90,7 +90,7 @@ RedGrayBlue <- colorRampPalette(c("firebrick", "lightgray", "#375997"))
 #' \emph{Introduction to Biplots for GxE Tables},
 #' Research Report 51, Centre for Statistics, The University of Queensland,
 #' Brisbane, Australia.
-#' \url{http://three-mode.leidenuniv.nl/document/biplot.pdf}
+#' \url{https://three-mode.leidenuniv.nl/document/biplot.pdf}
 #' 
 #' Yan, W. and Kang, M.S. (2003).
 #' \emph{GGE Biplot Analysis}.  CRC Press.
