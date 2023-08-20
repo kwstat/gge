@@ -23,8 +23,7 @@ knitr::opts_chunk$set(fig.align="center", fig.width=6, fig.height=6)
 options(width=90)
 ```
 
-An example of a GGE (genotype plus genotype-by-environment) biplot similar to
-figure 12 of @yan2006biplot.  The `flip` argument can be used to flip the x and y axes so that biplots are oriented as desired.  Because the SVD factorization is not unique, 
+An example of a GGE (genotype plus genotype-by-environment) biplot similar to figure 12 of @yan2006biplot.  The `flip` argument can be used to flip the x and y axes so that biplots are oriented as desired.  Because the SVD factorization is not unique, 
 
 ```{r gge}
 library(agridat)
@@ -85,10 +84,7 @@ biplot(m3, main="crossa.wheat - GGB biplot")
 
 ## Biplot with genotype focus
 
-When $\bf X$ is a genotype-by-environment matrix, a *genotype-focused*
-biplot is easily obtained.  The genotype coordinates are can be obtained
-from the SVD using the first two columns of $\bf G_{gf} = U S$
-or equivalently from NIPALS $\bf G_{gf} = T$.
+When $\bf X$ is a genotype-by-environment matrix, a *genotype-focused* biplot is easily obtained.  The genotype coordinates are can be obtained from the SVD using the first two columns of $\bf G_{gf} = U S$ or equivalently from NIPALS $\bf G_{gf} = T$.
 
 ```{r , eval=0}
 u <- Xc.svd$u
@@ -107,12 +103,10 @@ p[,1:2]
 
 ## Biplot with environment focus
 
-For an *environment-focused* biplot, a little more effort is needed as
-the eigenvalues from NIPALS are also required.  The square root of the NIPALS
-eigenvalues are the same as the SVD singular values.
+For an *environment-focused* biplot, a little more effort is needed as the eigenvalues from NIPALS are also required.  The square root of the NIPALS eigenvalues are the same as the SVD singular values.
 
 The genotype coordinates are the first two columns of
-$\bf G_{ef} = U $ (from SVD) or
+$\bf G_{ef} = U$ (from SVD) or
 $\bf G_{ef} = T \Lambda^{-1/2}$ from NIPALS, where
 $\bf \Lambda$ is a diagonal matrix of the eigenvalues.
 ```{r , eval=0}
@@ -132,16 +126,9 @@ $\bf E_{ef} = P \Lambda^{1/2}$ (from NIPALS):
 
 Note that GGE biplots are environment-focused.  In particular, this provides the interpretation that the correlation of genotype performance in two environments is approximated by the cosine of the angle between the vectors for those two environments.
 
-The SVD and NIPALS methods provide the same
-principal components for complete-data, except that a
-principal component from SVD and the corresponding principal component from
-NIPALS might point in opposite directions (differ by a factor of $-1$) as in some of the examples above.  The
-corresponding biplots would therefore be mirror-reversed along that component.
-For biplots from SVD and NIPALS that are visually consistent, each principal component can be directed to point in a direction that is positively correlated with the overall genotype means.  In other words, if the correlation of the genotype means and the ordinate of the genotypes along the principal component is negative, the principal component is multiplied by $-1$.
+The SVD and NIPALS methods provide the same principal components for complete-data, except that a principal component from SVD and the corresponding principal component from NIPALS might point in opposite directions (differ by a factor of $-1$) as in some of the examples above.  The corresponding biplots would therefore be mirror-reversed along that component. For biplots from SVD and NIPALS that are visually consistent, each principal component can be directed to point in a direction that is positively correlated with the overall genotype means.  In other words, if the correlation of the genotype means and the ordinate of the genotypes along the principal component is negative, the principal component is multiplied by $-1$.
 
-As with all biplots, the environment vectors can be arbitrarily scaled so that the genotypes and environments uses a similar amount of area on the plot.
-The algorithm that physically centers the biplot and scales it on the page is not perfect and has opportunities for improvement.
-
+As with all biplots, the environment vectors can be arbitrarily scaled so that the genotypes and environments uses a similar amount of area on the plot. The algorithm that physically centers the biplot and scales it on the page is not perfect and has opportunities for improvement.
 
 
 ## References

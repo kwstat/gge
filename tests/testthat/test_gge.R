@@ -188,6 +188,10 @@ test_that("rgl works", {
     biplot3d(m2, lab.env=FALSE)
     biplot3d(m2, res.vec=FALSE)
     biplot3d(m2, zoom.gen=2)
+    
+    data(crossa.wheat, package="agridat")
+    dat2 <- crossa.wheat
+    
     #dat2 <- data.frame(
     #  env=c("BH93","EA93","HW93","ID93","KE93","NN93","OA93","RN93","WP93"),
     #  grp=c("G2","G2","G2","G2","G1","G2","G1","G2","G2"))    
@@ -197,7 +201,7 @@ test_that("rgl works", {
   
     m4 <- gge(dat, yield ~ gen*env, env.group=eg, scale=FALSE)
     biplot3d(m4)
-    while (rgl.cur() > 0) { rgl.close() }
+    while (rgl.cur() > 0) { close3d() }
   })
   
   expect_error(biplot3d(m2, comps=1:2))

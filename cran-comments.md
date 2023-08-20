@@ -1,3 +1,17 @@
+# gge 1.8
+
+* Switch license from GPL3 to MIT.
+* Fix docType issue reported by CRAN.
+
+## Test environments & results
+
+* Local R 4.3.1 on Windows 10
+* WinBuilder devel
+* rhub::check_for_cran()
+
+No problems.
+
+
 # gge 1.7
 
 Fix a note about LazyData.

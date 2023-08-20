@@ -1,5 +1,5 @@
 # gge.R
-# Time-stamp: <30 Oct 2021 11:12:23 c:/one/rpack/gge/R/gge.R>
+# Time-stamp: <29 Mar 2023 08:45:09 c:/drop/rpack/gge/r/gge.R>
 
 
 # Note: 
@@ -11,9 +11,8 @@
 #' GGE and GGB biplots
 #' 
 #' @name gge
-#' @aliases gge package-gge
+#' @aliases gge-package
 #' @author Kevin Wright, Jean-Louis Laffont
-#' @docType package
 NULL
 
 # ----------------------------------------------------------------------------
@@ -119,7 +118,7 @@ RedGrayBlue <- colorRampPalette(c("firebrick", "lightgray", "#375997"))
 #'   # Specify env.group as column in data frame
 #'   data(crossa.wheat)
 #'   dat2 <- crossa.wheat
-#'   m2 <- gge(yield~gen*loc, dat2, env.group=locgroup, scale=FALSE)
+#'   m2 <- gge(dat2, yield~gen*loc, env.group=locgroup, scale=FALSE)
 #'   plot(m2)
 #'   biplot(m2, lab.env=TRUE, main="crossa.wheat")
 #'   # biplot3d(m2)
@@ -558,9 +557,9 @@ plot.gge <- function(x, main=substitute(x), ...) {
 #'
 #' @param ylab Label along axis. Default "auto" shows percent of variation explained. Use NULL to suppress.
 #' 
-#' @param cex.gen Character expansion for genotypes, default 0.6. Use 0 to omit genotypes.
+#' @param cex.gen Character expansion for genotype labels, default 0.6. Use 0 to omit genotype labels.
 #' 
-#' @param cex.env Character expansion for environment labels.
+#' @param cex.env Character expansion for environment labels/symbols.  Use lab.env=FALSE to omit labels.
 #' 
 #' @param col.gen Color for genotype labels.  May be a single color for all genotypes,
 #' or a vector of colors for each genotype.
@@ -575,8 +574,8 @@ plot.gge <- function(x, main=substitute(x), ...) {
 #' @param comps Principal components to use for the biplot. Default c(1,2).
 #' 
 #' @param flip If "auto" then each axis is flipped so that the genotype
-#' ordinate is positively correlated with genotype means.  Can also be a vector
-#' like c(TRUE,FALSE) for manual control.
+#' ordinate is positively correlated with genotype means.  Can also be
+#' a vector like c(TRUE,FALSE) for manual control.
 #' 
 #' @param origin If "auto", the plotting window is centered on genotypes, otherwise
 #' the origin is at the middle of the window.
