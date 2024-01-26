@@ -3,7 +3,7 @@ Title: Genotype Plus Genotype-by-Environment Biplots
 Version: 1.8
 Authors@R: c(
   person("Kevin","Wright", email="kw.stat@gmail.com", 
-  comment=c(ORCID = "0000-0002-0617-8673"), role=c("aut","cre")),
+  comment=c(ORCID = "0000-0002-0617-8673"), role=c("aut","cre","cph")),
   person("Jean-Louis","Laffont", role="aut")
   )
 Description: Create biplots for GGE (genotype plus genotype-by-environment) and
