@@ -1,28 +1,30 @@
+Type: Package
 Package: gge
 Title: Genotype Plus Genotype-by-Environment Biplots
 Version: 1.8
 Authors@R: c(
-  person("Kevin","Wright", email="kw.stat@gmail.com", 
-  comment=c(ORCID = "0000-0002-0617-8673"), role=c("aut","cre","cph")),
-  person("Jean-Louis","Laffont", role="aut")
+    person("Kevin", "Wright", , "kw.stat@gmail.com", role = c("aut", "cre", "cph"),
+           comment = c(ORCID = "0000-0002-0617-8673")),
+    person("Jean-Louis", "Laffont", role = "aut")
   )
-Description: Create biplots for GGE (genotype plus genotype-by-environment) and
-    GGB (genotype plus genotype-by-block-of-environments) models. 
-    See Laffont et al. (2013) <doi:10.2135/cropsci2013.03.0178>.
-Type: Package
-Imports:
-  nipals,
-  reshape2
-Suggests:
-  agridat,
-  knitr,
-  lattice,
-  rgl,
-  rmarkdown,
-  testthat
+Description: Create biplots for GGE (genotype plus
+    genotype-by-environment) and GGB (genotype plus
+    genotype-by-block-of-environments) models.  See Laffont et al. (2013)
+    <doi:10.2135/cropsci2013.03.0178>.
 License: MIT + file LICENSE
-URL: https://kwstat.github.io/gge/
+URL: https://kwstat.github.io/gge/, http://kwstat.github.io/gge/
 BugReports: https://github.com/kwstat/gge/issues
-VignetteBuilder: knitr
-RoxygenNote: 7.2.3
+Imports:
+    nipals,
+    reshape2
+Suggests:
+    agridat,
+    knitr,
+    lattice,
+    rgl,
+    rmarkdown,
+    testthat
+VignetteBuilder: 
+    knitr
 Encoding: UTF-8
+RoxygenNote: 7.3.2
