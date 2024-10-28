@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gge</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.8</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -65,7 +65,7 @@
                         <h4 data-toc-skip class="author">Kevin
 Wright</h4>
             
-            <h4 data-toc-skip class="date">2024-07-17</h4>
+            <h4 data-toc-skip class="date">2024-10-28</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kwstat/gge/blob/main/vignettes/gge_examples.Rmd" class="external-link"><code>vignettes/gge_examples.Rmd</code></a></small>
       <div class="d-none name"><code>gge_examples.Rmd</code></div>
@@ -109,17 +109,18 @@ plane.</p>
 <code class="sourceCode R"><span><span class="va">m2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gge.html">gge</a></span><span class="op">(</span><span class="va">dat1</span>, <span class="va">yield</span><span class="op">~</span><span class="va">gen</span><span class="op">*</span><span class="va">env</span>, scale<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/biplot.html" class="external-link">biplot</a></span><span class="op">(</span><span class="va">m2</span>, main<span class="op">=</span><span class="st">"yan.winterwheat - GGE biplot"</span>,</span>
 <span>       flip<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>, origin<span class="op">=</span><span class="fl">0</span><span class="op">)</span></span></code></pre></div>
-<p><img src="gge_examples_files/figure-html/unnamed-chunk-1-1.png" width="576" style="display: block; margin: auto;">
-As seen above, the environment vectors are fairly long, so that relative
-performance of genotypes in environments can be assessed with reasonable
-accuracy. In contrast, a biplot based on principal components 2 and 3
-has shorter vectors which should not be interpreted.</p>
+<p><img src="gge_examples_files/figure-html/unnamed-chunk-1-1.png" width="576" style="display: block; margin: auto;"></p>
+<p>As seen above, the environment vectors are fairly long, so that
+relative performance of genotypes in environments can be assessed with
+reasonable accuracy. In contrast, a biplot based on principal components
+2 and 3 has shorter vectors which should not be interpreted.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/biplot.html" class="external-link">biplot</a></span><span class="op">(</span><span class="va">m2</span>, main<span class="op">=</span><span class="st">"yan.winterwheat - GGE biplot - PC 2 &amp; 3"</span>,</span>
 <span>       comps<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">3</span><span class="op">)</span>, flip<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>, origin<span class="op">=</span><span class="fl">0</span><span class="op">)</span></span></code></pre></div>
-<p><img src="gge_examples_files/figure-html/unnamed-chunk-2-1.png" width="576" style="display: block; margin: auto;"><span class="citation">Laffont, Hanafi, and Wright (2007)</span> showed
-how to partition the sums-of-squares simultaneously along the principal
-component axes and along ‘G’ and ‘GxE’ axes.</p>
+<p><img src="gge_examples_files/figure-html/unnamed-chunk-2-1.png" width="576" style="display: block; margin: auto;"></p>
+<p><span class="citation">Laffont, Hanafi, and Wright (2007)</span>
+showed how to partition the sums-of-squares simultaneously along the
+principal component axes and along ‘G’ and ‘GxE’ axes.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m1</span>, main<span class="op">=</span><span class="st">"yan.winterwheat"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="gge_examples_files/figure-html/mosaic-1.png" width="576" style="display: block; margin: auto;"></p>
@@ -148,45 +149,61 @@ multiple locations.</p>
 <span><span class="va">m3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gge.html">gge</a></span><span class="op">(</span><span class="va">dat2</span>, <span class="va">yield</span><span class="op">~</span><span class="va">gen</span><span class="op">*</span><span class="va">loc</span>, env.group<span class="op">=</span><span class="va">eg</span>, scale<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/biplot.html" class="external-link">biplot</a></span><span class="op">(</span><span class="va">m3</span>, main<span class="op">=</span><span class="st">"crossa.wheat - GGB biplot"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="gge_examples_files/figure-html/ggb-1.png" width="576" style="display: block; margin: auto;"></p>
-<div class="section level3">
-<h3 id="biplot-with-genotype-focus">Biplot with genotype focus<a class="anchor" aria-label="anchor" href="#biplot-with-genotype-focus"></a>
-</h3>
-<p>When <span class="math inline">$\bf X$</span> is a
-genotype-by-environment matrix, a <em>genotype-focused</em> biplot is
-easily obtained. The genotype coordinates are can be obtained from the
-SVD using the first two columns of <span class="math inline">$\bf G_{gf}
-= U S$</span> or equivalently from NIPALS <span class="math inline">$\bf
-G_{gf} = T$</span>.</p>
+</div>
+<div class="section level2">
+<h2 id="how-to-modify-the-focus-of-a-biplot">How to modify the “focus” of a biplot<a class="anchor" aria-label="anchor" href="#how-to-modify-the-focus-of-a-biplot"></a>
+</h2>
+<p>Let <code>X</code> be a genotype-by-environment matrix.</p>
+<p>Let the Singular Value Decomposition be <code>X = USV'</code>.</p>
+<p>Let the NIPALS decomposition be <code>X = TLP'</code>. DANGER, some
+algorithms do not factor L out of T.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">## u &lt;- Xc.svd$u</span></span>
-<span><span class="co">## s &lt;- diag(Xc.svd$d)</span></span>
-<span><span class="co">## v &lt;- Xc.svd$v</span></span>
-<span><span class="co">## (u %*% s)[,1:2]</span></span>
-<span><span class="co">## t[,1:2]</span></span></code></pre></div>
-<p>The environment coordinates are the first two columns of <span class="math inline">$\bf E_{gf} = V$</span> (from the SVD) or <span class="math inline">$\bf E_{gf} = P$</span> (from NIPALS).</p>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://kwstat.github.io/agridat/" class="external-link">agridat</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/hadley/reshape" class="external-link">reshape2</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://kwstat.github.io/nipals/" class="external-link">nipals</a></span><span class="op">)</span></span>
+<span><span class="va">dat3</span> <span class="op">&lt;-</span> <span class="fu">agridat</span><span class="fu">::</span><span class="va"><a href="https://kwstat.github.io/agridat/reference/yan.winterwheat.html" class="external-link">yan.winterwheat</a></span></span>
+<span><span class="va">dat3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/reshape2/man/cast.html" class="external-link">acast</a></span><span class="op">(</span><span class="va">dat3</span>, <span class="va">gen</span><span class="op">~</span><span class="va">env</span>, value.var<span class="op">=</span><span class="st">"yield"</span><span class="op">)</span></span>
+<span><span class="va">dat3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="va">dat3</span>, center<span class="op">=</span><span class="cn">TRUE</span>, scale<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="va">Xsvd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/svd.html" class="external-link">svd</a></span><span class="op">(</span><span class="va">dat3</span><span class="op">)</span></span>
+<span><span class="va">Xnip</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kwstat.github.io/nipals/reference/nipals.html" class="external-link">nipals</a></span><span class="op">(</span><span class="va">dat3</span>, center<span class="op">=</span><span class="cn">FALSE</span>, scale<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="va">U</span> <span class="op">&lt;-</span> <span class="va">Xsvd</span><span class="op">$</span><span class="va">u</span></span>
+<span><span class="va">S</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="va">Xsvd</span><span class="op">$</span><span class="va">d</span><span class="op">)</span></span>
+<span><span class="va">V</span> <span class="op">&lt;-</span> <span class="va">Xsvd</span><span class="op">$</span><span class="va">v</span></span>
+<span><span class="cn">T</span> <span class="op">&lt;-</span> <span class="va">Xnip</span><span class="op">$</span><span class="va">scores</span></span>
+<span><span class="va">Lam</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="va">Xnip</span><span class="op">$</span><span class="va">eig</span><span class="op">)</span></span>
+<span><span class="va">P</span> <span class="op">&lt;-</span> <span class="va">Xnip</span><span class="op">$</span><span class="va">loadings</span></span></code></pre></div>
+<div class="section level3">
+<h3 id="biplots-with-genotype-focus">Biplots with genotype focus<a class="anchor" aria-label="anchor" href="#biplots-with-genotype-focus"></a>
+</h3>
+<p>To obtain a <em>genotype-focused</em> biplot the eigenvalues are
+associated with <code>U</code>.</p>
+<p>The genotype coordinates are can be obtained from the SVD using the
+first two columns of <code>U*S</code> or equivalently from NIPALS
+<code>T*Lam</code>.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">## v[,1:2]</span></span>
-<span><span class="co">## p[,1:2]</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="op">(</span><span class="va">U</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">S</span><span class="op">)</span><span class="op">[</span> , <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span></span>
+<span><span class="op">(</span><span class="cn">T</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">Lam</span><span class="op">)</span><span class="op">[</span> , <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span></span></code></pre></div>
+<p>The environment coordinates are the first two columns of
+<code>V</code> (from the SVD) or <code>P</code> (from NIPALS).</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">V</span><span class="op">[</span> , <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span></span>
+<span><span class="va">P</span><span class="op">[</span> , <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="biplot-with-environment-focus">Biplot with environment focus<a class="anchor" aria-label="anchor" href="#biplot-with-environment-focus"></a>
 </h3>
-<p>For an <em>environment-focused</em> biplot, a little more effort is
-needed as the eigenvalues from NIPALS are also required. The square root
-of the NIPALS eigenvalues are the same as the SVD singular values.</p>
-<p>The genotype coordinates are the first two columns of <span class="math inline">$\bf G_{ef} = U$</span> (from SVD) or <span class="math inline">$\bf G_{ef} = T \Lambda^{-1/2}$</span> from NIPALS,
-where <span class="math inline">$\bf \Lambda$</span> is a diagonal
-matrix of the eigenvalues.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">## u[,1:2]</span></span>
-<span><span class="co">## sv &lt;- sqrt(Xc.pca$eig)</span></span>
-<span><span class="co">## (t %*% diag(1/sv))[,1:2]</span></span></code></pre></div>
-<p>The environment coordinates are <span class="math inline">$\bf E_{ef}
-= V$</span> (from SVD) or <span class="math inline">$\bf E_{ef} = P
-\Lambda^{1/2}$</span> (from NIPALS):</p>
+<p>To obtain an <em>environment-focused</em> biplot the eigenvalues are
+associated with <code>V</code>.</p>
+<p>The genotype coordinates are the first two columns of <code>U</code>
+(from SVD) or <code>T</code> (from NIPALS).</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">## (v %*% s)[,1:2]</span></span>
-<span><span class="co">## (p %*% diag(sv))[,1:2]</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">U</span><span class="op">[</span> , <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span></span>
+<span><span class="cn">T</span><span class="op">[</span> , <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span></span></code></pre></div>
+<p>The environment coordinates are <code>S*V</code> (from SVD) or
+<code>Lam*P</code> (from NIPALS).</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="op">(</span><span class="va">S</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">V</span><span class="op">)</span><span class="op">[</span> , <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span></span>
+<span><span class="op">(</span><span class="va">Lam</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">P</span><span class="op">)</span><span class="op">[</span> , <span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="comments-on-biplots">Comments on biplots<a class="anchor" aria-label="anchor" href="#comments-on-biplots"></a>
@@ -198,16 +215,14 @@ the vectors for those two environments.</p>
 <p>The SVD and NIPALS methods provide the same principal components for
 complete-data, except that a principal component from SVD and the
 corresponding principal component from NIPALS might point in opposite
-directions (differ by a factor of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">-1</annotation></semantics></math>)
-as in some of the examples above. The corresponding biplots would
-therefore be mirror-reversed along that component. For biplots from SVD
-and NIPALS that are visually consistent, each principal component can be
-directed to point in a direction that is positively correlated with the
-overall genotype means. In other words, if the correlation of the
-genotype means and the ordinate of the genotypes along the principal
-component is negative, the principal component is multiplied by
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">-1</annotation></semantics></math>.</p>
+directions (differ by a factor of <code>-1</code> as in some of the
+examples above. The corresponding biplots would therefore be
+mirror-reversed along that component. For biplots from SVD and NIPALS
+that are visually consistent, each principal component can be directed
+to point in a direction that is positively correlated with the overall
+genotype means. In other words, if the correlation of the genotype means
+and the ordinate of the genotypes along the principal component is
+negative, the principal component is multiplied by <code>-1</code>.</p>
 <p>As with all biplots, the environment vectors can be arbitrarily
 scaled so that the genotypes and environments uses a similar amount of
 area on the plot. The algorithm that physically centers the biplot and
@@ -247,7 +262,7 @@ Multi-Environment Trial Data: Principles and Applications.”</span>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer>
