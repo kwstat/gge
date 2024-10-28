@@ -11,9 +11,18 @@ Bootstrap testing for PCs (Forkman 2019 paper)
 Bootstrap conf int
 
 
+# gge 1.9 (2024.10.28)
+
+* Documentation pages now created via Github Actions.
+
+* Changed vignette chunk option `eval=0` to `eval=FALSE` to maybe fix error when `revdep`-checking `agridat`.
+
+* Fixed vignette example showing the difference between genotype-focused and environment-focused biplots.
+
 # gge 1.8 (2023-08-20)
 
 * Switch from GPL3 to MIT license.
+
 * Fix docType issue as requested by CRAN.
 
 

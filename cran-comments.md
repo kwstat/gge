@@ -1,3 +1,17 @@
+# gge 1.9
+
+## Test environments & results
+
+* Local R 4.4.1 on Windows 11
+* WinBuilder R-devel
+* WinBuilder R-oldrelease
+
+Checked OK
+
+## revdepcheck results
+
+No problems with revdep `agridat`.
+
 # gge 1.8
 
 * Switch license from GPL3 to MIT.
@@ -6,8 +20,8 @@
 ## Test environments & results
 
 * Local R 4.3.1 on Windows 10
-* WinBuilder devel
-* rhub::check_for_cran()
+* WinBuilder R-devel
+* Rhub
 
 No problems.
 
@@ -73,8 +87,8 @@ No ERRORs in agridat, GGEBiplots.
 ## test environments
 
 * local R 3.5.0 on Windows 7
-* win-builder release
-* win-builder devel
+* win-builder R-release
+* win-builder R-devel
 
 ## R CMD check results
 
@@ -89,8 +103,8 @@ No ERRORs in agridat, GGEBiplots.
 ## test environments
 
 * local R 3.4.2 on Windows 7
-* win-builder release
-* win-builder devel
+* win-builder R-release
+* win-builder R-devel
 
 ## R CMD check results
 
@@ -110,8 +124,8 @@ Possibly mis-spelled words in DESCRIPTION:
 ## test environments
 
 * local R 3.4.0 on Windows 7
-* win-builder release
-* win-builder devel
+* win-builder R-release
+* win-builder R-devel
 
 ## R CMD check results
 
@@ -135,8 +149,8 @@ None.
 ## test environments
 
 * local R 3.3.1 on Windows 7
-* win-builder release
-* win-builder devel
+* win-builder R-release
+* win-builder R-devel
 
 ## R CMD check results
 
@@ -164,7 +178,8 @@ package.
 ## test environments
 
 * local R 3.2.3 on Windows 7
-* win-builder (devel & release)
+* win-builder R-devel
+* win-builder R-release
 
 ## R CMD check results
 
