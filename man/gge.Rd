@@ -4,7 +4,6 @@
 \alias{gge}
 \alias{gge-package}
 \alias{gge.data.frame}
-\alias{gge.formula}
 \alias{gge.matrix}
 \alias{plot.gge}
 \alias{biplot.gge}
@@ -15,8 +14,6 @@
 gge(x, ...)
 
 \method{gge}{data.frame}(x, formula, gen.group = NULL, env.group = NULL, ggb = FALSE, ...)
-
-\method{gge}{formula}(formula, data, gen.group = NULL, env.group = NULL, ggb = FALSE, ...)
 
 \method{gge}{matrix}(
   x,
@@ -82,8 +79,6 @@ biplot3d(x, ...)
 
 \item{ggb}{If TRUE, fit a GGB biplot model.}
 
-\item{data}{Data frame}
-
 \item{center}{If TRUE, center values for each environment}
 
 \item{scale}{If TRUE, scale values for each environment}
@@ -133,6 +128,8 @@ The default is 1. Values less than 1 may be useful if genotype names are long.}
 \item{zoom.env}{Zoom factor for manual control of environment xlim,ylim.
 The default is 1. Values less than 1 may be useful if environment names are long.
 Not used for 3D biplots.}
+
+\item{data}{Data frame}
 }
 \value{
 A list of class \code{gge} containing:

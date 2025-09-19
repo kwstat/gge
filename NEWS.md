@@ -10,6 +10,10 @@ Bootstrap testing for PCs (Forkman 2019 paper)
 
 Bootstrap conf int
 
+# gge 1.10 ()
+
+* Remove `gge.formula()`.
+
 
 # gge 1.9 (2024.10.28)
 
@@ -18,6 +22,7 @@ Bootstrap conf int
 * Changed vignette chunk option `eval=0` to `eval=FALSE` to maybe fix error when `revdep`-checking `agridat`.
 
 * Fixed vignette example showing the difference between genotype-focused and environment-focused biplots.
+
 
 # gge 1.8 (2023-08-20)
 

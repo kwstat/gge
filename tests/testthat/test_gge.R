@@ -46,10 +46,6 @@ test_that("errors with gge.matrix", {
   expect_error(gge(mat1, method="NIP")) # unknown method
 })
 
-test_that("errors with gge.formula", {
-  bar <- transform(lattice::barley, env=paste0(site,year))
-  expect_message( gge(yield~variety*site, bar))
-})
 
 test_that("errors with gge.data.frame", {
   bar <- transform(lattice::barley, env=paste0(site,year))

@@ -2,12 +2,6 @@
 # Time-stamp: <20 Nov 2023 13:30:55 c:/drop/rpack/gge/r/gge.R>
 
 
-# Note: 
-# gge.formula and gge.data.frame are identical
-# gge.formula will be deprecated at some point
-
-
-
 #' GGE and GGB biplots
 #' 
 #' @name gge
@@ -216,78 +210,6 @@ gge.data.frame <- function(x,
 ## gge.formula and gge.data.frame are identical
 ## gge.formula will be deprecated
 
-#' @rdname gge
-#' 
-#' @export
-gge.formula <- function(formula,
-                        data,
-                        gen.group=NULL,
-                        env.group=NULL,
-                        ggb=FALSE,
-                        ...) {
-  # Author: Kevin Wright
-
-  # Message introduced Jun 2020.  Plan to deprecate end of 2021.
-  message("Please use `gge(data,formula)` instead of `gge(formula,data)`\n")
-  
-  if(is.null(data))
-    stop("This usage of gge requires a formula AND data frame.")
-
-  # previous subset/filter could leave extra levels behind
-  data <- droplevels(data)
-  
-  # Get character representations of all necessary variables.
-  # There is probably a more R-like (tidyeval?) way to do this. Oh well.
-  vars <- all.vars(formula)
-  # Check for valid names (in the data)
-  if(!all(is.element(vars,names(data))))
-    stop("Some of the terms in the formula are not found in the data.")
-  .y <- vars[1]
-  .gen <- vars[2]
-  .env <- vars[3]
-
-  # Make gen.group & env.group either NULL or quoted name in the data
-  gen.group <- substitute(gen.group)
-  env.group <- substitute(env.group)
-  if(!is.null(gen.group)) {
-    gen.group <- deparse(gen.group) # convert gen.group to text
-    if(!is.element(gen.group, names(data)))
-      stop("The argument 'gen.group' refers to non-existant column of data.")
-
-    if(any(colSums(table(data[[gen.group]], data[[.gen]])>0)>1)){
-      stop("Some values of '", .gen, "' have multiple gen.group.")
-    }
-  }
-  if(!is.null(env.group)) {
-    env.group <- deparse(env.group)
-    if(!is.element(env.group, names(data)))
-      stop("The argument 'env.group' refers to non-existant column of data.")
-
-    if(any(colSums(table(data[[env.group]], data[[.env]])>0)>1)){
-      stop("Some values of '", .env, "' have multiple env.group.")
-      env.group <- NULL
-    }
-  }
-  if(is.null(env.group)) ggb <- FALSE
-  
-  # Finally, reshape data into a matrix, average values in each cell
-  datm <- reshape2::acast(data, formula(paste(.gen, "~", .env)),
-                          fun.aggregate=mean, na.rm=TRUE, value.var=.y)
-  datm[is.nan(datm)] <- NA # Use NA instead of NaN
-
-  # Make gen.group and env.group to be vectors for the rows/cols of datm
-  if(!is.null(gen.group)) {
-    ix1 <- match(rownames(datm), data[[.gen]])
-    gen.group <- data[[gen.group]][ix1]
-  }
-  if(!is.null(env.group)) {
-    ix2 <- match(colnames(datm), data[[.env]])
-    env.group <- data[[env.group]][ix2]
-  }
-
-  # Now call the matrix method and return the results
-  invisible(gge.matrix(datm, gen.group=gen.group, env.group=env.group, ggb=ggb, ...))
-}
 
 # ----------------------------------------------------------------------------
 
@@ -511,10 +433,8 @@ extend <- function(x,y,xlim,ylim){
 #' @export
 plot.gge <- function(x, main=substitute(x), ...) {
 
-  # title deprecated in gge 1.2, 2017
   args <- match.call()
   if( is.element("title", names(args)) ) {
-    #main <- args$title
     stop("Argument 'title' is deprecated. Use 'main' instead.\n")
   }
   
@@ -611,7 +531,7 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
                        zoom.gen=1, zoom.env=1,
                        ...){
 
-  # title deprecated in gge 1.2, 2017
+
   args <- match.call()
   if( is.element("title", names(args)) ) {
     main <- args$title
