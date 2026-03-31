@@ -1,4 +1,3 @@
-# Time-stamp: <30 Oct 2021 11:37:20 c:/one/rpack/gge/tests/testthat/test_gge.R>
 
 require(gge)
 
@@ -70,7 +69,6 @@ test_that("nipals",{
   expect_warning(gge(mat3, method="nipals")) # more than 10 percent missing
 })
 
-# ----------------------------------------------------------------------------
 
 test_that("Checking arguments of biplot", {
   expect_silent(NULL) # hack to avoid testthat warning
@@ -162,6 +160,37 @@ test_that("Polygon hull.  Yan 2006 fig 12", {
   )
 })
 
+
+test_that("AEC biplot option", {
+  m11 <- gge(mat1)
+
+  # Basic AEC biplot runs silently
+  expect_silent(biplot(m11, AEC = TRUE, cex.env=1))
+
+  # AEC with no environment labels (points instead)
+  expect_silent(biplot(m11, AEC = TRUE, lab.env = FALSE))
+
+  # AEC with axis flipping
+  expect_silent(biplot(m11, AEC = TRUE, flip = c(TRUE, FALSE)))
+  expect_silent(biplot(m11, AEC = TRUE, flip = c(FALSE, TRUE)))
+  expect_silent(biplot(m11, AEC = TRUE, flip = c(TRUE, TRUE)))
+
+  # AEC with zoom options
+  expect_silent(biplot(m11, AEC = TRUE, zoom.gen = 0.8))
+  expect_silent(biplot(m11, AEC = TRUE, zoom.env = 0.8))
+
+  # AEC with alternate components
+  expect_silent(biplot(m11, AEC = TRUE, comps = 2:3))
+
+  # AEC with env.group: unit-circle is suppressed (scale=TRUE default)
+  m_grp <- gge(mat1, env.group = c(1, 1, 1, 2, 2))
+  expect_silent(biplot(m_grp, AEC = TRUE))
+  expect_silent(biplot(m_grp, AEC = TRUE, lab.env = FALSE))
+
+  # AEC with unscaled model (no unit circle drawn)
+  m_unscaled <- gge(mat1, scale = FALSE)
+  expect_silent(biplot(m_unscaled, AEC = TRUE))
+})
 
 test_that("rgl works", {
   

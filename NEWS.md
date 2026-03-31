@@ -4,18 +4,18 @@ New argument `focus` for Different Singular Value Partitionings, including GH, J
 
 New function `ggbiplot()` function using `ggplot2` graphics to draw the biplot.
 
-Average Environment Coordinate
-
 Bootstrap testing for PCs (Forkman 2019 paper)
 
 Bootstrap conf int
 
-# gge 1.10 ()
+# gge 1.10 (2026-03-31)
 
 * Remove `gge.formula()`.
 
+* Add option `biplot( AEC=TRUE)` to draw Average Environment Coordinate biplot.
 
-# gge 1.9 (2024.10.28)
+
+# gge 1.9 (2024-10-28)
 
 * Documentation pages now created via Github Actions.
 

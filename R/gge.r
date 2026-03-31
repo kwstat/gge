@@ -207,9 +207,6 @@ gge.data.frame <- function(x,
   invisible(gge.matrix(datm, gen.group=gen.group, env.group=env.group, ggb=ggb, ...))
 }
 
-## gge.formula and gge.data.frame are identical
-## gge.formula will be deprecated
-
 
 # ----------------------------------------------------------------------------
 
@@ -505,6 +502,13 @@ plot.gge <- function(x, main=substitute(x), ...) {
 #' 
 #' @param hull If TRUE, show a which-won-where polygon.
 #' 
+#' @param AEC If TRUE, draw the Average Environment Coordination (AEC) biplot.
+#' Environment vectors are suppressed. Instead, a vector is drawn to the
+#' average of all environment coordinates (the "average environment"), the AEC
+#' axis is extended as a line through the origin across the plot, and concentric
+#' circles are drawn centred on the average environment point as a guide to
+#' stability (distance from the average environment).
+#' 
 #' @param zoom.gen Zoom factor for manual control of genotype xlim,ylim
 #' The default is 1. Values less than 1 may be useful if genotype names are long.
 #' 
@@ -528,6 +532,7 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
                        origin="auto",
                        res.vec=TRUE,
                        hull=FALSE,
+                       AEC=FALSE,
                        zoom.gen=1, zoom.env=1,
                        ...){
 
@@ -663,9 +668,10 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
   # E1 E2 E3 E4 E5 
   #  1  1  1  1  1
   
-  # for standardized biplots, draw a circle of radius 1 on locCoord scale
-  # do this first so we don't overwrite labels
-  if(x$scale) {
+  # For standardized biplots, draw unit circle of radius 1 on locCoord scale
+  # Do this first so we don't overwrite labels.
+  # Do not show the unit circle for AEC biplots.
+  if(x$scale && !AEC) {
     angles <- seq(from=0, to=2*pi, length=100)
     radius <- 1
     xc <- radius * sin(angles)
@@ -680,56 +686,101 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
     eix <- as.numeric(factor(env.group))
   }
 
-  if(lab.env == TRUE) {
-    text(locCoord[ , c(xcomp, ycomp), drop = FALSE],
-         rownames(locCoord), cex=cex.env, col = col.env[eix])
+  if(AEC) {
+    # AEC biplot: omit individual environment vectors.
+    # Draw the average environment point, the AEC axis through the origin,
+    # and concentric circles centred on the average environment.
+
+    avgEnv <- colMeans(locCoord[, c(xcomp, ycomp), drop = FALSE])
+    ax <- avgEnv[1]
+    ay <- avgEnv[2]
+
+    # AEC axis: line through origin in the direction of the average environment,
+    # extended to plot boundaries in both directions.
+    xy_pos <- extend( ax,  ay, xlime, ylime)
+    xy_neg <- extend(-ax, -ay, xlime, ylime)
+    segments(xy_neg$x2, xy_neg$y2, xy_pos$x2, xy_pos$y2,
+             lty = 1, col = "gray50")
+    # Arrow tip showing direction of increasing genotype mean
+    arrows(0, 0, .88 * xy_pos$x2, .88 * xy_pos$y2,
+           length = 0.1, col = "gray50")
+
+    # Concentric circles centred on average environment (stability guide).
+    # Radii at 1/2, 1, 3/2, 2 times the maximum distance from AE to any loc.
+    dists <- sqrt((locCoord[, xcomp] - ax)^2 + (locCoord[, ycomp] - ay)^2)
+    max_dist <- max(dists)
+    circ_angles <- seq(0, 2 * pi, length.out = 200)
+    for(r in max_dist * c(1/2, 1, 3/2, 2)) {
+      lines(ax + r * cos(circ_angles), ay + r * sin(circ_angles),
+            col = "lightblue", lty = 2)
+    }
+
+    # Mark the average environment with a filled circle
+    points(ax, ay, pch = 16, cex = 1.2, col = col.env[1])
+    if(lab.env) text(ax, ay, "AE", pos = 3, cex = cex.env, col = col.env[1])
+
+    # Plot environment labels or points at their individual coordinates
+    if(lab.env) {
+      text(locCoord[, c(xcomp, ycomp), drop = FALSE],
+           rownames(locCoord), cex = cex.env, col = col.env[eix])
+    } else {
+      points(locCoord[, c(xcomp, ycomp), drop = FALSE],
+             cex = cex.env, col = col.env[eix])
+    }
+
   } else {
-    points(locCoord[ , c(xcomp, ycomp), drop = FALSE],
-           cex = cex.env, col = col.env[eix]) # pch = (1:n.env.grp)[eix])
-  }
+    # Standard (non-AEC) environment rendering
+    if(lab.env == TRUE) {
+      text(locCoord[ , c(xcomp, ycomp), drop = FALSE],
+           rownames(locCoord), cex=cex.env, col = col.env[eix])
+    } else {
+      points(locCoord[ , c(xcomp, ycomp), drop = FALSE],
+             cex = cex.env, col = col.env[eix]) # pch = (1:n.env.grp)[eix])
+    }
 
-  # No env groups. Draw vector to each loc, shorten to reduce over-plotting
-  if(n.env.grp == 0){
-    segments(0, 0, .95*locCoord[,xcomp], .95*locCoord[,ycomp],
-             col = col.env[1])
-  }
+    # No env groups. Draw vector to each loc, shorten to reduce over-plotting
+    if(n.env.grp == 0){
+      segments(0, 0, .95*locCoord[,xcomp], .95*locCoord[,ycomp],
+               col = col.env[1])
+    }
 
-  # One or more groups. NOT GGB. Draw vector to each loc, colored by group.
-  if(n.env.grp >= 1 & !ggb){
-    segments(0, 0, .95*locCoord[,xcomp], .95*locCoord[,ycomp],
-             col = col.env[eix])
-  }
-  # One or more groups. IS GGB.
-  if(n.env.grp >= 1 & ggb) {
-    # Draw solid-line part of the group vector
-    unibc <- blockCoord[groupNames,,drop=FALSE] # Get unique row for each group
-    segments(0, 0, unibc[ , xcomp], unibc[ , ycomp], 
-             lwd = 2, col=col.env) # no 'eix'
-    # End point
-    # points(unibc[ , c(xcomp,ycomp)], pch = 16, col=col.env) # no 'eix'
-    # The 'xy' variable extends the vector to the edge of plot
-    xy <- extend(unibc[ , xcomp], unibc[ , ycomp], xlime, ylime)
-    # Now the extended dashed-line part of the group vector.  Shorten by 10%
-    # to reduce over-plotting.
-    segments(unibc[ , xcomp], unibc[ , ycomp],
-             .90*xy$x2, .90*xy$y2, lty = 3, col=col.env)
-    # Add group label
-    text(.95*xy$x2, .95*xy$y2, rownames(unibc), cex = 1, col=col.env)
-  }
-  
-  # One group. Add dashed line group vector in opposite direction for AEC
-  if(n.env.grp == 1){
-    unibc <- -1 * unibc 
-    xy <- extend( unibc[ , xcomp], unibc[ , ycomp], xlime, ylime)
-    segments(0, 0, .90*xy$x2, .90*xy$y2, lty = 3, col=col.env)
-  }
-  
-  # GGB with two or more groups. Draw residual vector from group mean to each loc
-  if(ggb & n.env.grp >=  2 & res.vec) {
-    segments(blockCoord[ , xcomp], blockCoord[ , ycomp],
-             locCoord[ , xcomp], locCoord[ , ycomp],
-             col = col.env[eix], lwd = .5)
-  }
+    # One or more groups. NOT GGB. Draw vector to each loc, colored by group.
+    if(n.env.grp >= 1 & !ggb){
+      segments(0, 0, .95*locCoord[,xcomp], .95*locCoord[,ycomp],
+               col = col.env[eix])
+    }
+    # One or more groups. IS GGB.
+    if(n.env.grp >= 1 & ggb) {
+      # Draw solid-line part of the group vector
+      unibc <- blockCoord[groupNames,,drop=FALSE] # Get unique row for each group
+      segments(0, 0, unibc[ , xcomp], unibc[ , ycomp],
+               lwd = 2, col=col.env) # no 'eix'
+      # End point
+      # points(unibc[ , c(xcomp,ycomp)], pch = 16, col=col.env) # no 'eix'
+      # The 'xy' variable extends the vector to the edge of plot
+      xy <- extend(unibc[ , xcomp], unibc[ , ycomp], xlime, ylime)
+      # Now the extended dashed-line part of the group vector.  Shorten by 10%
+      # to reduce over-plotting.
+      segments(unibc[ , xcomp], unibc[ , ycomp],
+               .90*xy$x2, .90*xy$y2, lty = 3, col=col.env)
+      # Add group label
+      text(.95*xy$x2, .95*xy$y2, rownames(unibc), cex = 1, col=col.env)
+    }
+
+    # One group. Add dashed line group vector in opposite direction for AEC
+    if(n.env.grp == 1){
+      unibc <- -1 * unibc
+      xy <- extend( unibc[ , xcomp], unibc[ , ycomp], xlime, ylime)
+      segments(0, 0, .90*xy$x2, .90*xy$y2, lty = 3, col=col.env)
+    }
+
+    # GGB with two or more groups. Draw residual vector from group mean to each loc
+    if(ggb & n.env.grp >=  2 & res.vec) {
+      segments(blockCoord[ , xcomp], blockCoord[ , ycomp],
+               locCoord[ , xcomp], locCoord[ , ycomp],
+               col = col.env[eix], lwd = .5)
+    }
+  } # end else (AEC == FALSE)
 
   pch.gen <- c(pch.gen, setdiff(1:20, pch.gen))
   if(n.gen.grp < 2) {
@@ -740,9 +791,17 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
     pch.gen <- rep(pch.gen, length=n.gen.grp)
   }
 
-  # AEC = Average Environment Coordinate
-  # One env group. Draw genotype perpendicular projection onto AEC
-  if(n.env.grp == 1){
+  # Draw genotype perpendicular projections onto the AEC axis.
+  # AEC=TRUE: axis defined by the average environment coordinate.
+  # n.env.grp==1 (classic single-group GGE): axis defined by blockCoord.
+  if(AEC) {
+    m1 <- ay / ax  # slope of AEC axis (average environment direction)
+    k  <- (m1 * genCoord[,xcomp] - genCoord[,ycomp]) / (m1^2 + 1)
+    x4 <- genCoord[,xcomp] - k * m1
+    y4 <- genCoord[,ycomp] + k
+    segments(genCoord[,xcomp], genCoord[,ycomp], x4, y4, col="gray80")
+  } else if(n.env.grp == 1){
+    # One env group. Draw genotype perpendicular projection onto AEC
     m1 <- blockCoord[1,ycomp] / blockCoord[1,xcomp] # slope of AEC line
     # See formula here: https://stackoverflow.com/questions/1811549
     # x1=0, y1=0, x2=1, y2=m1, x3 & y3 are genCoord
