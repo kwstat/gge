@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gge</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,7 +64,7 @@
                         <h4 data-toc-skip class="author">Kevin
 Wright</h4>
             
-            <h4 data-toc-skip class="date">2025-09-19</h4>
+            <h4 data-toc-skip class="date">2026-03-31</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kwstat/gge/blob/main/vignettes/gge_examples.Rmd" class="external-link"><code>vignettes/gge_examples.Rmd</code></a></small>
       <div class="d-none name"><code>gge_examples.Rmd</code></div>
@@ -98,7 +98,7 @@ factorization is not unique,</p>
 <span><span class="va">m1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gge.html">gge</a></span><span class="op">(</span><span class="va">dat1</span>, <span class="va">yield</span><span class="op">~</span><span class="va">gen</span><span class="op">*</span><span class="va">env</span>, scale<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/biplot.html" class="external-link">biplot</a></span><span class="op">(</span><span class="va">m1</span>, main<span class="op">=</span><span class="st">"yan.winterwheat - GGE biplot"</span>,</span>
 <span>       flip<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">0</span><span class="op">)</span>, origin<span class="op">=</span><span class="fl">0</span>, hull<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="gge_examples_files/figure-html/gge-1.png" width="576" style="display: block; margin: auto;"></p>
+<p><img src="gge_examples_files/figure-html/gge-1.png" class="r-plt" alt="" width="576" style="display: block; margin: auto;"></p>
 <p>Many people prefer to use ‘standardized’ biplots, in which the data
 for each environment has been centered and scaled. For standardized
 biplots, a unit circle is drawn. Environment vectors that reach out to
@@ -108,7 +108,7 @@ plane.</p>
 <code class="sourceCode R"><span><span class="va">m2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gge.html">gge</a></span><span class="op">(</span><span class="va">dat1</span>, <span class="va">yield</span><span class="op">~</span><span class="va">gen</span><span class="op">*</span><span class="va">env</span>, scale<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/biplot.html" class="external-link">biplot</a></span><span class="op">(</span><span class="va">m2</span>, main<span class="op">=</span><span class="st">"yan.winterwheat - GGE biplot"</span>,</span>
 <span>       flip<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>, origin<span class="op">=</span><span class="fl">0</span><span class="op">)</span></span></code></pre></div>
-<p><img src="gge_examples_files/figure-html/unnamed-chunk-1-1.png" width="576" style="display: block; margin: auto;"></p>
+<p><img src="gge_examples_files/figure-html/unnamed-chunk-1-1.png" class="r-plt" alt="" width="576" style="display: block; margin: auto;"></p>
 <p>As seen above, the environment vectors are fairly long, so that
 relative performance of genotypes in environments can be assessed with
 reasonable accuracy. In contrast, a biplot based on principal components
@@ -116,13 +116,13 @@ reasonable accuracy. In contrast, a biplot based on principal components
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/biplot.html" class="external-link">biplot</a></span><span class="op">(</span><span class="va">m2</span>, main<span class="op">=</span><span class="st">"yan.winterwheat - GGE biplot - PC 2 &amp; 3"</span>,</span>
 <span>       comps<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">3</span><span class="op">)</span>, flip<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>, origin<span class="op">=</span><span class="fl">0</span><span class="op">)</span></span></code></pre></div>
-<p><img src="gge_examples_files/figure-html/unnamed-chunk-2-1.png" width="576" style="display: block; margin: auto;"></p>
+<p><img src="gge_examples_files/figure-html/unnamed-chunk-2-1.png" class="r-plt" alt="" width="576" style="display: block; margin: auto;"></p>
 <p><span class="citation">Laffont, Hanafi, and Wright (2007)</span>
 showed how to partition the sums-of-squares simultaneously along the
 principal component axes and along ‘G’ and ‘GxE’ axes.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m1</span>, main<span class="op">=</span><span class="st">"yan.winterwheat"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="gge_examples_files/figure-html/mosaic-1.png" width="576" style="display: block; margin: auto;"></p>
+<p><img src="gge_examples_files/figure-html/mosaic-1.png" class="r-plt" alt="" width="576" style="display: block; margin: auto;"></p>
 <p>The mosaic plot above shows that the first principal component axis
 is capturing almost all of the variation between genotypes, so that a
 projection of the genotype markers onto the first principal component
@@ -147,7 +147,7 @@ multiple locations.</p>
 <span><span class="co"># Specify env.group as column in data frame</span></span>
 <span><span class="va">m3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/gge.html">gge</a></span><span class="op">(</span><span class="va">dat2</span>, <span class="va">yield</span><span class="op">~</span><span class="va">gen</span><span class="op">*</span><span class="va">loc</span>, env.group<span class="op">=</span><span class="va">eg</span>, scale<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/biplot.html" class="external-link">biplot</a></span><span class="op">(</span><span class="va">m3</span>, main<span class="op">=</span><span class="st">"crossa.wheat - GGB biplot"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="gge_examples_files/figure-html/ggb-1.png" width="576" style="display: block; margin: auto;"></p>
+<p><img src="gge_examples_files/figure-html/ggb-1.png" class="r-plt" alt="" width="576" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level2">
 <h2 id="how-to-modify-the-focus-of-a-biplot">How to modify the “focus” of a biplot<a class="anchor" aria-label="anchor" href="#how-to-modify-the-focus-of-a-biplot"></a>
@@ -261,7 +261,7 @@ Multi-Environment Trial Data: Principles and Applications.”</span>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

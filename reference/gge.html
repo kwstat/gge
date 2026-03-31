@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gge</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,7 +32,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>GGE and GGB biplots</h1>
-      <small class="dont-index">Source: <a href="https://github.com/kwstat/gge/blob/main/R/gge.R" class="external-link"><code>R/gge.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/kwstat/gge/blob/main/R/gge.r" class="external-link"><code>R/gge.r</code></a></small>
       <div class="d-none name"><code>gge.Rd</code></div>
     </div>
 
@@ -81,6 +81,7 @@
 <span>  origin <span class="op">=</span> <span class="st">"auto"</span>,</span>
 <span>  res.vec <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  hull <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  AEC <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  zoom.gen <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  zoom.env <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -208,6 +209,15 @@ of the locs to the individual locs.</p></dd>
 
 <dt id="arg-hull">hull<a class="anchor" aria-label="anchor" href="#arg-hull"></a></dt>
 <dd><p>If TRUE, show a which-won-where polygon.</p></dd>
+
+
+<dt id="arg-aec">AEC<a class="anchor" aria-label="anchor" href="#arg-aec"></a></dt>
+<dd><p>If TRUE, draw the Average Environment Coordination (AEC) biplot.
+Environment vectors are suppressed. Instead, a vector is drawn to the
+average of all environment coordinates (the "average environment"), the AEC
+axis is extended as a line through the origin across the plot, and concentric
+circles are drawn centred on the average environment point as a guide to
+stability (distance from the average environment).</p></dd>
 
 
 <dt id="arg-zoom-gen">zoom.gen<a class="anchor" aria-label="anchor" href="#arg-zoom-gen"></a></dt>
@@ -356,7 +366,7 @@ Brisbane, Australia.
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>
