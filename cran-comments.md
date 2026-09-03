@@ -1,3 +1,38 @@
+# gge 1.11
+
+Fix CRAN check notes.
+
+## Test environments & results
+
+* Local R 4.6.1 on Windows 11
+* WinBuilder r-devel
+* WinBuilder r-release
+
+Checked OK
+
+## revdepcheck results
+
+We checked 3 reverse dependencies (0 from CRAN + 3 from Bioconductor), comparing R CMD check results across CRAN and dev versions of this package.
+
+ * We saw 0 new problems
+ * We failed to check 0 packages
+
+
+# gge 1.10
+
+## Test environments & results
+
+* Local R 4.5.2 on Windows 11
+* WinBuilder R 4.6.0 alpha
+* WinBuilder R 4.5.3
+
+Checked OK
+
+## revdepcheck results
+
+No reverse depends.
+
+
 # gge 1.9
 
 ## Test environments & results

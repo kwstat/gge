@@ -10,7 +10,13 @@ export(biplot3d)
 export(gge)
 import(grDevices)
 import(graphics)
-import(reshape2)
 import(stats)
+importFrom(dplyr,
+  all_of,
+  summarise
+)
 importFrom(nipals,nipals)
+importFrom(rlang,.data)
+importFrom(tibble,column_to_rownames)
+importFrom(tidyr,pivot_wider)
 importFrom(utils,installed.packages)

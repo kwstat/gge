@@ -313,8 +313,8 @@ if(FALSE){
                       225, 267, 247, 240, 235, 256, 209, 215, 248, 220, 208,
                       214, 210, 247, 235, 242, 252, 253, 232, 251, 245, 232,
                       260, 237, 242),
-                    .Dim = c(15L, 20L),
-                    .Dimnames = list(c("G01", "G02", "G03", "G04", "G05",
+                    dim = c(15L, 20L),
+                    dimnames = list(c("G01", "G02", "G03", "G04", "G05",
                                        "G06", "G07", "G08", "G09", "G10",
                                        "G11", "G12", "G13", "G14", "G15"),
                                      c("E01", "E02", "E03", "E04", "E05",
@@ -335,13 +335,13 @@ if(FALSE){
          col.gen=c("gray","darkgreen"))
   
   # Crossa example
-  require("reshape2")
+  require("tidyr")
   require("agridat")
   # CRAN check doesn't like data() loading into global envt, so keep
   # this commented out.
   # data(crossa.wheat, package="agridat")
   dat1 <- crossa.wheat
-  mat7 <- reshape2::acast(dat1, gen~loc, value.var='yield')
+  mat7 <- dat1 |> dplyr::summarise(yield = mean(yield, na.rm=TRUE), .by = c(gen, loc)) |> tidyr::pivot_wider(names_from = loc, values_from = yield) |> tibble::column_to_rownames('gen') |> as.matrix()
   mat7 <- mat7[, c("SR","SG","CA","AK","TB","SE","ES","EB","EG",
                    "KN","NB","PA","BJ","IL","TC","JM","PI","AS","ID",
                    "SC","SS","SJ","MS","MG","MM")]

@@ -118,7 +118,10 @@ RedGrayBlue <- colorRampPalette(c("firebrick", "lightgray", "#375997"))
 #'   # biplot3d(m2)
 #' }
 #' 
-#' @import reshape2
+#' @importFrom tidyr pivot_wider
+#' @importFrom dplyr summarise all_of
+#' @importFrom rlang .data
+#' @importFrom tibble column_to_rownames
 #' 
 #' @export
 gge <- function(x, ...) UseMethod("gge")
@@ -183,14 +186,24 @@ gge.data.frame <- function(x,
 
     if(any(colSums(table(data[[env.group]], data[[.env]])>0)>1)){
       stop("Some values of '", .env, "' have multiple env.group.")
-      env.group <- NULL
     }
   }
   if(is.null(env.group)) ggb <- FALSE
   
   # Finally, reshape data into a matrix, average values in each cell
-  datm <- reshape2::acast(data, formula(paste(.gen, "~", .env)),
-                          fun.aggregate=mean, na.rm=TRUE, value.var=.y)
+  # ".env" was a clashing variable name in all_of(), so use "env_var" instead.
+  gen_var <- .gen
+  env_var <- .env
+  y_var <- .y
+  datm <- data |>
+    dplyr::summarise(.value = mean(.data[[y_var]], na.rm = TRUE),
+                     .by = c(.data[[gen_var]], .data[[env_var]])) |>
+    tidyr::pivot_wider(names_from = dplyr::all_of(env_var),
+                       values_from = ".value",
+                       id_cols = dplyr::all_of(gen_var)) |>
+    tibble::column_to_rownames(var = gen_var) |>
+    as.matrix()
+  
   datm[is.nan(datm)] <- NA # Use NA instead of NaN
 
   # Make gen.group and env.group to be vectors for the rows/cols of datm
@@ -244,9 +257,9 @@ gge.matrix <- function(x,
   # Check for missing values
   pctMiss <- sum(is.na(x))/(nrow(x)*ncol(x))
   if(pctMiss > 0)
-    cat("Missing values detected: (", round(100*pctMiss,0), "%)\n", sep="")
+    message("Missing values detected: (", round(100*pctMiss,0), "%)\n", sep="")
   if(pctMiss > 0 & method=="svd") {
-    cat("Switching to 'nipals' method.\n")
+    message("Switching to 'nipals' method.\n")
     method <- "nipals"
   }
   if(pctMiss > .10)
@@ -256,8 +269,13 @@ gge.matrix <- function(x,
   if(any(genPct<.2) || any(envPct<.2))
     warning("Missing data may be structured.")
 
-  # Maximum number of PCs. Because of column-centering, row rank is reduced by 1
-  maxPCs <- min(nrow(x)-1, ncol(x))
+  # Maximum number of PCs. Column-centering reduces the row rank by 1
+  if(center){
+    maxPCs <- min(nrow(x)-1, ncol(x))
+  } else {
+    maxPCs <- min(nrow(x), ncol(x))
+  }
+
 
   if(!is.element(method, c('svd', 'nipals')))
     stop("Unknown method.  Use 'svd' or 'nipals'.")
@@ -597,6 +615,7 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
   if(.Device=="windows" | .Device=="RStudioGD") {
     # These devices do not support true transparency
   } else {
+    # Positron does upport transparency
     col.env <- col2rgb(col.env)
     col.env <- rgb(col.env[1,], col.env[2,], col.env[3,],
                    alpha=180, maxColorValue=255)
@@ -795,7 +814,8 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
   # AEC=TRUE: axis defined by the average environment coordinate.
   # n.env.grp==1 (classic single-group GGE): axis defined by blockCoord.
   if(AEC) {
-    m1 <- ay / ax  # slope of AEC axis (average environment direction)
+    # slope of AEC axis (average environment direction)
+    m1 <- ay / ax  
     k  <- (m1 * genCoord[,xcomp] - genCoord[,ycomp]) / (m1^2 + 1)
     x4 <- genCoord[,xcomp] - k * m1
     y4 <- genCoord[,ycomp] + k
@@ -808,7 +828,7 @@ biplot.gge <- function(x, main = substitute(x), subtitle="",
     # k = (m1 * x3 - y3) / (m1^2 + 1)
     # x4 = x3 - k * m1
     # y4 = y3 + k
-    k <- (m1 * genCoord[,xcomp] - genCoord[,ycomp])
+    k <- (m1 * genCoord[,xcomp] - genCoord[,ycomp]) / (m1^2 + 1)
     x4 <- genCoord[,xcomp] - k * m1
     y4 <- genCoord[,ycomp] + k
     segments(genCoord[,xcomp], genCoord[,ycomp], x4, y4, col="gray80")

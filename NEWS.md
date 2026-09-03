@@ -8,11 +8,18 @@ Bootstrap testing for PCs (Forkman 2019 paper)
 
 Bootstrap conf int
 
+# gge 1.11 (2026-09-03)
+
+* Replace `reshape2` with `tidyr`
+
+* Fix CRAN check notes.
+
+
 # gge 1.10 (2026-03-31)
 
 * Remove `gge.formula()`.
 
-* Add option `biplot( AEC=TRUE)` to draw Average Environment Coordinate biplot.
+* Add option `biplot( , AEC=TRUE)` to draw Average Environment Coordinate biplot.
 
 
 # gge 1.9 (2024-10-28)

@@ -88,10 +88,10 @@ Let the NIPALS decomposition be `X = TLP'`.  DANGER, some algorithms do not fact
 
 ```{r , eval=FALSE}
 library(agridat)
-library(reshape2)
+library(tidyr)
 library(nipals)
 dat3 <- agridat::yan.winterwheat
-dat3 <- acast(dat3, gen~env, value.var="yield")
+dat3 <- dat3 |> tidyr::pivot_wider(names_from = env, values_from = yield) |> tibble::column_to_rownames('gen') |> as.matrix()
 dat3 <- scale(dat3, center=TRUE, scale=FALSE)
 Xsvd <- svd(dat3)
 Xnip <- nipals(dat3, center=FALSE, scale=FALSE)

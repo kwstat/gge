@@ -1,7 +1,7 @@
 Type: Package
 Package: gge
 Title: Genotype Plus Genotype-by-Environment Biplots
-Version: 1.10
+Version: 1.11
 Authors@R: c(
     person("Kevin", "Wright", , "kw.stat@gmail.com", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0002-0617-8673")),
@@ -16,7 +16,10 @@ URL: https://kwstat.github.io/gge/, http://kwstat.github.io/gge/
 BugReports: https://github.com/kwstat/gge/issues
 Imports:
     nipals,
-    reshape2
+    dplyr,
+    rlang,
+    tibble,
+    tidyr
 Suggests:
     agridat,
     knitr,
@@ -27,4 +30,4 @@ Suggests:
 VignetteBuilder: 
     knitr
 Encoding: UTF-8
-RoxygenNote: 7.3.3
+Config/roxygen2/version: 8.1.0
