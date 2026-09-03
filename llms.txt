@@ -19,6 +19,7 @@ Functions for GGE (genotype plus genotype-by-environment) and GGB
 ## Installation
 
 ``` r
+
 # Install the released version from CRAN:
 install.packages("gge")
 

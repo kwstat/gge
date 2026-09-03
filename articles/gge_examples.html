@@ -12,8 +12,8 @@
 <link rel="icon" sizes="any" href="../favicon.ico">
 <link rel="manifest" href="../site.webmanifest">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Genotype plus Genotype-By-Block-of-Environments Biplots">
 </head>
@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gge</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,7 +64,7 @@
                         <h4 data-toc-skip class="author">Kevin
 Wright</h4>
             
-            <h4 data-toc-skip class="date">2026-03-31</h4>
+            <h4 data-toc-skip class="date">2026-09-03</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/kwstat/gge/blob/main/vignettes/gge_examples.Rmd" class="external-link"><code>vignettes/gge_examples.Rmd</code></a></small>
       <div class="d-none name"><code>gge_examples.Rmd</code></div>
@@ -117,9 +117,9 @@ reasonable accuracy. In contrast, a biplot based on principal components
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/biplot.html" class="external-link">biplot</a></span><span class="op">(</span><span class="va">m2</span>, main<span class="op">=</span><span class="st">"yan.winterwheat - GGE biplot - PC 2 &amp; 3"</span>,</span>
 <span>       comps<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">3</span><span class="op">)</span>, flip<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>, origin<span class="op">=</span><span class="fl">0</span><span class="op">)</span></span></code></pre></div>
 <p><img src="gge_examples_files/figure-html/unnamed-chunk-2-1.png" class="r-plt" alt="" width="576" style="display: block; margin: auto;"></p>
-<p><span class="citation">Laffont, Hanafi, and Wright (2007)</span>
-showed how to partition the sums-of-squares simultaneously along the
-principal component axes and along ‘G’ and ‘GxE’ axes.</p>
+<p><span class="citation">Laffont et al. (2007)</span> showed how to
+partition the sums-of-squares simultaneously along the principal
+component axes and along ‘G’ and ‘GxE’ axes.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">m1</span>, main<span class="op">=</span><span class="st">"yan.winterwheat"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="gge_examples_files/figure-html/mosaic-1.png" class="r-plt" alt="" width="576" style="display: block; margin: auto;"></p>
@@ -128,10 +128,10 @@ is capturing almost all of the variation between genotypes, so that a
 projection of the genotype markers onto the first principal component
 axis is a good overall representation of the rankings of the
 genotypes.</p>
-<p><span class="citation">Laffont, Wright, and Hanafi (2013)</span>
-presented GGB (genotype plus genotype-by-block of environments) biplots,
-which are useful to enhance the view of mega-environments consisting of
-multiple locations.</p>
+<p><span class="citation">Laffont et al. (2013)</span> presented GGB
+(genotype plus genotype-by-block of environments) biplots, which are
+useful to enhance the view of mega-environments consisting of multiple
+locations.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://kwstat.github.io/agridat/" class="external-link">agridat</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">crossa.wheat</span><span class="op">)</span></span>
@@ -158,10 +158,10 @@ multiple locations.</p>
 algorithms do not factor L out of T.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://kwstat.github.io/agridat/" class="external-link">agridat</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/hadley/reshape" class="external-link">reshape2</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://kwstat.github.io/nipals/" class="external-link">nipals</a></span><span class="op">)</span></span>
 <span><span class="va">dat3</span> <span class="op">&lt;-</span> <span class="fu">agridat</span><span class="fu">::</span><span class="va"><a href="https://kwstat.github.io/agridat/reference/yan.winterwheat.html" class="external-link">yan.winterwheat</a></span></span>
-<span><span class="va">dat3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/reshape2/man/cast.html" class="external-link">acast</a></span><span class="op">(</span><span class="va">dat3</span>, <span class="va">gen</span><span class="op">~</span><span class="va">env</span>, value.var<span class="op">=</span><span class="st">"yield"</span><span class="op">)</span></span>
+<span><span class="va">dat3</span> <span class="op">&lt;-</span> <span class="va">dat3</span> <span class="op">|&gt;</span> <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html" class="external-link">pivot_wider</a></span><span class="op">(</span>names_from <span class="op">=</span> <span class="va">env</span>, values_from <span class="op">=</span> <span class="va">yield</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/rownames.html" class="external-link">column_to_rownames</a></span><span class="op">(</span><span class="st">'gen'</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">dat3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/scale.html" class="external-link">scale</a></span><span class="op">(</span><span class="va">dat3</span>, center<span class="op">=</span><span class="cn">TRUE</span>, scale<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="va">Xsvd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/svd.html" class="external-link">svd</a></span><span class="op">(</span><span class="va">dat3</span><span class="op">)</span></span>
 <span><span class="va">Xnip</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kwstat.github.io/nipals/reference/nipals.html" class="external-link">nipals</a></span><span class="op">(</span><span class="va">dat3</span>, center<span class="op">=</span><span class="cn">FALSE</span>, scale<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
@@ -231,7 +231,7 @@ improvement.</p>
 <div class="section level3">
 <h3 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h3>
-<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-laffont2007numerical" class="csl-entry">
 Laffont, Jean-Louis, Mohamed Hanafi, and Kevin Wright. 2007.
 <span>“Numerical and Graphical Measures to Facilitate the Interpretation
@@ -261,7 +261,7 @@ Multi-Environment Trial Data: Principles and Applications.”</span>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

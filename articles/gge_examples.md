@@ -7,6 +7,7 @@ A short note about GGE and GGB biplots.
 ## R setup
 
 ``` r
+
 library("knitr")
 knitr::opts_chunk$set(fig.align="center", fig.width=6, fig.height=6)
 options(width=90)
@@ -18,6 +19,7 @@ be used to flip the x and y axes so that biplots are oriented as
 desired. Because the SVD factorization is not unique,
 
 ``` r
+
 library(agridat)
 data(yan.winterwheat)
 dat1 <- yan.winterwheat
@@ -36,6 +38,7 @@ a unit circle is drawn. Environment vectors that reach out to the unit
 circle are perfectly represented in the two dimensional plane.
 
 ``` r
+
 m2 <- gge(dat1, yield~gen*env, scale=TRUE)
 biplot(m2, main="yan.winterwheat - GGE biplot",
        flip=c(1,1), origin=0)
@@ -49,17 +52,19 @@ accuracy. In contrast, a biplot based on principal components 2 and 3
 has shorter vectors which should not be interpreted.
 
 ``` r
+
 biplot(m2, main="yan.winterwheat - GGE biplot - PC 2 & 3",
        comps=c(2,3), flip=c(1,1), origin=0)
 ```
 
 ![](gge_examples_files/figure-html/unnamed-chunk-2-1.png)
 
-Laffont, Hanafi, and Wright (2007) showed how to partition the
-sums-of-squares simultaneously along the principal component axes and
-along ‘G’ and ‘GxE’ axes.
+Laffont et al. (2007) showed how to partition the sums-of-squares
+simultaneously along the principal component axes and along ‘G’ and
+‘GxE’ axes.
 
 ``` r
+
 plot(m1, main="yan.winterwheat")
 ```
 
@@ -70,11 +75,12 @@ capturing almost all of the variation between genotypes, so that a
 projection of the genotype markers onto the first principal component
 axis is a good overall representation of the rankings of the genotypes.
 
-Laffont, Wright, and Hanafi (2013) presented GGB (genotype plus
-genotype-by-block of environments) biplots, which are useful to enhance
-the view of mega-environments consisting of multiple locations.
+Laffont et al. (2013) presented GGB (genotype plus genotype-by-block of
+environments) biplots, which are useful to enhance the view of
+mega-environments consisting of multiple locations.
 
 ``` r
+
 library(agridat)
 data(crossa.wheat)
 dat2 <- crossa.wheat
@@ -103,11 +109,12 @@ Let the NIPALS decomposition be `X = TLP'`. DANGER, some algorithms do
 not factor L out of T.
 
 ``` r
+
 library(agridat)
-library(reshape2)
+library(tidyr)
 library(nipals)
 dat3 <- agridat::yan.winterwheat
-dat3 <- acast(dat3, gen~env, value.var="yield")
+dat3 <- dat3 |> tidyr::pivot_wider(names_from = env, values_from = yield) |> tibble::column_to_rownames('gen') |> as.matrix()
 dat3 <- scale(dat3, center=TRUE, scale=FALSE)
 Xsvd <- svd(dat3)
 Xnip <- nipals(dat3, center=FALSE, scale=FALSE)
@@ -128,6 +135,7 @@ The genotype coordinates are can be obtained from the SVD using the
 first two columns of `U*S` or equivalently from NIPALS `T*Lam`.
 
 ``` r
+
 (U %*% S)[ , 1:2]
 (T %*% Lam)[ , 1:2]
 ```
@@ -136,6 +144,7 @@ The environment coordinates are the first two columns of `V` (from the
 SVD) or `P` (from NIPALS).
 
 ``` r
+
 V[ , 1:2]
 P[ , 1:2]
 ```
@@ -149,6 +158,7 @@ The genotype coordinates are the first two columns of `U` (from SVD) or
 `T` (from NIPALS).
 
 ``` r
+
 U[ , 1:2]
 T[ , 1:2]
 ```
@@ -157,6 +167,7 @@ The environment coordinates are `S*V` (from SVD) or `Lam*P` (from
 NIPALS).
 
 ``` r
+
 (S %*% V)[ , 1:2]
 (Lam %*% P)[ , 1:2]
 ```

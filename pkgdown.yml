@@ -1,9 +1,9 @@
-pandoc: 3.1.11
-pkgdown: 2.2.0
+pandoc: 3.8.3
+pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
   gge_examples: gge_examples.html
-last_built: 2026-03-31T21:20Z
+last_built: 2026-09-03T19:19Z
 urls:
   reference: http://kwstat.github.io/gge/reference
   article: http://kwstat.github.io/gge/articles
